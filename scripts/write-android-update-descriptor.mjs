@@ -18,6 +18,9 @@ import { fileURLToPath } from 'node:url'
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const GRADLE_FILE = join(ROOT, 'apps/mobile/android/app/build.gradle.kts')
+// Same CDN layout the Qurvis desktop channel publishes to, so both products share one bucket:
+// https://img1.rrzuji.cn/qurvis-package/latest/QuWork-1.6.5-win-x64.exe
+const CDN_BASE_URL = 'https://img1.rrzuji.cn/qurvis-package/latest'
 
 function fail(message) {
   console.error(`update descriptor: ${message}`)
@@ -25,9 +28,10 @@ function fail(message) {
 }
 
 function parseArguments(argv) {
-  const options = { apks: [], out: undefined, baseUrl: undefined, repo: undefined, releaseTag: undefined, version: undefined, versionCode: undefined, notesUrl: undefined }
+  const options = { apks: [], out: undefined, baseUrl: undefined, github: false, repo: undefined, releaseTag: undefined, version: undefined, versionCode: undefined, notesUrl: undefined }
   for (const argument of argv) {
     if (argument.startsWith('--out=')) options.out = argument.slice(6)
+    else if (argument === '--github') options.github = true
     else if (argument.startsWith('--base-url=')) options.baseUrl = argument.slice(11)
     else if (argument.startsWith('--repo=')) options.repo = argument.slice(7)
     else if (argument.startsWith('--release-tag=')) options.releaseTag = argument.slice(14)
@@ -71,10 +75,11 @@ const options = parseArguments(process.argv.slice(2))
 if (options.help) {
   console.log(`Usage: node scripts/write-android-update-descriptor.mjs <apk...> [options]
 
-  --base-url=<url>       Host the APKs are uploaded to (your web site or OSS/CDN prefix).
-                         Omit to derive GitHub release download URLs instead.
-  --repo=<owner/name>    GitHub repository used when --base-url is absent.
-  --release-tag=<tag>    Release tag for derived URLs (default android-v<version>).
+  --base-url=<url>       Prefix the APKs are uploaded to (default
+                         https://img1.rrzuji.cn/qurvis-package/latest).
+  --github               Derive the links from a GitHub release instead of the CDN.
+  --repo=<owner/name>    GitHub repository used with --github.
+  --release-tag=<tag>    Release tag for --github links (default android-v<version>).
   --version=<x.y.z>      Override the version read from build.gradle.kts.
   --version-code=<n>     Override the versionCode read from build.gradle.kts.
   --notes-url=<url>      Optional release notes page.
@@ -91,9 +96,13 @@ if (!Number.isSafeInteger(build.versionCode) || build.versionCode <= 0) fail('ve
 if (!/^\d+\.\d+\.\d+(?:[-+][0-9A-Za-z.-]+)?$/u.test(build.version)) fail(`invalid version ${JSON.stringify(build.version)}`)
 
 const releaseTag = options.releaseTag ?? `android-v${build.version}`
-const baseUrl = options.baseUrl === undefined ? undefined : httpsUrl(options.baseUrl, '--base-url')
 const repo = options.repo ?? 'Jlnvv-tom/quwork-dsh-mobile'
-const githubBase = `https://github.com/${repo}/releases/download/${releaseTag}`
+const baseUrl = httpsUrl(
+  options.github
+    ? `https://github.com/${repo}/releases/download/${releaseTag}`
+    : options.baseUrl ?? CDN_BASE_URL,
+  options.github ? 'release URL' : '--base-url',
+)
 
 const downloads = {}
 const checksums = {}
@@ -101,7 +110,7 @@ for (const apk of options.apks) {
   const name = basename(apk)
   const variant = /-iroh\.apk$/u.test(name) ? 'iroh' : 'compatibility'
   if (downloads[variant]) fail(`duplicate ${variant} APK: ${apk}`)
-  downloads[variant] = `${baseUrl ?? httpsUrl(githubBase, 'release URL')}/${encodeURIComponent(name)}`
+  downloads[variant] = `${baseUrl}/${encodeURIComponent(name)}`
   checksums[variant] = await sha256(apk)
 }
 

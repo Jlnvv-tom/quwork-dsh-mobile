@@ -13,6 +13,9 @@ const SIGNED_APK = join(RELEASE_DIR, 'app-release.apk')
 const UNSIGNED_APK = join(RELEASE_DIR, 'app-release-unsigned.apk')
 const TRANSPORT_SCRIPT = join(ROOT, 'scripts/build-android-transport.mjs')
 const UPDATE_DESCRIPTOR_SCRIPT = join(ROOT, 'scripts/write-android-update-descriptor.mjs')
+// Mirrors the Qurvis desktop channel layout, so APKs and the desktop packages share one CDN:
+// https://img1.rrzuji.cn/qurvis-package/latest/QuWork-1.6.5-win-x64.exe
+const CDN_BASE_URL = 'https://img1.rrzuji.cn/qurvis-package/latest'
 const DEFAULT_CREDENTIALS = join(homedir(), '.quwork-signing.txt')
 const DEFAULT_NDK_VERSION = '25.2.9519653'
 const DEFAULT_RUST_TOOLCHAIN = '1.99.1'
@@ -42,8 +45,11 @@ Options:
   --credentials=<file>         KEY=VALUE signing file (default: ~/.quwork-signing.txt)
   --rust-toolchain=<name>      Rust toolchain for the iroh package (default: ${DEFAULT_RUST_TOOLCHAIN})
   --download-page=<url>        Page the App opens for a manual download (default: GitHub releases)
-  --update-descriptor=<url>    Descriptor the App polls once per launch (default: empty, disabled)
-  --base-url=<url>             Host for the generated descriptor's APK links (your site or OSS/CDN)
+  --update-descriptor=<url>    Descriptor the App polls once per launch
+                               (default: ${CDN_BASE_URL}/dsh-mobile-android-release.json; pass an
+                               empty value to disable update checking)
+  --base-url=<url>             Prefix the generated descriptor's APK links point at
+                               (default: ${CDN_BASE_URL})
   --unsigned                   Build without signing (produces an uninstallable APK)
   --skip-verify                Skip apksigner and package payload checks
   --no-daemon                  Pass --no-daemon to Gradle
@@ -75,6 +81,9 @@ function parseArgs(argv) {
     variants: ['full', 'compat'],
     out: join(ROOT, 'dist/android'),
     prefix: 'dsh-mobile',
+    // Upload target for the APKs, and the descriptor an installed App polls once per launch.
+    baseUrl: CDN_BASE_URL,
+    updateDescriptor: `${CDN_BASE_URL}/dsh-mobile-android-release.json`,
     rustToolchain: process.env.RUSTUP_TOOLCHAIN || DEFAULT_RUST_TOOLCHAIN,
     unsigned: false,
     skipVerify: false,
@@ -260,8 +269,9 @@ function gradleArguments(variant, context) {
   } else {
     args.push('-PirohNative=false')
   }
-  if (context.options.downloadPage) args.push(`-PmobileDownloadPageUrl=${context.options.downloadPage}`)
-  if (context.options.updateDescriptor) args.push(`-PmobileUpdateDescriptorUrl=${context.options.updateDescriptor}`)
+  // An explicit empty value reaches Gradle as -Pname=, which disables that URL.
+  if (context.options.downloadPage !== undefined) args.push(`-PmobileDownloadPageUrl=${context.options.downloadPage}`)
+  if (context.options.updateDescriptor !== undefined) args.push(`-PmobileUpdateDescriptorUrl=${context.options.updateDescriptor}`)
   args.push('assembleRelease')
   return args
 }
@@ -359,8 +369,12 @@ async function main() {
 
   // The descriptor is what an installed App polls; upload it beside the APKs it points at.
   const descriptorPath = join(options.out, 'dsh-mobile-android-release.json')
-  const descriptorArgs = [UPDATE_DESCRIPTOR_SCRIPT, ...artifacts.map(artifact => artifact.path), `--out=${descriptorPath}`]
-  if (options.baseUrl) descriptorArgs.push(`--base-url=${options.baseUrl}`)
+  const descriptorArgs = [
+    UPDATE_DESCRIPTOR_SCRIPT,
+    ...artifacts.map(artifact => artifact.path),
+    `--base-url=${options.baseUrl}`,
+    `--out=${descriptorPath}`,
+  ]
   run(process.execPath, descriptorArgs, { cwd: ROOT })
 
   console.log('\n=== release artifacts ===')
@@ -370,9 +384,8 @@ async function main() {
   }
   console.log(`\nChecksums:  ${join(options.out, 'SHA256SUMS.txt')}`)
   console.log(`Descriptor: ${descriptorPath}`)
-  if (!options.baseUrl) {
-    console.log('Next:       upload the APKs, then rerun with --base-url=<your site or OSS prefix>')
-  }
+  console.log(`Upload to:  ${options.baseUrl}/`)
+  console.log(`Update URL: ${options.updateDescriptor}`)
   console.log(`Elapsed:   ${((Date.now() - started) / 1000).toFixed(1)}s`)
   console.log(`Install:   adb install -r "${artifacts[0].path}"`)
 }

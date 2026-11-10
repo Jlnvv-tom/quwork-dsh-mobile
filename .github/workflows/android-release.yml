@@ -102,9 +102,9 @@ jobs:
           done
       - name: Name Android package and prepare release descriptor
         env:
-          # Optional repository variable: point App downloads (and the descriptor) at your own
-          # site, OSS bucket or CDN instead of GitHub release URLs.
-          MOBILE_DOWNLOAD_BASE_URL: ${{ vars.MOBILE_DOWNLOAD_BASE_URL }}
+          # Descriptor APK links follow the fork's CDN layout; override the repository variable to
+          # publish from a different bucket or site.
+          MOBILE_DOWNLOAD_BASE_URL: ${{ vars.MOBILE_DOWNLOAD_BASE_URL || 'https://img1.rrzuji.cn/qurvis-package/latest' }}
         run: |
           version="${GITHUB_REF_NAME#android-v}"
           for apk in dsh-mobile-android-v*.apk; do sha256sum "$apk" > "$apk.sha256"; done

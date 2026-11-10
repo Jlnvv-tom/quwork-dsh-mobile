@@ -24,15 +24,17 @@ val irohRoot = rootProject.projectDir.resolve("../../..").canonicalFile
 val irohNdk = providers.gradleProperty("irohNdk").orElse(providers.environmentVariable("ANDROID_NDK_HOME"))
 
 /**
- * Update delivery is opt-in and owner-controlled. `mobileDownloadPageUrl` is the page the App
- * opens for a manual download (use your own site or an OSS/CDN mirror);
- * `mobileUpdateDescriptorUrl` is the JSON an installed App polls at most once per launch.
- * An empty descriptor URL disables checking entirely, so a plain build never contacts a host.
+ * Update delivery is owner-controlled. `mobileDownloadPageUrl` is the page the App opens for a
+ * manual download; `mobileUpdateDescriptorUrl` is the JSON an installed App polls at most once per
+ * launch. Both default to the fork's CDN, which mirrors the Qurvis desktop channel layout
+ * (https://img1.rrzuji.cn/qurvis-package/latest/...). Pass an empty -P value to disable checking.
  * Override per build with -P, or globally in ~/.gradle/gradle.properties.
  */
 fun httpsUrlProperty(name: String, fallback: String): String {
-    val raw = providers.gradleProperty(name).orNull?.trim().orEmpty()
-    if (raw.isEmpty()) return fallback
+    val raw = providers.gradleProperty(name).orNull?.trim()
+    if (raw == null) return fallback
+    // An explicit empty value (-Pname=) turns the URL off; an unset property keeps the default.
+    if (raw.isEmpty()) return ""
     require(raw.startsWith("https://") && raw.none { it == '"' || it == '\\' || it.code <= 0x20 }) {
         "-P$name must be a single https URL"
     }
@@ -43,7 +45,10 @@ val downloadPageUrl = httpsUrlProperty(
     "mobileDownloadPageUrl",
     "https://github.com/Jlnvv-tom/quwork-dsh-mobile/releases",
 )
-val updateDescriptorUrl = httpsUrlProperty("mobileUpdateDescriptorUrl", "")
+val updateDescriptorUrl = httpsUrlProperty(
+    "mobileUpdateDescriptorUrl",
+    "https://img1.rrzuji.cn/qurvis-package/latest/dsh-mobile-android-release.json",
+)
 val buildIrohTransport = tasks.register<Exec>("buildIrohTransport") {
     group = "build"
     description = "Build and verify selected Rust Android ABIs with an explicitly selected NDK"

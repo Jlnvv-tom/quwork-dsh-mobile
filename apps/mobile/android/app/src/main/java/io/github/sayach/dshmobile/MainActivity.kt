@@ -2317,6 +2317,7 @@ class MainActivity : Activity() {
     }
 
     private fun openExternalDownloadPage() {
+        if (BuildConfig.DOWNLOAD_PAGE_URL.isBlank()) return
         openExternal(Uri.parse(BuildConfig.DOWNLOAD_PAGE_URL))
     }
 
