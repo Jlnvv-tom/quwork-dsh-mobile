@@ -39,7 +39,7 @@ export function createMobilePushAssetLoader(packageRoot: string): (path: string)
 
 // Resolve the package's exported package.json so bundled lib/index.mjs and source
 // both anchor at the package root, independent of module depth or process.cwd().
-const packageRoot = dirname(createRequire(import.meta.url).resolve('dsh-mobile/package.json'))
+const packageRoot = dirname(createRequire(import.meta.url).resolve('qurwork-mobile/package.json'))
 const loadFromPackage = createMobilePushAssetLoader(packageRoot)
 
 /** Return only a known push manifest/icon; optional packageRoot enables explicit host injection. */

@@ -124,6 +124,8 @@ class MainActivity : Activity() {
     private val remoteCredentialStore by lazy { DeviceCredentialStore(this, "remote") }
     private val pairedDeviceStore by lazy { PairedDeviceStore(this) }
     private var legacyStorageUnavailable = false
+    // The public descriptor is polled once per process; a failed lookup is never retried on resume.
+    private var appUpdateCheckStarted = false
     private val ioExecutor = Executors.newSingleThreadExecutor()
     private val restoreExecutor = Executors.newFixedThreadPool(3)
     private val restoreWorkGate = NativeRestoreWorkGate<String>(restoreExecutor)
@@ -356,6 +358,7 @@ class MainActivity : Activity() {
         window.decorView.requestApplyInsets()
         if (deviceListVisible && showingSetup) refreshDeviceStatuses(pairedDeviceStore.load())
         startIrohStatusMonitor()
+        checkForAppUpdate()
     }
 
     override fun onPause() {
@@ -2271,12 +2274,50 @@ class MainActivity : Activity() {
         status.visibility = View.VISIBLE
         val dialog = AlertDialog.Builder(this).setTitle(title).setMessage(message)
         if (issue.kind == CompatibilityIssueKind.APP_TOO_OLD) {
-            dialog.setPositiveButton(R.string.download_update) { _, _ -> openExternal(Uri.parse(APP_RELEASES_URL)) }
+            dialog.setPositiveButton(R.string.download_update) { _, _ -> openExternalDownloadPage() }
                 .setNegativeButton(R.string.cancel, null)
         } else {
             dialog.setPositiveButton(android.R.string.ok, null)
         }
         dialog.show()
+    }
+
+    /**
+     * Checks the owner's release descriptor once per process, without blocking startup. Any failure
+     * is silent: the App stays usable offline and when the release host is unreachable.
+     */
+    private fun checkForAppUpdate() {
+        if (appUpdateCheckStarted || BuildConfig.UPDATE_DESCRIPTOR_URL.isBlank()) return
+        appUpdateCheckStarted = true
+        ioExecutor.execute {
+            val decision = runCatching {
+                AppUpdateChecker(
+                    descriptorUrl = BuildConfig.UPDATE_DESCRIPTOR_URL,
+                    installedVersionCode = BuildConfig.VERSION_CODE,
+                    irohNative = BuildConfig.IROH_NATIVE_ENABLED,
+                    userAgent = "DSHMobile/${BuildConfig.VERSION_NAME}",
+                ).check()
+            }.getOrNull() ?: return@execute
+            runOnUiThread { if (!isFinishing && !isDestroyed) showAppUpdateAvailable(decision) }
+        }
+    }
+
+    /** Offers the published package for a manual install; the App never downloads or installs it. */
+    private fun showAppUpdateAvailable(decision: AppUpdateDecision) {
+        if (isFinishing || isDestroyed) return
+        // Announce a published build once; a later release prompts again, declining stays quiet.
+        if (!AppUpdatePolicy.shouldAnnounce(decision, preferences.getInt(PREFERENCE_UPDATE_PROMPTED_VERSION_CODE, 0))) return
+        preferences.edit().putInt(PREFERENCE_UPDATE_PROMPTED_VERSION_CODE, decision.versionCode).apply()
+        AlertDialog.Builder(this)
+            .setTitle(R.string.app_update_available_title)
+            .setMessage(getString(R.string.app_update_available_message, decision.version))
+            .setPositiveButton(R.string.download_update) { _, _ -> openExternal(Uri.parse(decision.downloadUrl)) }
+            .setNegativeButton(R.string.cancel, null)
+            .show()
+    }
+
+    private fun openExternalDownloadPage() {
+        openExternal(Uri.parse(BuildConfig.DOWNLOAD_PAGE_URL))
     }
 
     private fun pairingFailureMessage(error: Throwable, origin: GatewayOrigin): Int = when ((error as? NativeAuthFailure)?.kind) {
@@ -4206,6 +4247,8 @@ class MainActivity : Activity() {
         const val PREFERENCE_NOTIFICATION_PERMISSION_REQUESTED = "notification_permission_requested"
         const val PREFERENCE_WEB_CHROME_COLOR = "web_chrome_color"
         const val PREFERENCE_APP_ICON = "app_icon"
+        // Highest published versionCode already announced, so one release prompts at most once.
+        const val PREFERENCE_UPDATE_PROMPTED_VERSION_CODE = "update_prompted_version_code"
         const val STATE_SHOWING_SETUP = "showing_setup"
         const val STATE_ACCESS_MODE = "access_mode"
         const val STATE_NATIVE_BRIDGE = "native_bridge"
@@ -4230,7 +4273,8 @@ class MainActivity : Activity() {
         const val PAGE_READY_POLL_MS = 250L
         const val LAN_CONNECTION_BUDGET_MS = 30_000L
         const val REMOTE_CONNECTION_BUDGET_MS = 60_000L
-        const val APP_RELEASES_URL = "https://github.com/saya-ch/dsh-mobile/releases/latest"
+        // Download page and update descriptor come from BuildConfig (-PmobileDownloadPageUrl and
+        // -PmobileUpdateDescriptorUrl), so an owner can point the App at its own mirror.
         val RECOVERY_DELAYS_MS = longArrayOf(0L, 1_000L, 3_000L, 8_000L)
         val MIME_TYPE = Regex("^[a-z0-9!#$&^_.+-]+/[a-z0-9!#$&^_.+*-]+$")
         val UNSAFE_FILENAME = Regex("[\\\\/:*?\"<>|\\p{Cc}]")

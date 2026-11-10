@@ -50,7 +50,7 @@ Use short 150–240ms state/navigation transitions. Respect `prefers-reduced-mot
 
 ## Brand artwork
 
-- Default app artwork: `assets/brand/app-icon-master.png` shows the whale-themed character holding a phone. Keep this as the default identity and README icon; do not add text or watermarks. The app also offers six existing DeepSeek whale-mark color variants through native Launcher aliases. Selecting one changes only the launcher artwork, not the package, signer or paired data; it does not make this community app an official DeepSeek client.
+- Default app artwork: `assets/brand/app-icon-master.png` is the QuWork mark (black "Qw" lettering with a `#066AFF` sparkle) on a white rounded tile. Keep this as the default identity and README icon; do not add text or watermarks. The app also offers six background variants of the same mark through native Launcher aliases. Selecting one changes only the launcher artwork, not the package, signer or paired data.
 - Repository hero: use `assets/brand/repository-hero.png`; the existing image includes the DSH Mobile title at left and a character with a desktop scene at right. Keep README copy outside the image rather than duplicating its built-in title.
 
 ## Delivery checklist

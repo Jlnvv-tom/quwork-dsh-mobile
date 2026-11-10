@@ -34,7 +34,7 @@ describe('installed default extension worker entry', () => {
     if (filename === undefined) throw new Error('npm pack did not return a filename')
     const installRoot = join(root, 'installed'); await mkdir(installRoot)
     await run(process.execPath, [npmCli, 'install', '--prefix', installRoot, '--ignore-scripts', '--no-audit', '--no-fund', '--package-lock=false', join(root, filename)])
-    extracted = join(installRoot, 'node_modules', 'dsh-mobile')
+    extracted = join(installRoot, 'node_modules', 'qurwork-mobile')
   }, 30_000)
   afterAll(async () => { if (root !== undefined) await rm(root, { recursive: true, force: true }) }, 30_000)
 

@@ -22,6 +22,28 @@ val irohAbis = providers.gradleProperty("irohAbis").orElse("arm64-v8a,x86_64")
 val irohJniOutput = layout.buildDirectory.dir("generated/iroh/jniLibs")
 val irohRoot = rootProject.projectDir.resolve("../../..").canonicalFile
 val irohNdk = providers.gradleProperty("irohNdk").orElse(providers.environmentVariable("ANDROID_NDK_HOME"))
+
+/**
+ * Update delivery is opt-in and owner-controlled. `mobileDownloadPageUrl` is the page the App
+ * opens for a manual download (use your own site or an OSS/CDN mirror);
+ * `mobileUpdateDescriptorUrl` is the JSON an installed App polls at most once per launch.
+ * An empty descriptor URL disables checking entirely, so a plain build never contacts a host.
+ * Override per build with -P, or globally in ~/.gradle/gradle.properties.
+ */
+fun httpsUrlProperty(name: String, fallback: String): String {
+    val raw = providers.gradleProperty(name).orNull?.trim().orEmpty()
+    if (raw.isEmpty()) return fallback
+    require(raw.startsWith("https://") && raw.none { it == '"' || it == '\\' || it.code <= 0x20 }) {
+        "-P$name must be a single https URL"
+    }
+    return raw
+}
+
+val downloadPageUrl = httpsUrlProperty(
+    "mobileDownloadPageUrl",
+    "https://github.com/Jlnvv-tom/quwork-dsh-mobile/releases",
+)
+val updateDescriptorUrl = httpsUrlProperty("mobileUpdateDescriptorUrl", "")
 val buildIrohTransport = tasks.register<Exec>("buildIrohTransport") {
     group = "build"
     description = "Build and verify selected Rust Android ABIs with an explicitly selected NDK"
@@ -59,6 +81,8 @@ android {
         versionCode = 87
         versionName = "0.7.2"
         buildConfigField("boolean", "IROH_NATIVE_ENABLED", irohNativeEnabled.toString())
+        buildConfigField("String", "DOWNLOAD_PAGE_URL", "\"$downloadPageUrl\"")
+        buildConfigField("String", "UPDATE_DESCRIPTOR_URL", "\"$updateDescriptorUrl\"")
     }
 
     signingConfigs {

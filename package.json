@@ -1,14 +1,14 @@
 {
-  "name": "dsh-mobile",
+  "name": "qurwork-mobile",
   "version": "0.8.5",
   "private": false,
-  "description": "DeepSeek Harness 移动端适配与安全访问插件，支持局域网、远程连接、Android App 和手机浏览器。",
+  "description": "QuWork 移动端适配与安全访问插件，支持局域网、远程连接、Android App 和手机浏览器。",
   "type": "module",
   "workspaces": [
     "packages/question-fixes"
   ],
   "bin": {
-    "dsh-mobile": "lib/cli.js"
+    "qurwork-mobile": "lib/cli.js"
   },
   "main": "./lib/index.mjs",
   "types": "./lib/index.d.mts",
@@ -111,6 +111,8 @@
     "build": "tsdown && node ./scripts/check-client-bundle.mjs",
     "build:funnel-host": "node ./scripts/build-funnel-host.mjs",
     "build:iroh-host": "node ./scripts/build-iroh-host.mjs",
+    "build:android-apk": "node ./scripts/build-android-apk.mjs",
+    "write:android-update-descriptor": "node ./scripts/write-android-update-descriptor.mjs",
     "check:funnel-licenses": "node ./scripts/funnel-third-party-licenses.mjs",
     "check:funnel-licenses:full": "node ./scripts/funnel-third-party-licenses.mjs --full-check",
     "check:mobile-release": "node ./scripts/check-mobile-release.mjs",

@@ -31,5 +31,8 @@ tmp-dsh-web.err.log
 /target/
 native/target/
 
+# Local signed APK archive produced by scripts/build-android-apk.mjs
+dist/
+
 # Local agent workspace (research notes, memory); not part of the package or docs
 .workbuddy/

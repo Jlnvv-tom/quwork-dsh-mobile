@@ -33,7 +33,7 @@ it('serves the original icons from an extracted npm package outside its working 
     expect(record.files.map(file => file.path)).toEqual(expect.arrayContaining([
       'assets/mobile-push/icon-180.png', 'assets/mobile-push/icon-192.png', 'assets/mobile-push/icon-512.png',
     ]))
-    expect(record.filename).toMatch(/^dsh-mobile-[^/\\]+\.tgz$/u)
+    expect(record.filename).toMatch(/^qurwork-mobile-[^/\\]+\.tgz$/u)
     const extracted = join(root, 'extracted')
     await mkdir(extracted)
     await run('tar', ['-xzf', join(root, record.filename), '-C', extracted])

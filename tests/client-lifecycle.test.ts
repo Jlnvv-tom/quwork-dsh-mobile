@@ -2,6 +2,7 @@ import { readFileSync, readdirSync } from 'node:fs'
 import postcss from 'postcss'
 import { Context } from '@deepseek-ai/cordis'
 import { afterEach, describe, expect, it, vi } from 'vitest'
+import { BRAND } from '../src/brand.js'
 import { collectConnectionDiagnostics, type DiagnosticSnapshot } from '../src/diagnostics.js'
 import {
   apply,
@@ -1002,83 +1003,37 @@ describe('mobile-control localization', () => {
     expect(CONTROL_STYLES).toContain('color:var(--dsw-alias-label-primary-bluish,#2563eb)')
   })
 
-  it('renders only validated release versions and the official Android download', () => {
+  it('renders only validated release versions and never hides the bundled App behind an update', () => {
     expect(clientReleaseInfo({
       updateAvailable: true,
       latestVersion: '0.4.1',
       androidVersion: '0.4.1',
       androidDownloadUrl: 'https://github.com/saya-ch/dsh-mobile/releases/download/v0.4.1/dsh-mobile-android-v0.4.1.apk',
-
-      androidIrohDownloadUrl: 'https://github.com/saya-ch/dsh-mobile/releases/download/android-v0.4.1/dsh-mobile-android-v0.4.1-iroh.apk',
       releaseNotes: '## notes',
     })).toEqual({
-      updateAvailable: true,
+      updateAvailable: false,
       latestVersion: '0.4.1',
       androidVersion: '0.4.1',
-      androidDownloadUrl: 'https://github.com/saya-ch/dsh-mobile/releases/download/v0.4.1/dsh-mobile-android-v0.4.1.apk',
-
-      androidIrohDownloadUrl: 'https://github.com/saya-ch/dsh-mobile/releases/download/android-v0.4.1/dsh-mobile-android-v0.4.1-iroh.apk',
+      androidDownloadUrl: BRAND.downloadPageUrl,
       releaseNotes: '## notes',
-    })
-    expect(clientReleaseInfo({
-      updateAvailable: true,
-      latestVersion: '0.4.1',
-      releaseNotes: '',
-    })).toEqual({
-      updateAvailable: true,
-      latestVersion: '0.4.1',
-      androidDownloadUrl: 'https://github.com/saya-ch/dsh-mobile/releases',
-    })
-    expect(clientReleaseInfo({
-      updateAvailable: true,
-      latestVersion: '0.4.1',
-      androidVersion: '0.4.1',
-      androidDownloadUrl: 'https://github.com/saya-ch/dsh-mobile/releases/download/v0.4.1/dsh-mobile-android-v0.4.1.apk',
-
-      androidIrohDownloadUrl: 'https://github.com/saya-ch/dsh-mobile/releases/download/android-v0.4.1/dsh-mobile-android-v0.4.1-iroh.apk',
-    })).toEqual({
-      updateAvailable: true,
-      latestVersion: '0.4.1',
-      androidVersion: '0.4.1',
-      androidDownloadUrl: 'https://github.com/saya-ch/dsh-mobile/releases/download/v0.4.1/dsh-mobile-android-v0.4.1.apk',
-
-      androidIrohDownloadUrl: 'https://github.com/saya-ch/dsh-mobile/releases/download/android-v0.4.1/dsh-mobile-android-v0.4.1-iroh.apk',
     })
     expect(clientReleaseInfo({
       updateAvailable: true,
       latestVersion: '<script>',
       androidVersion: 'latest',
-      androidDownloadUrl: 'https://example.com/app.apk',
+      releaseNotes: '',
     })).toEqual({
       updateAvailable: false,
-      androidDownloadUrl: 'https://github.com/saya-ch/dsh-mobile/releases',
-    })
-    expect(clientReleaseInfo({
-      updateAvailable: false,
-      androidVersion: '0.4.1',
-      androidDownloadUrl: 'https://example.com/dsh-mobile.apk',
-    })).toEqual({
-      updateAvailable: false,
-      androidVersion: '0.4.1',
-      androidDownloadUrl: 'https://github.com/saya-ch/dsh-mobile/releases',
-    })
-  })
-
-  it.each(['v0.6.1', 'android-v0.6.1'])('renders independent plugin and App versions with the exact official App tag %s', releaseTag => {
-    const androidDownloadUrl = `https://github.com/saya-ch/dsh-mobile/releases/download/${releaseTag}/dsh-mobile-android-v0.6.1.apk`
-    expect(clientReleaseInfo({ updateAvailable: true, latestVersion: '0.6.2', androidVersion: '0.6.1', androidDownloadUrl })).toEqual({
-      updateAvailable: true, latestVersion: '0.6.2', androidVersion: '0.6.1', androidDownloadUrl,
-      androidIrohDownloadUrl: 'https://github.com/saya-ch/dsh-mobile/releases/download/android-v0.6.1/dsh-mobile-android-v0.6.1-iroh.apk',
+      androidDownloadUrl: BRAND.downloadPageUrl,
     })
   })
 
   it.each([
-    'https://github.com/other-owner/dsh-mobile/releases/download/android-v0.6.1/dsh-mobile-android-v0.6.1.apk',
-    'https://github.com/saya-ch/dsh-mobile/releases/download/android-v0.6.2/dsh-mobile-android-v0.6.1.apk',
-    'https://github.com/saya-ch/dsh-mobile/releases/download/android-v0.6.1/dsh-mobile-android-android-v0.6.1.apk',
-    'https://github.com/saya-ch/dsh-mobile/releases/download/android-v0.6.1/dsh-mobile-android-v0.6.1.apk?token=bad',
-  ])('does not accept a mismatched or non-canonical App asset URL: %s', androidDownloadUrl => {
-    expect(clientReleaseInfo({ androidVersion: '0.6.1', androidDownloadUrl }).androidDownloadUrl).toBe('https://github.com/saya-ch/dsh-mobile/releases')
+    'https://github.com/saya-ch/dsh-mobile/releases/download/android-v0.6.1/dsh-mobile-android-v0.6.1.apk',
+    'https://example.com/dsh-mobile.apk',
+    'https://evil.example/app.apk?token=bad',
+  ])('always points the download at the QuWork page instead of a response URL: %s', androidDownloadUrl => {
+    expect(clientReleaseInfo({ androidVersion: '0.6.1', androidDownloadUrl }).androidDownloadUrl).toBe(BRAND.downloadPageUrl)
   })
 
   it('follows the DSH document language before the browser fallback', () => {

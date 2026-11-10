@@ -101,10 +101,18 @@ jobs:
             fi
           done
       - name: Name Android package and prepare release descriptor
+        env:
+          # Optional repository variable: point App downloads (and the descriptor) at your own
+          # site, OSS bucket or CDN instead of GitHub release URLs.
+          MOBILE_DOWNLOAD_BASE_URL: ${{ vars.MOBILE_DOWNLOAD_BASE_URL }}
         run: |
           version="${GITHUB_REF_NAME#android-v}"
           for apk in dsh-mobile-android-v*.apk; do sha256sum "$apk" > "$apk.sha256"; done
-          node --input-type=module -e 'import {readFileSync,writeFileSync} from "node:fs"; const gradle=readFileSync("apps/mobile/android/app/build.gradle.kts","utf8"); const version=gradle.match(/^\s*versionName\s*=\s*"([^"]+)"\s*$/m)[1]; const versionCode=Number(gradle.match(/^\s*versionCode\s*=\s*(\d+)\s*$/m)[1]); writeFileSync("dsh-mobile-android-release.json", JSON.stringify({version, versionCode, releaseTag:process.env.GITHUB_REF_NAME}, null, 2)+"\n");'
+          node scripts/write-android-update-descriptor.mjs dsh-mobile-android-v*.apk \
+            --repo "$GITHUB_REPOSITORY" \
+            --release-tag "$GITHUB_REF_NAME" \
+            ${MOBILE_DOWNLOAD_BASE_URL:+--base-url="$MOBILE_DOWNLOAD_BASE_URL"} \
+            --out dsh-mobile-android-release.json
       - uses: actions/upload-artifact@v7
         with:
           name: android-package

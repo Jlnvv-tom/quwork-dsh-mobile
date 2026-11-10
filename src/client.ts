@@ -7,6 +7,7 @@ import {
   MOBILE_CONTROL_MESSAGES,
   type MobileControlLocale,
 } from './client-messages.js'
+import { BRAND } from './brand.js'
 import { createRestrictedFrpServerTemplate } from './frp-template.js'
 import { createFrpAttachFrpcToml, createFrpAttachTemplate } from './frp-attach.js'
 import { parseFrpSettings, type FrpSettings } from './frp-config.js'
@@ -526,7 +527,6 @@ function MobileTaskNotificationRow(): unknown {
 
 const CONTROL_REQUEST_TIMEOUT_MS = 15_000
 const LONG_CONTROL_REQUEST_TIMEOUT_MS = 210_000
-const GITHUB_RELEASES_URL = 'https://github.com/saya-ch/dsh-mobile/releases'
 const CONTROL_PANEL_ID = 'dsh-mobile-control-panel'
 
 export interface ClientReleaseInfo {
@@ -554,23 +554,14 @@ function releaseVersion(value: unknown): string | undefined {
 export function clientReleaseInfo(data: Readonly<Record<string, unknown>>): ClientReleaseInfo {
   const latestVersion = releaseVersion(data.latestVersion)
   const androidVersion = releaseVersion(data.androidVersion)
-  const expectedAndroidDownloadUrls = androidVersion === undefined
-    ? []
-    : ['v', 'android-v'].map(prefix => `${GITHUB_RELEASES_URL}/download/${prefix}${androidVersion}/dsh-mobile-android-v${androidVersion}.apk`)
-  const androidDownloadUrl = typeof data.androidDownloadUrl === 'string' && expectedAndroidDownloadUrls.includes(data.androidDownloadUrl)
-    ? data.androidDownloadUrl
-    : GITHUB_RELEASES_URL
-  // The full build shares the same release tag and only adds the -iroh suffix, so
-  // its URL is derived from the validated version instead of a separate response field.
-  const androidIrohDownloadUrl = androidVersion === undefined || androidDownloadUrl === GITHUB_RELEASES_URL
-    ? undefined
-    : `${GITHUB_RELEASES_URL}/download/android-v${androidVersion}/dsh-mobile-android-v${androidVersion}-iroh.apk`
+  // Downloads and updates belong to the QuWork download page; a response can never
+  // redirect the client to an upstream or third-party host.
+  const androidDownloadUrl = BRAND.downloadPageUrl
   return {
-    updateAvailable: data.updateAvailable === true && latestVersion !== undefined,
+    updateAvailable: false,
     ...(latestVersion === undefined ? {} : { latestVersion }),
     ...(androidVersion === undefined ? {} : { androidVersion }),
     androidDownloadUrl,
-    ...(androidIrohDownloadUrl === undefined ? {} : { androidIrohDownloadUrl }),
     ...(typeof data.androidCompatBytes === 'number' && data.androidCompatBytes > 0 ? { androidCompatBytes: data.androidCompatBytes } : {}),
     ...(typeof data.androidIrohBytes === 'number' && data.androidIrohBytes > 0 ? { androidIrohBytes: data.androidIrohBytes } : {}),
     ...(typeof data.releaseNotes === 'string' && data.releaseNotes !== '' ? { releaseNotes: data.releaseNotes.slice(0, 4000) } : {}),
@@ -1017,8 +1008,8 @@ function installControl(): { remove: () => void; toggle: () => void; isOpen: () 
   // Two App builds exist: the compatibility APK (32-bit friendly, no iroh) and the
   // full 64-bit APK that adds the optional iroh transport.
   const appDownloads = element('div', 'dsh-mobile-control__app-downloads')
-  const appDownload = element('a', 'dsh-mobile-control__app-download'); appDownload.href = GITHUB_RELEASES_URL; appDownload.target = '_blank'; appDownload.rel = 'noopener noreferrer'; appDownload.textContent = t('downloadAndroid'); appDownload.setAttribute('aria-label', t('downloadAndroidAria'))
-  const appDownloadIroh = element('a', 'dsh-mobile-control__app-download is-iroh'); appDownloadIroh.href = GITHUB_RELEASES_URL; appDownloadIroh.target = '_blank'; appDownloadIroh.rel = 'noopener noreferrer'; appDownloadIroh.textContent = t('downloadAndroidIroh'); appDownloadIroh.setAttribute('aria-label', t('downloadAndroidIrohAria')); appDownloadIroh.hidden = true
+  const appDownload = element('a', 'dsh-mobile-control__app-download'); appDownload.href = BRAND.downloadPageUrl; appDownload.target = '_blank'; appDownload.rel = 'noopener noreferrer'; appDownload.textContent = t('downloadAndroid'); appDownload.setAttribute('aria-label', t('downloadAndroidAria'))
+  const appDownloadIroh = element('a', 'dsh-mobile-control__app-download is-iroh'); appDownloadIroh.href = BRAND.downloadPageUrl; appDownloadIroh.target = '_blank'; appDownloadIroh.rel = 'noopener noreferrer'; appDownloadIroh.textContent = t('downloadAndroidIroh'); appDownloadIroh.setAttribute('aria-label', t('downloadAndroidIrohAria')); appDownloadIroh.hidden = true
   appDownloads.append(appDownload, appDownloadIroh)
   const switcher = element('div', 'dsh-mobile-control__switcher')
   const lanTab = element('button', 'dsh-mobile-control__tab is-active'); lanTab.type = 'button'; lanTab.textContent = t('lan')
