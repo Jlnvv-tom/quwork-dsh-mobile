@@ -12,7 +12,7 @@ import { DSH_MOBILE_VERSION } from './version.js'
  * versions only; it never contacts an upstream registry and never replaces the
  * installed profile package. Update discovery belongs to the QuWork client.
  */
-const PACKAGE_NAME = 'qurwork-mobile'
+const PACKAGE_NAME = 'quwork-mobile'
 
 const bundledAndroidRelease: unknown = createRequire(import.meta.url)('../apps/mobile/release.json')
 

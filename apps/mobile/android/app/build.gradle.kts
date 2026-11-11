@@ -47,7 +47,7 @@ val downloadPageUrl = httpsUrlProperty(
 )
 val updateDescriptorUrl = httpsUrlProperty(
     "mobileUpdateDescriptorUrl",
-    "https://img1.rrzuji.cn/qurvis-package/latest/dsh-mobile-android-release.json",
+    "https://img1.rrzuji.cn/qurvis-package/latest/quwork-android-release.json",
 )
 val buildIrohTransport = tasks.register<Exec>("buildIrohTransport") {
     group = "build"

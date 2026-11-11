@@ -12,8 +12,8 @@ class AppUpdatePolicyTest {
           "versionCode": 88,
           "releaseTag": "android-v0.7.3",
           "downloads": {
-            "iroh": "https://dl.example.com/android/dsh-mobile-android-v0.7.3-iroh.apk",
-            "compatibility": "https://dl.example.com/android/dsh-mobile-android-v0.7.3.apk"
+            "iroh": "https://dl.example.com/android/quwork-android-v0.7.3-iroh.apk",
+            "compatibility": "https://dl.example.com/android/quwork-android-v0.7.3.apk"
           }
         }
     """.trimIndent()
@@ -24,11 +24,11 @@ class AppUpdatePolicyTest {
     @Test
     fun offersTheNewerPackageForTheInstalledVariant() {
         assertEquals(
-            "https://dl.example.com/android/dsh-mobile-android-v0.7.3-iroh.apk",
+            "https://dl.example.com/android/quwork-android-v0.7.3-iroh.apk",
             decision(87, irohNative = true)?.downloadUrl,
         )
         assertEquals(
-            "https://dl.example.com/android/dsh-mobile-android-v0.7.3.apk",
+            "https://dl.example.com/android/quwork-android-v0.7.3.apk",
             decision(87, irohNative = false)?.downloadUrl,
         )
         assertEquals("0.7.3", decision(87, irohNative = true)?.version)
@@ -43,11 +43,11 @@ class AppUpdatePolicyTest {
     @Test
     fun fallsBackToTheCompatibilityPackageForAnIrohBuild() {
         val body = descriptor.replace(
-            """"iroh": "https://dl.example.com/android/dsh-mobile-android-v0.7.3-iroh.apk",""",
+            """"iroh": "https://dl.example.com/android/quwork-android-v0.7.3-iroh.apk",""",
             "",
         )
         assertEquals(
-            "https://dl.example.com/android/dsh-mobile-android-v0.7.3.apk",
+            "https://dl.example.com/android/quwork-android-v0.7.3.apk",
             decision(87, irohNative = true, body)?.downloadUrl,
         )
     }

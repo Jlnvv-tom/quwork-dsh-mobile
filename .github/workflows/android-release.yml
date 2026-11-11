@@ -57,8 +57,8 @@ jobs:
         run: |
           node scripts/check-iroh-notices.mjs
           version="${GITHUB_REF_NAME#android-v}"
-          cp apps/mobile/android/app/build/outputs/apk/release/app-release.apk "dsh-mobile-android-v${version}-iroh.apk"
-          node scripts/build-android-transport.mjs --verify-apk "dsh-mobile-android-v${version}-iroh.apk" --build-tools "$ANDROID_HOME/build-tools/36.0.0"
+          cp apps/mobile/android/app/build/outputs/apk/release/app-release.apk "quwork-android-v${version}-iroh.apk"
+          node scripts/build-android-transport.mjs --verify-apk "quwork-android-v${version}-iroh.apk" --build-tools "$ANDROID_HOME/build-tools/36.0.0"
       - name: Build signed compatibility package
         env:
           DSH_ANDROID_KEYSTORE_FILE: ${{ runner.temp }}/dsh-mobile-release.jks
@@ -70,30 +70,33 @@ jobs:
       - name: Preserve and verify the compatibility APK
         run: |
           version="${GITHUB_REF_NAME#android-v}"
-          cp apps/mobile/android/app/build/outputs/apk/release/app-release.apk "dsh-mobile-android-v${version}.apk"
-          node scripts/build-android-transport.mjs --verify-apk "dsh-mobile-android-v${version}.apk" --variant compatibility --build-tools "$ANDROID_HOME/build-tools/36.0.0"
+          cp apps/mobile/android/app/build/outputs/apk/release/app-release.apk "quwork-android-v${version}.apk"
+          node scripts/build-android-transport.mjs --verify-apk "quwork-android-v${version}.apk" --variant compatibility --build-tools "$ANDROID_HOME/build-tools/36.0.0"
       - name: Remove signing keystore
         if: always()
         run: rm -f "$RUNNER_TEMP/dsh-mobile-release.jks"
       - name: Record Android runtime dependencies
         run: |
-          bash ./gradlew --no-daemon :app:dependencies --configuration releaseRuntimeClasspath -PirohNative=true > "$GITHUB_WORKSPACE/dsh-mobile-android-v${GITHUB_REF_NAME#android-v}-iroh-dependencies.txt"
-          bash ./gradlew --no-daemon :app:dependencies --configuration releaseRuntimeClasspath -PirohNative=false > "$GITHUB_WORKSPACE/dsh-mobile-android-v${GITHUB_REF_NAME#android-v}-dependencies.txt"
+          bash ./gradlew --no-daemon :app:dependencies --configuration releaseRuntimeClasspath -PirohNative=true > "$GITHUB_WORKSPACE/quwork-android-v${GITHUB_REF_NAME#android-v}-iroh-dependencies.txt"
+          bash ./gradlew --no-daemon :app:dependencies --configuration releaseRuntimeClasspath -PirohNative=false > "$GITHUB_WORKSPACE/quwork-android-v${GITHUB_REF_NAME#android-v}-dependencies.txt"
         working-directory: apps/mobile/android
       - name: Verify Android signature
         shell: bash
+        env:
+          # Defaults to the upstream certificate; set this repository variable to the fork's signer.
+          ANDROID_CERT_SHA256: ${{ vars.ANDROID_CERT_SHA256 }}
         run: |
           apksigner="$(find "$ANDROID_HOME/build-tools" -type f -name apksigner | sort -V | tail -n 1)"
           test -x "$apksigner"
           report="$RUNNER_TEMP/dsh-mobile-apksigner.txt"
-          for apk in dsh-mobile-android-v*.apk; do
+          for apk in quwork-android-v*.apk; do
             "$apksigner" verify --verbose --print-certs "$apk" | tee "$report"
             node scripts/verify-android-signature.mjs < "$report"
           done
       - name: Enforce Android package size
         run: |
           maximum=$((40 * 1024 * 1024))
-          for apk in dsh-mobile-android-v*.apk; do
+          for apk in quwork-android-v*.apk; do
             actual="$(stat -c %s "$apk")"
             if [ "$actual" -gt "$maximum" ]; then
               echo "$apk is $actual bytes; release limit is $maximum bytes." >&2
@@ -107,20 +110,20 @@ jobs:
           MOBILE_DOWNLOAD_BASE_URL: ${{ vars.MOBILE_DOWNLOAD_BASE_URL || 'https://img1.rrzuji.cn/qurvis-package/latest' }}
         run: |
           version="${GITHUB_REF_NAME#android-v}"
-          for apk in dsh-mobile-android-v*.apk; do sha256sum "$apk" > "$apk.sha256"; done
-          node scripts/write-android-update-descriptor.mjs dsh-mobile-android-v*.apk \
+          for apk in quwork-android-v*.apk; do sha256sum "$apk" > "$apk.sha256"; done
+          node scripts/write-android-update-descriptor.mjs quwork-android-v*.apk \
             --repo "$GITHUB_REPOSITORY" \
             --release-tag "$GITHUB_REF_NAME" \
             ${MOBILE_DOWNLOAD_BASE_URL:+--base-url="$MOBILE_DOWNLOAD_BASE_URL"} \
-            --out dsh-mobile-android-release.json
+            --out quwork-android-release.json
       - uses: actions/upload-artifact@v7
         with:
           name: android-package
           path: |
-            dsh-mobile-android-v*.apk
-            dsh-mobile-android-v*.apk.sha256
-            dsh-mobile-android-v*-dependencies.txt
-            dsh-mobile-android-release.json
+            quwork-android-v*.apk
+            quwork-android-v*.apk.sha256
+            quwork-android-v*-dependencies.txt
+            quwork-android-release.json
           if-no-files-found: error
 
   github-release:
@@ -150,4 +153,4 @@ jobs:
             --notes "Android ${GITHUB_REF_NAME#android-v}. Choose the full -iroh.apk for experimental iroh transport on arm64-v8a / x86_64, or the compatibility .apk for existing HTTPS channels (including 32-bit devices). The legacy update link serves the compatibility APK. Both use the same package and established signer; existing pairing data is retained. Install only one variant. Plugin and App versions are independent."
       - name: Record descriptor promotion step
         run: |
-          echo 'After downloading and verifying the published APK, copy dsh-mobile-android-release.json to apps/mobile/release.json in a separate reviewed commit. This workflow does not change the public App pointer.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'After downloading and verifying the published APK, copy quwork-android-release.json to apps/mobile/release.json in a separate reviewed commit. This workflow does not change the public App pointer.' >> "$GITHUB_STEP_SUMMARY"

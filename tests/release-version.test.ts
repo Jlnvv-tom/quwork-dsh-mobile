@@ -10,7 +10,7 @@ const roots: string[] = []
 const prefix = 'dsh-mobile-release-version-test-'
 const version = '0.5.6'
 const releaseLink = `https://github.com/saya-ch/dsh-mobile/releases/tag/v${version}`
-const apkLink = `https://github.com/saya-ch/dsh-mobile/releases/download/v${version}/dsh-mobile-android-v${version}.apk`
+const apkLink = `https://github.com/saya-ch/dsh-mobile/releases/download/v${version}/quwork-android-v${version}.apk`
 
 afterEach(async () => {
   for (const root of roots.splice(0)) {
@@ -66,7 +66,7 @@ describe('release version and documentation gate', () => {
 
   it('accepts a plugin-only release while the published App keeps its own version and APK', async () => {
     const appVersion = '0.5.5'
-    const appLink = `https://github.com/saya-ch/dsh-mobile/releases/download/v${appVersion}/dsh-mobile-android-v${appVersion}.apk`
+    const appLink = `https://github.com/saya-ch/dsh-mobile/releases/download/v${appVersion}/quwork-android-v${appVersion}.apk`
     const result = await check({
       'apps/mobile/android/app/build.gradle.kts': `versionName = "${appVersion}"\nversionCode = 75\n`,
       'apps/mobile/release.json': JSON.stringify({ version: appVersion, versionCode: 75, releaseTag: `v${appVersion}` }),
@@ -251,7 +251,7 @@ describe('release version and documentation gate', () => {
   })
 
   it('retains root APK and release-link checks', async () => {
-    const result = await check({ 'README.en.md': `[Old App](https://github.com/saya-ch/dsh-mobile/releases/download/v0.5.5/dsh-mobile-android-v0.5.5.apk)\n` })
+    const result = await check({ 'README.en.md': `[Old App](https://github.com/saya-ch/dsh-mobile/releases/download/v0.5.5/quwork-android-v0.5.5.apk)\n` })
     expect(result.status).toBe(1)
     expect(result.output).toContain(`README.en.md must link the published Android ${version} download and plugin ${version} release notes`)
   })

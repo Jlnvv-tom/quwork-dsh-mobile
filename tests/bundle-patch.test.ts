@@ -35,7 +35,7 @@ function evaluate(value: unknown): unknown {
 describe('stock DSH bundle patch', () => {
   it('adds one ordinary dual-face plugin and no core replacement rows', () => {
     const row = mobileRow()
-    expect(row).toMatchObject({ id: 'mobile-access', name: 'qurwork-mobile', inject: ['webServer', 'connection'] })
+    expect(row).toMatchObject({ id: 'mobile-access', name: 'quwork-mobile', inject: ['webServer', 'connection'] })
     expect(source).not.toContain('pluginInventory')
     expect(source).not.toContain('requestAuth')
     expect(source).not.toMatch(/^\s*- id: connection$/mu)

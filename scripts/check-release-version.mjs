@@ -123,7 +123,7 @@ async function main() {
     ]) {
       const marker = developmentMarkers.find(candidate => source.includes(candidate))
       if (marker !== undefined) throw new Error(`${label} still marks ${marker} as in development`)
-      const apk = `releases/download/${publishedApp.releaseTag}/dsh-mobile-android-v${publishedAppVersion}.apk`
+      const apk = `releases/download/${publishedApp.releaseTag}/quwork-android-v${publishedAppVersion}.apk`
       const release = `releases/tag/v${packageVersion}`
       if (!source.includes(apk) || !source.includes(release)) {
         throw new Error(`${label} must link the published Android ${publishedAppVersion} download and plugin ${packageVersion} release notes`)

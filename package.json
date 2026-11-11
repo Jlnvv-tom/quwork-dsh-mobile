@@ -1,5 +1,5 @@
 {
-  "name": "qurwork-mobile",
+  "name": "quwork-mobile",
   "version": "0.8.5",
   "private": false,
   "description": "QuWork 移动端适配与安全访问插件，支持局域网、远程连接、Android App 和手机浏览器。",
@@ -8,7 +8,7 @@
     "packages/question-fixes"
   ],
   "bin": {
-    "qurwork-mobile": "lib/cli.js"
+    "quwork-mobile": "lib/cli.js"
   },
   "main": "./lib/index.mjs",
   "types": "./lib/index.d.mts",

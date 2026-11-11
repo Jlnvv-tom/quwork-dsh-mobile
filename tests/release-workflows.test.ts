@@ -56,15 +56,15 @@ describe('independent plugin and Android release workflows', () => {
   it('carries the verified App pointer into plugin artifacts and generated Release notes', async () => {
     const release = await workflow('release')
     const packageCommands = release.jobs.package!.steps.map(step => step.run ?? '').join('\n')
-    expect(packageCommands).toContain('cp apps/mobile/release.json dsh-mobile-android-release.json')
+    expect(packageCommands).toContain('cp apps/mobile/release.json quwork-android-release.json')
     const publication = release.jobs['github-release']!.steps.map(step => step.run ?? '').join('\n')
-    expect(publication).toContain('release-assets/dsh-mobile-android-release.json')
+    expect(publication).toContain('release-assets/quwork-android-release.json')
     expect(publication).toContain('Android App: **${app.version}**')
-    expect(publication).toContain('releases/download/${tag}/dsh-mobile-android-v${version}.apk')
+    expect(publication).toContain('releases/download/${tag}/quwork-android-v${version}.apk')
     expect(publication).toContain('--generate-notes')
     expect(publication).toContain('--notes-start-tag "$previous_plugin_tag"')
     expect(publication).toContain('--notes "$release_note"')
-    expect(publication).not.toContain('dsh-mobile-android-v${GITHUB_REF_NAME#v}.apk')
+    expect(publication).not.toContain('quwork-android-v${GITHUB_REF_NAME#v}.apk')
   })
 
   it('reconciles immutable npm tarball integrity before continuing to GitHub publication', async () => {
@@ -85,12 +85,12 @@ describe('independent plugin and Android release workflows', () => {
     const root = await mkdtemp(join(tmpdir(), 'dsh-mobile-release-note-'))
     try {
       await mkdir(join(root, 'release-assets'))
-      await writeFile(join(root, 'release-assets', 'dsh-mobile-android-release.json'), JSON.stringify({ version: '0.6.1', versionCode: 77, releaseTag }))
+      await writeFile(join(root, 'release-assets', 'quwork-android-release.json'), JSON.stringify({ version: '0.6.1', versionCode: 77, releaseTag }))
       const result = spawnSync(process.execPath, ['--input-type=module', '-e', source!], { cwd: root, encoding: 'utf8', timeout: 10_000, windowsHide: true })
       if (result.error) throw result.error
       expect(result.signal).toBeNull()
       expect(result.status).toBe(0)
-      expect(result.stdout).toBe(`Android App: **0.6.1** — [Download APK](https://github.com/saya-ch/dsh-mobile/releases/download/${releaseTag}/dsh-mobile-android-v0.6.1.apk). Plugin and App versions are independent.`)
+      expect(result.stdout).toBe(`Android App: **0.6.1** — [Download APK](https://github.com/Jlnvv-tom/quwork-dsh-mobile/releases/download/${releaseTag}/quwork-android-v0.6.1.apk). Plugin and App versions are independent.`)
     } finally {
       await rm(root, { recursive: true, force: true, maxRetries: 3, retryDelay: 50 })
     }
@@ -110,12 +110,12 @@ describe('independent plugin and Android release workflows', () => {
     expect(publish.needs).toBe('android')
     const publication = publish.steps.map(step => step.run ?? '').join('\n')
     expect(publication).toContain('--latest=false')
-    expect(publication).toContain('copy dsh-mobile-android-release.json to apps/mobile/release.json')
+    expect(publication).toContain('copy quwork-android-release.json to apps/mobile/release.json')
     expect(publication).not.toContain('npm publish')
     expect(publication).not.toContain('--clobber')
     expect(publication).not.toMatch(/git (?:push|commit)/u)
-    expect(commands).toContain('dsh-mobile-android-v${version}.apk')
-    expect(commands).not.toContain('dsh-mobile-android-${GITHUB_REF_NAME}.apk')
+    expect(commands).toContain('quwork-android-v${version}.apk')
+    expect(commands).not.toContain('quwork-android-${GITHUB_REF_NAME}.apk')
   })
 
   it('includes the verified App descriptor in published npm packages', async () => {
@@ -126,14 +126,14 @@ describe('independent plugin and Android release workflows', () => {
   it('preserves the full signed APK before rebuilding the legacy compatibility download', async () => {
     const release = await workflow('android-release')
     const commands = release.jobs.android!.steps.map(step => step.run ?? '').join('\n')
-    const preserveFull = commands.indexOf('cp apps/mobile/android/app/build/outputs/apk/release/app-release.apk "dsh-mobile-android-v${version}-iroh.apk"')
+    const preserveFull = commands.indexOf('cp apps/mobile/android/app/build/outputs/apk/release/app-release.apk "quwork-android-v${version}-iroh.apk"')
     const rebuildCompatibility = commands.indexOf('assembleRelease -PirohNative=false')
-    const preserveCompatibility = commands.indexOf('cp apps/mobile/android/app/build/outputs/apk/release/app-release.apk "dsh-mobile-android-v${version}.apk"')
+    const preserveCompatibility = commands.indexOf('cp apps/mobile/android/app/build/outputs/apk/release/app-release.apk "quwork-android-v${version}.apk"')
     expect(preserveFull).toBeGreaterThan(0)
     expect(rebuildCompatibility).toBeGreaterThan(preserveFull)
     expect(preserveCompatibility).toBeGreaterThan(rebuildCompatibility)
     expect(commands).toContain('--variant compatibility')
-    expect(commands).toContain('for apk in dsh-mobile-android-v*.apk; do')
+    expect(commands).toContain('for apk in quwork-android-v*.apk; do')
     expect(commands).toContain('releaseRuntimeClasspath -PirohNative=true')
     expect(commands).toContain('releaseRuntimeClasspath -PirohNative=false')
     const publication = release.jobs['github-release']!.steps.map(step => step.run ?? '').join('\n')

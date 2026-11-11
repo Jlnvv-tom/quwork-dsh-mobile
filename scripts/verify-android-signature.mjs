@@ -1,7 +1,10 @@
 import { readFileSync } from 'node:fs'
 
 // Run only after apksigner verify succeeds; this checks the established release identity.
-const expected = 'f46bbee7dbe47d18f49f95f940e1d368f0b79bd8ad9d15d488337fba51e92e87'
+// The upstream certificate is the default; a fork overrides it through the repository variable
+// ANDROID_CERT_SHA256 so the check keeps rejecting any other signer.
+const upstreamCert = 'f46bbee7dbe47d18f49f95f940e1d368f0b79bd8ad9d15d488337fba51e92e87'
+const expected = (process.env.ANDROID_CERT_SHA256 || upstreamCert).toLowerCase()
 const lines = readFileSync(0, 'utf8').split(/\r?\n/u).map(line => line.trim())
 const signerCounts = lines.filter(line => line.startsWith('Number of signers:'))
 const certificates = lines.filter(line => line.includes('certificate SHA-256 digest:'))

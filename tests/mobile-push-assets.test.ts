@@ -40,7 +40,7 @@ describe('dedicated Mobile push static assets', () => {
     try {
       await mkdir(assetRoot, { recursive: true })
       await mkdir(join(packageRoot, 'lib'), { recursive: true })
-      await writeFile(join(packageRoot, 'package.json'), JSON.stringify({ name: 'qurwork-mobile', type: 'module', exports: { './package.json': './package.json' } }))
+      await writeFile(join(packageRoot, 'package.json'), JSON.stringify({ name: 'quwork-mobile', type: 'module', exports: { './package.json': './package.json' } }))
       for (const size of [180, 192, 512]) await cp(join(workspace, 'assets', 'mobile-push', `icon-${size}.png`), join(assetRoot, `icon-${size}.png`))
       const { build } = await import('tsdown')
       await build({ entry: { index: join(workspace, 'src/mobile-push/assets.ts') }, outDir: join(packageRoot, 'lib'), format: 'esm', platform: 'node', target: 'node22', dts: false, clean: true, config: false })

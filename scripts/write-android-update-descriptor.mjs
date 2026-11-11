@@ -8,7 +8,7 @@
  * release tag.
  *
  * Usage:
- *   node scripts/write-android-update-descriptor.mjs dist/android/dsh-mobile-android-v0.7.2*.apk \
+ *   node scripts/write-android-update-descriptor.mjs dist/android/quwork-android-v0.7.2*.apk \
  *     --base-url=https://dl.example.com/android --out=dist/android/update.json
  */
 import { createHash } from 'node:crypto'

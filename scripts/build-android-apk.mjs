@@ -38,7 +38,7 @@ build directory and verifies signature, ABI payload and ZIP alignment.
 Options:
   --variant=both|full|compat   Which packages to build (default: both)
   --out=<directory>            Archive directory (default: <repo>/dist/android)
-  --prefix=<name>              Artifact name prefix (default: dsh-mobile)
+  --prefix=<name>              Artifact name prefix (default: quwork)
   --sdk=<directory>            Android SDK root (default: $ANDROID_HOME)
   --ndk=<directory>            NDK directory for the iroh package (default: $ANDROID_NDK_HOME)
   --build-tools=<directory>    Build-tools directory (default: newest installed)
@@ -46,7 +46,7 @@ Options:
   --rust-toolchain=<name>      Rust toolchain for the iroh package (default: ${DEFAULT_RUST_TOOLCHAIN})
   --download-page=<url>        Page the App opens for a manual download (default: GitHub releases)
   --update-descriptor=<url>    Descriptor the App polls once per launch
-                               (default: ${CDN_BASE_URL}/dsh-mobile-android-release.json; pass an
+                               (default: ${CDN_BASE_URL}/quwork-android-release.json; pass an
                                empty value to disable update checking)
   --base-url=<url>             Prefix the generated descriptor's APK links point at
                                (default: ${CDN_BASE_URL})
@@ -80,10 +80,10 @@ function parseArgs(argv) {
   const options = {
     variants: ['full', 'compat'],
     out: join(ROOT, 'dist/android'),
-    prefix: 'dsh-mobile',
+    prefix: 'quwork',
     // Upload target for the APKs, and the descriptor an installed App polls once per launch.
     baseUrl: CDN_BASE_URL,
-    updateDescriptor: `${CDN_BASE_URL}/dsh-mobile-android-release.json`,
+    updateDescriptor: `${CDN_BASE_URL}/quwork-android-release.json`,
     rustToolchain: process.env.RUSTUP_TOOLCHAIN || DEFAULT_RUST_TOOLCHAIN,
     unsigned: false,
     skipVerify: false,
@@ -368,7 +368,7 @@ async function main() {
   await writeFile(join(options.out, 'SHA256SUMS.txt'), `${lines.join('\n')}\n`)
 
   // The descriptor is what an installed App polls; upload it beside the APKs it points at.
-  const descriptorPath = join(options.out, 'dsh-mobile-android-release.json')
+  const descriptorPath = join(options.out, 'quwork-android-release.json')
   const descriptorArgs = [
     UPDATE_DESCRIPTOR_SCRIPT,
     ...artifacts.map(artifact => artifact.path),

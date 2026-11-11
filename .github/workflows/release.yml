@@ -44,21 +44,21 @@ jobs:
       - name: Pack plugin and release metadata
         run: |
           npm pack
-          sha256sum dsh-mobile-*.tgz > dsh-mobile-plugin.sha256
-          npm sbom --sbom-format cyclonedx > dsh-mobile-npm-sbom.cdx.json
-          go version -m bin/dsh-mobile-funnel-win32-x64.exe > dsh-mobile-funnel-go-modules.txt
-          go version -m bin/dsh-mobile-funnel-linux-x64 >> dsh-mobile-funnel-go-modules.txt
-          go version -m bin/dsh-mobile-funnel-linux-arm64 >> dsh-mobile-funnel-go-modules.txt
-          cp apps/mobile/release.json dsh-mobile-android-release.json
+          sha256sum quwork-mobile-*.tgz > quwork-mobile-plugin.sha256
+          npm sbom --sbom-format cyclonedx > quwork-mobile-npm-sbom.cdx.json
+          go version -m bin/dsh-mobile-funnel-win32-x64.exe > quwork-mobile-funnel-go-modules.txt
+          go version -m bin/dsh-mobile-funnel-linux-x64 >> quwork-mobile-funnel-go-modules.txt
+          go version -m bin/dsh-mobile-funnel-linux-arm64 >> quwork-mobile-funnel-go-modules.txt
+          cp apps/mobile/release.json quwork-android-release.json
       - uses: actions/upload-artifact@v7
         with:
           name: plugin-package
           path: |
-            dsh-mobile-*.tgz
-            dsh-mobile-plugin.sha256
-            dsh-mobile-npm-sbom.cdx.json
-            dsh-mobile-funnel-go-modules.txt
-            dsh-mobile-android-release.json
+            quwork-mobile-*.tgz
+            quwork-mobile-plugin.sha256
+            quwork-mobile-npm-sbom.cdx.json
+            quwork-mobile-funnel-go-modules.txt
+            quwork-android-release.json
           if-no-files-found: error
 
   publish:
@@ -82,12 +82,12 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
-          package="$(find "$GITHUB_WORKSPACE/release-assets" -maxdepth 1 -type f -name 'dsh-mobile-*.tgz' -print -quit)"
+          package="$(find "$GITHUB_WORKSPACE/release-assets" -maxdepth 1 -type f -name 'quwork-mobile-*.tgz' -print -quit)"
           test -n "$package"
           version="${GITHUB_REF_NAME#v}"
           publication="$(node scripts/check-npm-release-integrity.mjs "$package" "$version")"
           if [ "$publication" = "published" ]; then
-            echo "dsh-mobile@$version is already published with matching tarball integrity."
+            echo "quwork-mobile@$version is already published with matching tarball integrity."
             exit 0
           fi
           test "$publication" = "unpublished"
@@ -115,7 +115,7 @@ jobs:
           if [ "$GITHUB_REF_NAME" = "v0.3.2" ]; then
             contributor_note="Special thanks to @JackRushante for PR #16: the secure Android media bridge, image attachments, localization foundation, bounded extension requests, and Funnel lifecycle hardening. The contributor's four original commits are retained in the release history."
           fi
-          app_note="$(node --input-type=module -e 'import {readFileSync} from "node:fs"; const app=JSON.parse(readFileSync("release-assets/dsh-mobile-android-release.json","utf8")); const tag=encodeURIComponent(app.releaseTag); const version=encodeURIComponent(app.version); process.stdout.write(`Android App: **${app.version}** — [Download APK](https://github.com/saya-ch/dsh-mobile/releases/download/${tag}/dsh-mobile-android-v${version}.apk). Plugin and App versions are independent.`);')"
+          app_note="$(node --input-type=module -e 'import {readFileSync} from "node:fs"; const app=JSON.parse(readFileSync("release-assets/quwork-android-release.json","utf8")); const tag=encodeURIComponent(app.releaseTag); const version=encodeURIComponent(app.version); process.stdout.write(`Android App: **${app.version}** — [Download APK](https://github.com/Jlnvv-tom/quwork-dsh-mobile/releases/download/${tag}/quwork-android-v${version}.apk). Plugin and App versions are independent.`);')"
           release_note="$app_note"
           if [ -n "$contributor_note" ]; then
             release_note="$release_note"$'\n\n'"$contributor_note"

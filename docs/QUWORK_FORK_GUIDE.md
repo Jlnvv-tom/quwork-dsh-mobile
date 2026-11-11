@@ -80,8 +80,8 @@ export const BRAND = {
 
 | 序号 | 文件 | 现状 | 改法 |
 | --- | --- | --- | --- |
-| 1 | `package.json` | `name: "dsh-mobile"`，`bin.dsh-mobile`，`description` 含 DSH 品牌 | 改为 `qurwork-mobile`，bin 同名，重写描述；`files` 白名单保持 |
-| 2 | `cordis.patch.yml` | 条目 `name: dsh-mobile`、`id: mobile-access` | 改 `name: qurwork-mobile`；`id` 与配置路径保持不变 |
+| 1 | `package.json` | `name: "dsh-mobile"`，`bin.dsh-mobile`，`description` 含 DSH 品牌 | 改为 `quwork-mobile`，bin 同名，重写描述；`files` 白名单保持 |
+| 2 | `cordis.patch.yml` | 条目 `name: dsh-mobile`、`id: mobile-access` | 改 `name: quwork-mobile`；`id` 与配置路径保持不变 |
 | 3 | `src/brand.ts` | 不存在 | 新增，见 4.1 |
 | 4 | `src/client-messages.ts` | 中英文词条含 `DSH Mobile`、`DeepSeek Harness` | 词条改为引用 `BRAND`，保持键名不变 |
 | 5 | `src/auth-pages.ts` | 配对页、重连页标题含 DSH 品牌 | 引用 `BRAND.fullName` |
@@ -113,7 +113,7 @@ export const BRAND = {
 | `src/release-update.ts` | `ANDROID_RELEASE_DESCRIPTOR_URL = 'https://raw.githubusercontent.com/.../apps/mobile/release.json'` | 查询 App 最新版本 |
 | `src/release-update.ts` | `GITHUB_RELEASE_API = 'https://api.github.com/repos/.../releases/tags/'` | 拉取更新说明与 APK 体积 |
 | `src/release-update.ts` | `GITHUB_RELEASES_URL = 'https://github.com/.../releases'` | 兜底下载页 |
-| `src/client.ts` 约 559 行 | 用 `GITHUB_RELEASES_URL` 拼 `dsh-mobile-android-v<ver>.apk` | 生成 APK 下载链接 |
+| `src/client.ts` 约 559 行 | 用 `GITHUB_RELEASES_URL` 拼 `quwork-android-v<ver>.apk` | 生成 APK 下载链接 |
 | `apps/mobile/android/.../MainActivity.kt` 约 4233 行 | `APP_RELEASES_URL = 'https://github.com/.../releases/latest'` | App 内"下载更新"跳转 |
 
 ### 5.2 方案 A：关闭自动更新（第一阶段推荐，成本最低）
@@ -133,7 +133,7 @@ export const BRAND = {
   "pluginVersion": "1.0.3",
   "androidVersion": "1.0.3",
   "androidVersionCode": 103,
-  "androidDownloadUrl": "https://<cdn>/qurwork-mobile-android-v1.0.3.apk",
+  "androidDownloadUrl": "https://<cdn>/quwork-android-v1.0.3.apk",
   "androidCompatBytes": 0,
   "androidIrohBytes": 41230000,
   "releaseNotes": "更新说明"
@@ -164,8 +164,8 @@ export const BRAND = {
 
 ```bash
 cd apps/mobile/android/app/src/main/java
-mkdir -p com/qurwork
-git mv io/github/sayach/dshmobile com/qurwork/mobile
+mkdir -p com/quwork
+git mv io/github/sayach/dshmobile com/quwork/mobile
 rmdir io/github/sayach io/github 2>/dev/null || true
 ```
 
@@ -173,16 +173,16 @@ rmdir io/github/sayach io/github 2>/dev/null || true
 
 ```bash
 cd apps/mobile/android
-grep -rl "io\.github\.sayach\.dshmobile" app/src | xargs sed -i '' 's/io\.github\.sayach\.dshmobile/com.qurwork.mobile/g'
+grep -rl "io\.github\.sayach\.dshmobile" app/src | xargs sed -i '' 's/io\.github\.sayach\.dshmobile/com.quwork.mobile/g'
 ```
 
 3. 修改 `app/build.gradle.kts`：
 
 ```kotlin
 android {
-    namespace = "com.qurwork.mobile"
+    namespace = "com.quwork.mobile"
     defaultConfig {
-        applicationId = "com.qurwork.mobile"
+        applicationId = "com.quwork.mobile"
         versionCode = <你的版本号>
         versionName = "<你的版本名>"
     }
@@ -211,7 +211,7 @@ android {
 
 ### 6.5 双 APK 策略
 
-现有发布包含 `iroh` 完整版与兼容版，由 Gradle 属性 `irohNative` 与 `irohAbis` 控制，产物形如 `qurwork-mobile-android-v<ver>.apk` 和 `qurwork-mobile-android-v<ver>-iroh.apk`。
+现有发布包含 `iroh` 完整版与兼容版，由 Gradle 属性 `irohNative` 与 `irohAbis` 控制，产物形如 `quwork-android-v<ver>.apk` 和 `quwork-android-v<ver>-iroh.apk`。
 
 产品化建议只发行 `iroh` 完整版：`irohNative=true` 默认开启，兼容版仅作为内部兜底，减少支持面与测试矩阵。若保留双包，必须同时更新发布脚本、`release.json` 与下载链接拼装逻辑。
 
@@ -223,13 +223,13 @@ android {
 
 ```json
 {
-  "id": "qurwork-mobile",
+  "id": "quwork-mobile",
   "displayName": "QuWork 移动端",
   "version": "1.0.0",
   "source": "local",
   "dshVersionRange": ">=0.2.1-rc.3 <0.3.0-0",
-  "entryId": "qurwork:mobile",
-  "packageName": "qurwork-mobile",
+  "entryId": "quwork:mobile",
+  "packageName": "quwork-mobile",
   "packageRoot": "package",
   "config": {}
 }
@@ -243,8 +243,8 @@ android {
 
 ```json
 {
-  "id": "qurwork-mobile",
-  "packageName": "qurwork-mobile",
+  "id": "quwork-mobile",
+  "packageName": "quwork-mobile",
   "displayName": "QuWork 移动端",
   "delivery": "bundled",
   "visibleInPluginManagement": false
@@ -279,7 +279,7 @@ bundles: dsh-plugin-tether, dsh-plugin-mobile-gateway, dsh-mobile, dsh-pocket
 | 传输（公网通道） | `dsh-plugin-tether` 或插件内置的 cloudflared / frp / iroh，二选一 | 出场只开局域网与 iroh，其余折叠进高级选项 |
 | 移动端 UI 壳 | `dsh-mobile` | 不允许第二个插件接管 shell/DOM |
 
-结论：QuWork 内置 `qurwork-mobile` 后，必须从 profile 的 `bundles` 中移除 `dsh-pocket`，并明确 `dsh-plugin-tether`、`dsh-plugin-mobile-gateway` 是否保留。
+结论：QuWork 内置 `quwork-mobile` 后，必须从 profile 的 `bundles` 中移除 `dsh-pocket`，并明确 `dsh-plugin-tether`、`dsh-plugin-mobile-gateway` 是否保留。
 
 ### 8.3 启动自检（建议实现）
 
@@ -289,7 +289,7 @@ bundles: dsh-plugin-tether, dsh-plugin-mobile-gateway, dsh-mobile, dsh-pocket
 // 已在别处存在移动导航壳时放弃接管，只记录一次提示
 const conflictingShell = document.querySelector('[data-mobile-nav="frame"],[data-mobile-nav="backdrop"]')
 if (conflictingShell !== null) {
-  console.warn('[qurwork-mobile] another mobile shell detected, skip takeover')
+  console.warn('[quwork-mobile] another mobile shell detected, skip takeover')
   return
 }
 ```
@@ -298,7 +298,7 @@ if (conflictingShell !== null) {
 
 ### 8.4 用户侧修复动作
 
-升级说明中必须写清楚：在 QuWork 插件管理里禁用 `dsh-pocket`，或从 `~/.qurwork-desktop-dsh/.dsh/profiles/web/package.json` 的 `dsh.bundle.bundles` 中删除该条目后重启。仅靠 `qurwork-mobile` 内置无法自动清理用户既有 profile。
+升级说明中必须写清楚：在 QuWork 插件管理里禁用 `dsh-pocket`，或从 `~/.qurwork-desktop-dsh/.dsh/profiles/web/package.json` 的 `dsh.bundle.bundles` 中删除该条目后重启。仅靠 `quwork-mobile` 内置无法自动清理用户既有 profile。
 
 ## 9 阶段六：发布流水线迁移
 

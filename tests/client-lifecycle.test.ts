@@ -1008,7 +1008,7 @@ describe('mobile-control localization', () => {
       updateAvailable: true,
       latestVersion: '0.4.1',
       androidVersion: '0.4.1',
-      androidDownloadUrl: 'https://github.com/saya-ch/dsh-mobile/releases/download/v0.4.1/dsh-mobile-android-v0.4.1.apk',
+      androidDownloadUrl: 'https://github.com/saya-ch/dsh-mobile/releases/download/v0.4.1/quwork-android-v0.4.1.apk',
       releaseNotes: '## notes',
     })).toEqual({
       updateAvailable: false,
@@ -1029,7 +1029,7 @@ describe('mobile-control localization', () => {
   })
 
   it.each([
-    'https://github.com/saya-ch/dsh-mobile/releases/download/android-v0.6.1/dsh-mobile-android-v0.6.1.apk',
+    'https://github.com/saya-ch/dsh-mobile/releases/download/android-v0.6.1/quwork-android-v0.6.1.apk',
     'https://example.com/dsh-mobile.apk',
     'https://evil.example/app.apk?token=bad',
   ])('always points the download at the QuWork page instead of a response URL: %s', androidDownloadUrl => {

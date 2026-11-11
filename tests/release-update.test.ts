@@ -23,9 +23,9 @@ afterEach(async () => {
 })
 
 async function profileDirectory(spec: string): Promise<string> {
-  const directory = await mkdtemp(join(tmpdir(), 'qurwork-mobile-release-'))
+  const directory = await mkdtemp(join(tmpdir(), 'quwork-mobile-release-'))
   temporaryDirectories.push(directory)
-  await writeFile(join(directory, 'package.json'), JSON.stringify({ dependencies: { 'qurwork-mobile': spec } }))
+  await writeFile(join(directory, 'package.json'), JSON.stringify({ dependencies: { 'quwork-mobile': spec } }))
   return directory
 }
 
@@ -104,14 +104,14 @@ describe('profile resolution', () => {
   })
 
   it('resolves the Desktop profile from the module installation when the launcher omits it', async () => {
-    const dshHome = await mkdtemp(join(tmpdir(), 'qurwork-mobile-home-'))
+    const dshHome = await mkdtemp(join(tmpdir(), 'quwork-mobile-home-'))
     temporaryDirectories.push(dshHome)
     const desktopProfile = join(dshHome, 'profiles', 'desktop')
-    const moduleDirectory = join(desktopProfile, 'node_modules', 'qurwork-mobile', 'lib')
+    const moduleDirectory = join(desktopProfile, 'node_modules', 'quwork-mobile', 'lib')
     await mkdir(moduleDirectory, { recursive: true })
     await writeFile(join(desktopProfile, 'package.json'), JSON.stringify({
-      dependencies: { 'qurwork-mobile': '^0.8.5' },
-      dsh: { profile: { bundles: ['qurwork-mobile'] } },
+      dependencies: { 'quwork-mobile': '^0.8.5' },
+      dsh: { profile: { bundles: ['quwork-mobile'] } },
     }))
     const ctx = new Context()
     ctx.provide('desktopRuntime', { platform: 'win32' })
@@ -121,14 +121,14 @@ describe('profile resolution', () => {
   })
 
   it('does not use a module installation outside the managed profile root as the Desktop fallback', async () => {
-    const dshHome = await mkdtemp(join(tmpdir(), 'qurwork-mobile-home-'))
-    const externalProfile = await mkdtemp(join(tmpdir(), 'qurwork-mobile-external-'))
+    const dshHome = await mkdtemp(join(tmpdir(), 'quwork-mobile-home-'))
+    const externalProfile = await mkdtemp(join(tmpdir(), 'quwork-mobile-external-'))
     temporaryDirectories.push(dshHome, externalProfile)
-    const moduleDirectory = join(externalProfile, 'node_modules', 'qurwork-mobile', 'lib')
+    const moduleDirectory = join(externalProfile, 'node_modules', 'quwork-mobile', 'lib')
     await mkdir(moduleDirectory, { recursive: true })
     await writeFile(join(externalProfile, 'package.json'), JSON.stringify({
-      dependencies: { 'qurwork-mobile': '^0.8.5' },
-      dsh: { profile: { bundles: ['qurwork-mobile'] } },
+      dependencies: { 'quwork-mobile': '^0.8.5' },
+      dsh: { profile: { bundles: ['quwork-mobile'] } },
     }))
     const ctx = new Context()
     ctx.provide('desktopRuntime', { platform: 'win32' })
