@@ -2,6 +2,7 @@
 import { createHash } from 'node:crypto'
 import { lstat, readFile } from 'node:fs/promises'
 import { pathToFileURL } from 'node:url'
+import { MOBILE_PACKAGE_NAME } from './packed-profile.mjs'
 
 /**
  * Compare immutable npm metadata with candidate bytes.
@@ -12,9 +13,9 @@ import { pathToFileURL } from 'node:url'
  */
 export function verifyPublishedPlugin(bytes, metadata, version) {
   const integrity = `sha512-${createHash('sha512').update(bytes).digest('base64')}`
-  if (metadata?.name !== 'dsh-mobile' || metadata.version !== version
+  if (metadata?.name !== MOBILE_PACKAGE_NAME || metadata.version !== version
     || metadata.dist?.integrity !== integrity) {
-    throw new Error(`Occupied npm version dsh-mobile@${version} does not match the candidate tarball; publication must stop`)
+    throw new Error(`Occupied npm version ${MOBILE_PACKAGE_NAME}@${version} does not match the candidate tarball; publication must stop`)
   }
   return integrity
 }
@@ -30,7 +31,7 @@ export async function checkPluginPublication(bytes, version, request = fetch) {
   if (typeof version !== 'string' || !/^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$/u.test(version)) {
     throw new Error('Invalid plugin release version')
   }
-  const response = await request(`https://registry.npmjs.org/dsh-mobile/${encodeURIComponent(version)}`, {
+  const response = await request(`https://registry.npmjs.org/${MOBILE_PACKAGE_NAME}/${encodeURIComponent(version)}`, {
     redirect: 'error', signal: AbortSignal.timeout(30_000), headers: { accept: 'application/json' },
   })
   if (response.status === 404) {

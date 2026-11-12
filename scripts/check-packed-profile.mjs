@@ -2,6 +2,7 @@ import { realpath } from 'node:fs/promises'
 import { createRequire } from 'node:module'
 import { dirname, join } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
+import { MOBILE_PACKAGE_NAME } from './packed-profile.mjs'
 
 const [dshBin, profileDir, home] = process.argv.slice(2)
 if (dshBin === undefined || profileDir === undefined || home === undefined) {
@@ -16,10 +17,10 @@ const { Context } = await import(pathToFileURL(require.resolve('@deepseek-ai/cor
 const { ModuleLoader } = await import(pathToFileURL(require.resolve('@deepseek-ai/cordis-plugin-loader')))
 const { ClientModuleRegistry } = await import(pathToFileURL(require.resolve('@deepseek-ai/dsh-client-modules')))
 const profile = loadProfileDirectory('dsh', profileDir, installation)
-const installed = await realpath(join(profileDir, 'node_modules', 'dsh-mobile'))
-const selected = profile.layers.find(layer => layer.packageName === 'dsh-mobile')
+const installed = await realpath(join(profileDir, 'node_modules', MOBILE_PACKAGE_NAME))
+const selected = profile.layers.find(layer => layer.packageName === MOBILE_PACKAGE_NAME)
 if (selected === undefined || await realpath(selected.packageDir) !== installed) {
-  throw new Error('DSH selected Mobile outside the installed test profile; install the DSH runtime without dsh-mobile')
+  throw new Error(`DSH selected Mobile outside the installed test profile; install the DSH runtime without ${MOBILE_PACKAGE_NAME}`)
 }
 const resolution = await createRuntimeResolution({ installAnchor: installation, profile, home })
 const context = new Context()

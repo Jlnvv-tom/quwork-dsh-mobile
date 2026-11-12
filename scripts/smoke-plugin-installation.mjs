@@ -6,7 +6,7 @@ import { tmpdir } from 'node:os'
 import { join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { chromium } from 'playwright'
-import { packBundle, packedManifest, assertProfileComponents, runPackagingCommand } from './packed-profile.mjs'
+import { packBundle, packedManifest, assertProfileComponents, runPackagingCommand, MOBILE_PACKAGE_NAME } from './packed-profile.mjs'
 import { launchDsh, removeTemporaryRoot } from './mobile-boot-fixture.mjs'
 import { tarballRegistry } from './npm-tarball-registry.mjs'
 
@@ -48,20 +48,20 @@ try {
     if (!response.ok || body.result?.ok !== true) throw new Error(`Plugin-manager RPC failed: ${JSON.stringify(body)}`)
     return body.result.value
   }, { method, args })
-  const installed = await rpc('installBundle', registryInstallation ? { spec: `dsh-mobile@${manifest.version}`, options: { registry: registry.origin } } : { spec: resolve(tarball) })
+  const installed = await rpc('installBundle', registryInstallation ? { spec: `${MOBILE_PACKAGE_NAME}@${manifest.version}`, options: { registry: registry.origin } } : { spec: resolve(tarball) })
   assert.equal(installed.packageResult?.exitCode, 0, JSON.stringify(installed))
   if (previous === undefined) assert.equal(installed.application, 'applied', JSON.stringify(installed))
   else assert.ok(['applied', 'restart-required'].includes(installed.application), JSON.stringify(installed))
   assert.equal(installed.error, undefined)
   if (registryInstallation) {
-    assert.ok(registry.requests.includes('/dsh-mobile'))
-    assert.ok(registry.requests.includes(`/dsh-mobile/-/dsh-mobile-${manifest.version}.tgz`))
+    assert.ok(registry.requests.includes(`/${MOBILE_PACKAGE_NAME}`))
+    assert.ok(registry.requests.includes(`/${MOBILE_PACKAGE_NAME}/-/${MOBILE_PACKAGE_NAME}-${manifest.version}.tgz`))
   }
-  const mobile = join(profile, 'node_modules', 'dsh-mobile')
+  const mobile = join(profile, 'node_modules', MOBILE_PACKAGE_NAME)
   await assertProfileComponents(mobile)
   const profileManifest = JSON.parse(await readFile(join(profile, 'package.json'), 'utf8'))
-  assert.ok(profileManifest.dsh.profile.bundles.includes('dsh-mobile'))
-  assert.ok(profileManifest.dependencies['dsh-mobile'])
+  assert.ok(profileManifest.dsh.profile.bundles.includes(MOBILE_PACKAGE_NAME))
+  assert.ok(profileManifest.dependencies[MOBILE_PACKAGE_NAME])
   const require = createRequire(join(mobile, 'packages', 'question-fixes', 'package.json'))
   assert.ok(require.resolve('dsh-mobile-question-fixes').includes('packages'))
   const lockfile = await readFile(join(profile, 'pnpm-lock.yaml'), 'utf8')

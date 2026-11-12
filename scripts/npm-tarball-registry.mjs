@@ -2,21 +2,21 @@
 import { createHash } from 'node:crypto'
 import { readFile } from 'node:fs/promises'
 import { createServer } from 'node:http'
-import { packedManifest } from './packed-profile.mjs'
+import { packedManifest, MOBILE_PACKAGE_NAME } from './packed-profile.mjs'
 
 /** Serve the owned package and let pnpm obtain other dependencies from the public registry. */
 export async function tarballRegistry(tarball) {
   const manifest = await packedManifest(tarball)
-  if (manifest.name !== 'dsh-mobile' || typeof manifest.version !== 'string') throw new Error('Unexpected Mobile tarball')
+  if (manifest.name !== MOBILE_PACKAGE_NAME || typeof manifest.version !== 'string') throw new Error('Unexpected Mobile tarball')
   const bytes = await readFile(tarball)
   const requests = []
-  const tarballPath = `/dsh-mobile/-/dsh-mobile-${manifest.version}.tgz`
+  const tarballPath = `/${MOBILE_PACKAGE_NAME}/-/${MOBILE_PACKAGE_NAME}-${manifest.version}.tgz`
   let origin
   const server = createServer((request, response) => {
     const path = new URL(request.url, 'http://127.0.0.1').pathname
     requests.push(path)
     if (request.method !== 'GET') { response.writeHead(405).end(); return }
-    if (path === '/dsh-mobile') {
+    if (path === `/${MOBILE_PACKAGE_NAME}`) {
       const metadata = { ...manifest, dist: { tarball: `${origin}${tarballPath}`, integrity: `sha512-${createHash('sha512').update(bytes).digest('base64')}` } }
       response.writeHead(200, { 'content-type': 'application/json' }).end(JSON.stringify({ name: manifest.name, 'dist-tags': { latest: manifest.version }, versions: { [manifest.version]: metadata } }))
     } else if (path === tarballPath) {

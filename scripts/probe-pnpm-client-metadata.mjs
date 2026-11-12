@@ -7,6 +7,7 @@ import { join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { chromium } from 'playwright'
 import { createMobileProfile, launchDsh, removeTemporaryRoot, CLIENT_TIMEOUT_MS } from './mobile-boot-fixture.mjs'
+import { MOBILE_PACKAGE_NAME } from './packed-profile.mjs'
 import { installPackedBundle, packBundle } from './packed-profile.mjs'
 
 const prefix = 'dsh-mobile-client-metadata-'
@@ -95,7 +96,7 @@ try {
     const packageStoreDirectory = join(caseRoot, 'private-pnpm-store')
     const home = await createMobileProfile(first, { tarball: candidate, dshBin: runtime, packageStoreDirectory, packageImportMethod })
     await installProbe(caseRoot, home)
-    const fileA = join(home, 'profiles', 'web', 'node_modules', 'dsh-mobile', 'lib', 'client.js')
+    const fileA = join(home, 'profiles', 'web', 'node_modules', MOBILE_PACKAGE_NAME, 'lib', 'client.js')
     let dsh, browser
     const result = { packageImportMethod }
     try {
@@ -114,7 +115,7 @@ try {
       // This is the single controlled transition. The two profiles use a store
       // allocated inside this probe, never the user's global pnpm store.
       const secondHome = await createMobileProfile(second, { tarball: candidate, dshBin: runtime, packageStoreDirectory, packageImportMethod })
-      const fileB = join(secondHome, 'profiles', 'web', 'node_modules', 'dsh-mobile', 'lib', 'client.js')
+      const fileB = join(secondHome, 'profiles', 'web', 'node_modules', MOBILE_PACKAGE_NAME, 'lib', 'client.js')
       result.afterFiles = { first: await fileState(fileA), second: await fileState(fileB) }
       result.sharedIdentity = result.afterFiles.first.device === result.afterFiles.second.device
         && result.afterFiles.first.inode === result.afterFiles.second.inode

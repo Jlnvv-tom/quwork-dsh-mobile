@@ -18,7 +18,7 @@ import {
 } from './mobile-boot-fixture.mjs'
 import { createPushIntegrationFixture, packPushIntegrationFixture } from './push-integration-fixture.mjs'
 import { readTransportEvidence } from './push-evidence-reader.mjs'
-import { installPackedBundle } from './packed-profile.mjs'
+import { installPackedBundle, MOBILE_PACKAGE_NAME } from './packed-profile.mjs'
 import { completeSmoke } from './negative-control.mjs'
 
 const repository = fileURLToPath(new URL('../', import.meta.url))
@@ -1228,7 +1228,7 @@ async function runFullSmoke({ negativeControl = false, pairDiagnostic = false } 
     const packageManifest = JSON.parse(await traced('read-installed-profile-manifest', () => readFile(join(profile, 'package.json'), 'utf8')))
     assert(packageManifest.dsh.profile.bundles.includes(packedFixture.packageName), 'Actual DSH profile did not select the public Host fixture')
     assert(packageManifest.dependencies[packedFixture.packageName], 'Actual DSH profile did not install the Host fixture tarball')
-    const installedMobile = join(profile, 'node_modules', 'dsh-mobile')
+    const installedMobile = join(profile, 'node_modules', MOBILE_PACKAGE_NAME)
     const installedRequire = createRequire(join(installedMobile, 'package.json'))
     const installedMobileManifest = JSON.parse(await traced('read-packed-mobile-manifest', () => readFile(join(installedMobile, 'package.json'), 'utf8')))
     const installedHostEntry = await traced('resolve-packed-host-entry', () => realpath(join(installedMobile, installedMobileManifest.main)))

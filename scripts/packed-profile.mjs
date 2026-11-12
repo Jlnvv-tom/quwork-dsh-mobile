@@ -7,6 +7,12 @@ import { gunzip } from 'node:zlib'
 
 export const QUESTION_FIXES_PACKAGE = 'dsh-mobile-question-fixes'
 
+/**
+ * npm name of this repository's bundle. Profile install paths, registry specs and
+ * tarball identities follow it, so the fork name must not be hard-coded in smokes.
+ */
+export const MOBILE_PACKAGE_NAME = JSON.parse(await readFile(new URL('../package.json', import.meta.url), 'utf8')).name
+
 /** Run one owned packaging command and await its exit, including on timeout. */
 export async function runPackagingCommand(command, args, cwd, overrides = {}) {
   const environment = { ...process.env, NODE_OPTIONS: '', NODE_PATH: '' }

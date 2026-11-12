@@ -4,7 +4,7 @@ import { lstat, mkdir, readdir, realpath, rm, unlink, writeFile } from 'node:fs/
 import { tmpdir } from 'node:os'
 import { basename, dirname, isAbsolute, join, relative, resolve, sep } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { assertProfileComponents, installPackedBundle, runPackagingCommand } from './packed-profile.mjs'
+import { assertProfileComponents, installPackedBundle, MOBILE_PACKAGE_NAME, runPackagingCommand } from './packed-profile.mjs'
 
 const START_TIMEOUT_MS = 90_000
 export const CLIENT_TIMEOUT_MS = 60_000
@@ -128,7 +128,7 @@ export async function createMobileProfile(root, {
   }, ...extraPatches]) + '\n')
   await writeFile(join(profile, 'pnpm-workspace.yaml'), mobileProfilePnpmConfiguration({ packageStoreDirectory, packageImportMethod }))
   await installPackedBundle(tarball, profile, { dshBin })
-  const installed = join(profile, 'node_modules', 'dsh-mobile')
+  const installed = join(profile, 'node_modules', MOBILE_PACKAGE_NAME)
   await assertProfileComponents(installed)
   if (missingCompanion) {
     const companion = join(installed, 'packages', 'question-fixes')

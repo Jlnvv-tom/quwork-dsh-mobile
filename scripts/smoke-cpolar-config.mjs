@@ -4,7 +4,7 @@ import { access, mkdtemp, readFile, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { dirname, join, resolve } from 'node:path'
 import { createMobileProfile, launchDsh, removeTemporaryRoot } from './mobile-boot-fixture.mjs'
-import { packedManifest } from './packed-profile.mjs'
+import { packedManifest, MOBILE_PACKAGE_NAME } from './packed-profile.mjs'
 
 const requiredPath = name => {
   const value = process.env[name]
@@ -17,7 +17,7 @@ await Promise.all([access(dshBin), access(tarball)])
 const runtime = JSON.parse(await readFile(join(dirname(dirname(dshBin)), 'package.json'), 'utf8'))
 assert.equal(runtime.name, '@deepseek-ai/dsh')
 const candidate = await packedManifest(tarball)
-assert.equal(candidate.name, 'dsh-mobile')
+assert.equal(candidate.name, MOBILE_PACKAGE_NAME)
 const prefix = 'dsh-mobile-cpolar-config-smoke-'
 const root = await mkdtemp(join(tmpdir(), prefix))
 let owner
@@ -77,7 +77,7 @@ try {
     tarball, dshBin, packageStoreDirectory: join(root, 'pnpm-store'),
   })
   const profile = join(home, 'profiles', 'web')
-  const installed = join(profile, 'node_modules', 'dsh-mobile')
+  const installed = join(profile, 'node_modules', MOBILE_PACKAGE_NAME)
   const zh = guideConfig(await readFile(join(installed, 'docs', 'CPOLAR_SUBDOMAIN.md'), 'utf8'))
   const en = guideConfig(await readFile(join(installed, 'docs', 'CPOLAR_SUBDOMAIN.en.md'), 'utf8'))
   assert.equal(zh, en, 'Chinese and English guides must execute the same complete config')

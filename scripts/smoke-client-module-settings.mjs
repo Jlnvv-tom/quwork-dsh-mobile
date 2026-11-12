@@ -6,7 +6,7 @@ import { tmpdir } from 'node:os'
 import { join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { chromium } from 'playwright'
-import { packBundle, runPackagingCommand } from './packed-profile.mjs'
+import { packBundle, runPackagingCommand, MOBILE_PACKAGE_NAME } from './packed-profile.mjs'
 import { observeMobileBootDiagnostics, summarizeMobileBootDiagnostics } from './mobile-boot-diagnostics.mjs'
 import { CLIENT_TIMEOUT_MS, createMobileProfile, dismissOnboarding, launchDsh, openMobileSettings, openPairing,
   pairMobilePage, removeTemporaryRoot, sanitized } from './mobile-boot-fixture.mjs'
@@ -230,7 +230,7 @@ try {
   assert.equal(JSON.parse(await readFile(join(skinRoot, 'package.json'), 'utf8')).version, skinVersion)
   assert.equal(createHash('sha256').update(await readFile(join(skinRoot, 'lib/client.js'))).digest('hex'), skinSha256,
     'The installed published skin client differs from the reviewed npm artifact')
-  record.pluginVersion = JSON.parse(await readFile(join(profile, 'node_modules/dsh-mobile/package.json'), 'utf8')).version
+  record.pluginVersion = JSON.parse(await readFile(join(profile, 'node_modules', MOBILE_PACKAGE_NAME, 'package.json'), 'utf8')).version
   stage = 'dsh-startup'
   dsh = launchDsh(root, home, dshBin)
   browser = await chromium.launch({ headless: true })

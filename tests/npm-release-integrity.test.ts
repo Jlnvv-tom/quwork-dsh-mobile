@@ -1,19 +1,21 @@
 import { createHash } from 'node:crypto'
+import { readFile } from 'node:fs/promises'
 import { describe, expect, it } from 'vitest'
 
 const helper: {
   verifyPublishedPlugin: (bytes: Uint8Array, metadata: object, version: string) => string
   checkPluginPublication: (bytes: Uint8Array, version: string, request: typeof fetch) => Promise<'published' | 'unpublished'>
 } = await import(new URL('../scripts/check-npm-release-integrity.mjs', import.meta.url).href)
+const { name: mobilePackageName } = JSON.parse(await readFile(new URL('../package.json', import.meta.url), 'utf8'))
 const bytes = Buffer.from('owned plugin candidate tarball')
 const integrity = `sha512-${createHash('sha512').update(bytes).digest('base64')}`
-const metadata = { name: 'dsh-mobile', version: '0.6.3', dist: { integrity } }
+const metadata = { name: mobilePackageName, version: '0.6.3', dist: { integrity } }
 
 describe('immutable npm release reconciliation', () => {
   it('accepts the occupied version only when its integrity matches the candidate bytes', async () => {
     expect(helper.verifyPublishedPlugin(bytes, metadata, '0.6.3')).toBe(integrity)
     await expect(helper.checkPluginPublication(bytes, '0.6.3', async (url, options) => {
-      expect(String(url)).toBe('https://registry.npmjs.org/dsh-mobile/0.6.3')
+      expect(String(url)).toBe(`https://registry.npmjs.org/${mobilePackageName}/0.6.3`)
       expect(options?.redirect).toBe('error')
       return Response.json(metadata)
     })).resolves.toBe('published')
