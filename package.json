@@ -121,6 +121,8 @@
     "check:notices": "node ./scripts/check-third-party-notices.mjs",
     "check:mobile-release": "node ./scripts/check-mobile-release.mjs",
     "check:dsh-compatibility": "node ./scripts/check-dsh-compatibility.mjs",
+    "sync:upstream": "node ./scripts/sync-upstream.mjs",
+    "sync:upstream:dry": "node ./scripts/sync-upstream.mjs --dry-run",
     "smoke:dsh-boot": "node ./scripts/smoke-dsh-mobile-boot.mjs",
     "smoke:push-contract": "node ./scripts/smoke-mobile-push-contract.mjs",
     "smoke:web-push": "node ./scripts/smoke-mobile-push.mjs",
