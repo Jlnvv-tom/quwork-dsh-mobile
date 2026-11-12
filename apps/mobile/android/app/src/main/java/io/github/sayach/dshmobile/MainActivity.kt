@@ -123,6 +123,10 @@ class MainActivity : Activity() {
     private val lanCredentialStore by lazy { DeviceCredentialStore(this, "lan") }
     private val remoteCredentialStore by lazy { DeviceCredentialStore(this, "remote") }
     private val pairedDeviceStore by lazy { PairedDeviceStore(this) }
+    // Boot batches are content-revisioned, so the store outlives every WebView; each WebView owns
+    // one cache (and its bounded worker) which destroyWebView closes.
+    private val bootAssetStore by lazy { BootAssetStore(File(filesDir, "boot-assets")) }
+    private var bootAssetCache: BootAssetCache? = null
     private var legacyStorageUnavailable = false
     // The public descriptor is polled once per process; a failed lookup is never retried on resume.
     private var appUpdateCheckStarted = false
@@ -203,6 +207,7 @@ class MainActivity : Activity() {
     // WebView exposes grants, not reliable track-ended events. Refuse migration for this document.
     private var audioCaptureGrantedBrowser: WebView? = null
     private var gatewayOrigin: GatewayOrigin? = null
+    private var pendingNotificationNavigate: String? = null
     private var accessMode = AccessMode.LAN
     private var setupBackAction: (() -> Unit)? = null
     private data class PendingWebFileChooser(
@@ -254,6 +259,9 @@ class MainActivity : Activity() {
         applyStatusBarIconContrast(window, getColor(R.color.app_background))
         nearbyPermissionLimited = preferences.getBoolean(PREFERENCE_NEARBY_PERMISSION_LIMITED, false)
         migrateLegacyDeviceSlots()
+        pendingNotificationNavigate = NativeBridgePolicy.sanitizeNotificationNavigate(
+            intent.getStringExtra(NativeBridgePolicy.EXTRA_NOTIFICATION_NAVIGATE).orEmpty(),
+        ).ifEmpty { null }
         val retainedHandoff = lastNonConfigurationInstance as? RetainedBridgeHandoff
         restoredNativeBridgeState = retainedHandoff?.bridgeState
             ?: savedInstanceState?.getBundle(STATE_NATIVE_BRIDGE)
@@ -286,6 +294,37 @@ class MainActivity : Activity() {
             restoreColdStartConnection(
                 restoredMode ?: AccessMode.parse(preferences.getString(PREFERENCE_LAST_ACCESS_MODE, null)),
             )
+        }
+    }
+
+    /**
+     * A task-notification tap can arrive while the app is already foregrounded. Route it to the
+     * same pending-navigate path used at cold start (see showBrowser), so the page lands on the
+     * exact conversation the notification referred to.
+     */
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        val navigate = NativeBridgePolicy.sanitizeNotificationNavigate(
+            intent.getStringExtra(NativeBridgePolicy.EXTRA_NOTIFICATION_NAVIGATE).orEmpty(),
+        ).ifEmpty { return }
+        pendingNotificationNavigate = navigate
+        val origin = gatewayOrigin
+        val browser = webView
+        if (origin != null && browser != null && !isFinishing) {
+            val full = origin.serialized.trimEnd('/') + navigate
+            if (GatewayUrlPolicy.isSameOrigin(origin, full)) {
+                // A live page can open the Session in place; only a page that cannot handle the
+                // route is reloaded with it. Reloading discarded drafts, scroll and other Sessions.
+                val script = "window.__dshMobileOpenSession && window.__dshMobileOpenSession(" +
+                    org.json.JSONObject.quote(navigate) + ")"
+                browser.evaluateJavascript(script) { result ->
+                    val handled = result == "true"
+                    if (webView !== browser || isFinishing) return@evaluateJavascript
+                    if (!handled) browser.loadUrl(full)
+                    pendingNotificationNavigate = null
+                }
+            }
         }
     }
 
@@ -1140,8 +1179,10 @@ class MainActivity : Activity() {
                     ?.takeIf { it.instanceId == device.instanceId }
                 val legacyOrigin = preferences.getString(originPreference(device.mode), null)
                 if (withCredentialStorage { pairedDeviceStore.remove(device.key) } != true) return@setPositiveButton
+                clearBootAssetStore()
                 if (activeDeviceKey == device.key) {
                     stopIrohTransport()
+                    BackgroundNotificationService.disable(this)
                     activeDeviceKey = null
                     destroyWebView()
                 }
@@ -1741,6 +1782,42 @@ class MainActivity : Activity() {
         val session = activeIroh?.takeIf { it.endpoint.origin == origin && irohController.owns(it.requestId) }
             ?: throw NativeAuthFailure(NativeAuthFailureKind.NETWORK)
         return IrohHttpsTransport(session.endpoint)
+    }
+
+    /**
+     * One boot-batch cache per WebView. It is null when the patch is switched off, which leaves the
+     * WebView as the only owner of every request — exactly the 0.8.1 behaviour.
+     */
+    private fun createBootAssetCache(
+        origin: GatewayOrigin,
+        caCertificate: ByteArray?,
+        userAgent: String?,
+    ): BootAssetCache? {
+        if (!BOOT_ASSET_CACHE_ENABLED) return null
+        // An iroh page must fetch through its CONNECT proxy, not the platform resolver.
+        val transport = runCatching { transportFor(origin) }.getOrDefault(LocalTransport)
+        return BootAssetCache(
+            origin = origin,
+            store = bootAssetStore,
+            fetcher = HttpBootAssetFetcher(origin, transport, caCertificate, userAgent),
+        ).also { bootAssetCache = it }
+    }
+
+    /** Device-benefit measurement: counters only, no cookie, query, origin or session identifier. */
+    private fun logBootAssetMetrics(cache: BootAssetCache) {
+        runCatching { android.util.Log.i(BOOT_ASSET_LOG_TAG, cache.metrics.snapshot().summary()) }
+    }
+
+    /**
+     * Clears the stored boot batches off the UI thread: `clear()` deletes files and may wait on the
+     * store monitor while a running download holds it across an fsync. Both call sites keep their
+     * previous timing (site-data clear and device removal); only the thread changed.
+     */
+    private fun clearBootAssetStore() {
+        if (!BOOT_ASSET_CACHE_ENABLED) return
+        val task = Runnable { runCatching { bootAssetStore.clear() } }
+        // A shutdown executor (teardown) must not drop the clear, so fall back to running it inline.
+        runCatching { ioExecutor.execute(task) }.onFailure { task.run() }
     }
 
     private fun stopIrohTransport() {
@@ -2577,6 +2654,7 @@ class MainActivity : Activity() {
             .putLong(lastConnectedPreference(record.mode), record.lastConnectedAt ?: System.currentTimeMillis())
             .putString(originPreference(record.mode), record.origin.serialized)
             .apply()
+        runCatching { BackgroundNotificationService.resumeIfEnabled(this, record.key) }
     }
 
     private fun showPairedDeviceNamePrompt(record: PairedDeviceRecord, complete: () -> Unit) {
@@ -2615,6 +2693,7 @@ class MainActivity : Activity() {
         withCredentialStorage { pairedDeviceStore.update(key) { it.copy(status = PairedDeviceStatus.REVOKED) } }
         runOnUiThread {
             if (activeDeviceKey != key || isFinishing || isDestroyed) return@runOnUiThread
+            BackgroundNotificationService.disable(this)
             activeDeviceKey = null
             destroyWebView()
             Toast.makeText(this, R.string.device_revoked_message, Toast.LENGTH_LONG).show()
@@ -3619,6 +3698,7 @@ class MainActivity : Activity() {
         }
         val secureClient = SecureWebViewClient(
             origin = origin,
+            bootAssets = BootAssetResponder(createBootAssetCache(origin, caCertificate, browser.settings.userAgentString)),
             onBeforeTopLevelNavigation = {
                 if (ownsBrowser() && fileChooserNavigationListener == null) {
                     cancelPageSessionRenewal()
@@ -3658,6 +3738,7 @@ class MainActivity : Activity() {
                     CookieManager.getInstance().flush()
                     nativeBridge?.injectPage()
                     secureWebViewClient?.currentDocumentGeneration?.let(::inspectVisibleContent)
+                    bootAssetCache?.let(::logBootAssetMetrics)
                 }
             },
             onContentVisible = { generation ->
@@ -3724,6 +3805,13 @@ class MainActivity : Activity() {
             bridge.onCancelRenewSession = ::cancelPageSessionRenewal
             bridge.onSwitchComputer = ::showDeviceList
             bridge.onOpenTaskNotificationSettings = ::openTaskNotificationSettings
+            bridge.onGetBackgroundNotifications = {
+                BackgroundNotificationService.isEnabled(this) && activeDeviceKey != null
+            }
+            bridge.onGetBackgroundNotificationStatus = {
+                BackgroundNotificationService.status(this)
+            }
+            bridge.onSetBackgroundNotifications = ::setBackgroundNotifications
             bridge.onGetDisplayScale = { displayScale.percent }
             bridge.onSetDisplayScale = { percent ->
                 displayScale.set(percent)
@@ -3769,8 +3857,13 @@ class MainActivity : Activity() {
         }
         root.requestApplyInsets()
         root.post { if (webView === browser && !isFinishing) offerWebViewEngineUpdate(browser) }
-        val initialUrl = requestedInitialUrl.takeIf { GatewayUrlPolicy.isSameOrigin(origin, it) }
+        val baseUrl = requestedInitialUrl.takeIf { GatewayUrlPolicy.isSameOrigin(origin, it) }
             ?: origin.serialized
+        val initialUrl = pendingNotificationNavigate?.let { nav ->
+            val full = origin.serialized.trimEnd('/') + nav
+            if (GatewayUrlPolicy.isSameOrigin(origin, full)) full else baseUrl
+        } ?: baseUrl
+        pendingNotificationNavigate = null
         retryUrl = initialUrl
         startIrohStatusMonitor()
         if (stagedBrowser == null) browser.loadUrl(initialUrl)
@@ -3798,6 +3891,29 @@ class MainActivity : Activity() {
         } catch (_: ActivityNotFoundException) {
             startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:$packageName")))
         }
+    }
+
+    /**
+     * Opt-in persistent delivery is owned by the active paired computer. An iroh
+     * device stays on the in-page path until the native transport can expose the
+     * same exact public-key/TLS identity to a foreground service.
+     */
+    private fun setBackgroundNotifications(enabled: Boolean): Boolean {
+        if (!enabled) {
+            runCatching { BackgroundNotificationService.disable(this) }
+            return true
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+            checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED
+        ) {
+            openTaskNotificationSettings()
+            return false
+        }
+        val key = activeDeviceKey ?: return false
+        if (gatewayOrigin == null) return false
+        val device = pairedDeviceStore.load().firstOrNull { it.key == key } ?: return false
+        if (device.iroh != null) return false
+        return runCatching { BackgroundNotificationService.enable(this, key) }.getOrDefault(false)
     }
 
     private fun showFileChooser(
@@ -3998,6 +4114,8 @@ class MainActivity : Activity() {
             clearSslPreferences()
         }
         WebStorage.getInstance().deleteAllData()
+        // Site data and cached boot batches belong to the same session; clearing one clears both.
+        clearBootAssetStore()
         WebViewDatabase.getInstance(this).apply {
             clearHttpAuthUsernamePassword()
         }
@@ -4094,6 +4212,12 @@ class MainActivity : Activity() {
         cancelPendingWebBack()
         secureWebViewClient?.dispose()
         secureWebViewClient = null
+        bootAssetCache?.let { cache ->
+            logBootAssetMetrics(cache)
+            // Cancels in-flight downloads and stops the worker threads this WebView owned.
+            cache.close()
+        }
+        bootAssetCache = null
         pendingAudioPermission = null
         audioCaptureGrantedBrowser = null
         nativeBridge?.dispose(changingConfigurations)
@@ -4268,6 +4392,7 @@ class MainActivity : Activity() {
         const val VOICE_PERMISSION_REQUEST = 4107
         const val DEVICE_STATUS_REFRESH_MS = 20_000L
         const val IROH_STATUS_POLL_MS = 2_000L
+        const val BOOT_ASSET_LOG_TAG = "DSHMobile"
         const val DEVICE_UNDO_TIMEOUT_MS = 6_000L
         const val LIVE_DOCUMENT_PROBE_TIMEOUT_MS = 2_000L
         const val MOBILE_BACK_TIMEOUT_MS = 1_500L

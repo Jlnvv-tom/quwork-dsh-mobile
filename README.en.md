@@ -28,7 +28,7 @@
   <a href="#compatibility">Compatibility</a> ·
   <a href="docs/README.md">Documentation</a> ·
   <a href="#contributors">Contributors</a> ·
-  <a href="https://github.com/saya-ch/dsh-mobile/releases/tag/v0.8.5">Release notes</a> ·
+  <a href="https://github.com/saya-ch/dsh-mobile/releases/tag/v0.8.7">Release notes</a> ·
   <a href="README.md">简体中文</a>
 </p>
 
@@ -36,9 +36,9 @@
 >
 > **Using an iPhone or iPad?** Use Safari or [add DSH Mobile to your Home Screen as a web app (PWA)](<#iphone-and-ipad-home-screen-web-app-pwa>)—no native iOS download needed.
 >
-> **Current stable release: 0.8.5**. Preserve existing Windows firewall rules, fix Desktop update targeting and CGNAT LAN discovery, and add a bounded catalog cache plus a macOS permission notice. Plugin and Android App releases remain independent. [Plugin release notes and downloads](https://github.com/saya-ch/dsh-mobile/releases/tag/v0.8.5) · [Full changelog](CHANGELOG.md).
+> **Current stable release: 0.8.7**. Add an opt-in session prefetch, close an expiring Gateway WebSocket normally with clearer authentication-failure categories, and prepare the background-reminder status and in-place notification open for Android 0.7.4; also update the plugin icon and iroh troubleshooting notes. Plugin and Android App releases remain independent; Android App 0.7.3 remains the published app and 0.7.4 ships separately. [Plugin release notes and downloads](https://github.com/saya-ch/dsh-mobile/releases/tag/v0.8.7) · [Full changelog](CHANGELOG.md).
 >
-> **Version policy**: since plugin **0.6.2**, the Android app and plugin use independent version numbers and releases. Their numbers do not need to match, and a plugin update does not imply an app update. [Compatibility notes](#compatibility).
+> **Version policy**: from plugin **0.6.2** the Android app and plugin ship as independent releases (the app was still 0.6.1 then), and the app has used its own version numbers since app **0.6.2**. Their numbers do not need to match, and a plugin update does not imply an app update. [Compatibility notes](#compatibility).
 
 <p align="center">
   <a href="https://github.com/Jlnvv-tom/quwork-dsh-mobile/releases/download/android-v0.7.2/quwork-android-v0.7.2.apk"><img src="https://raw.githubusercontent.com/saya-ch/dsh-mobile/main/assets/brand/app-icon-rounded.svg" alt="DSH Mobile Android app icon" width="72" height="72"></a><br>
@@ -58,9 +58,9 @@ It also lets you customize the phone from a DSH conversation: `/mobile <what you
 - **Customize the phone UI by talking to DSH**: request layout, interaction, or feature changes in a conversation; changed customization resources are usually picked up automatically.
 - **A dedicated touch layout**: session drawer, tool details, settings, question cards, and composer reorganized for phones. The sidebar remembers its list position within the page instead of jumping to the top after a session switch. The app follows the system locale (Chinese/English/Italian), plugin UI follows DSH's locale.
 - **Several remote options**: Tailscale, cpolar, cloudflared quick/named tunnels, self-hosted FRP, your own reverse proxy, and experimental iroh without a domain or public port; Windows/Linux x64 can also let the plugin manage Caddy HTTPS and certificates.
-- **Pairing and multi-device**: pair once via QR code, link, or key; Wi-Fi, hotspot, or IP changes normally recover automatically; the app lists LAN and remote paired computers together, checks their reachability periodically, and lets you switch, re-pair, or delete a local record.
+- **Pairing and multi-device**: pair once via QR code, link, or key; the same Origin renews automatically, while an address, certificate or listener change requires pairing again through **Change network** (while LAN access runs) or takes effect the next time you enable it; the app lists LAN and remote paired computers together, checks their reachability periodically, and lets you switch, re-pair, or delete a local record.
 - **One-click diagnostics and approval**: check versions, gateway, network interface, firewall, and the remote path with a redacted report; approve blocked third-party plugin connections per exact path.
-- **iPhone / iPad Web Push**: add the page to your Home Screen and explicitly enable notifications in DSH General settings. Choose from six categories and receive alerts while the page is closed or the screen is locked, without conversation text on the lock screen. [Requirements and setup](docs/WEB_PUSH.en.md).
+- **iPhone / iPad Web Push**: add the page to your Home Screen and explicitly enable notifications in DSH General settings. Choose from six categories and receive alerts while the page is closed or the screen is locked; default text never includes conversation content, while custom text sent by a trusted Host plugin through `mobilePush.notify` (since 0.8.6) is supplied by that plugin. [Requirements and setup](docs/WEB_PUSH.en.md).
 - **Android task notifications**: enable completion and pending-input alerts in DSH General settings inside the app, using its separate native notification channel with redacted lock-screen text.
 - **Defense in depth**: a private CA pinned for LAN, trusted HTTPS for public remote paths, and a remote CA pinned by the 0.4.6 app for the self-signed FRP entry. Credentials are Keystore-backed, device tokens go only to their exact Origin, and third-party WebSockets are blocked by default.
 
@@ -108,7 +108,7 @@ Restart DSH, then search for **dsh-mobile** under **Settings → Plugin Market**
 
 </details>
 
-`setup` automatically selects and remembers the current LAN from RFC1918 and `100.64.0.0/10` candidates; Wi-Fi, hotspot, and IP changes normally recover without re-pairing. Use `--address 192.168.x.x` to name the actual address only when automatic selection fails. Settings, certificates, devices, and customization files live under `$DSH_HOME/mobile-access/`.
+`setup` automatically selects and remembers the current LAN from RFC1918 and `100.64.0.0/10` candidates; the gateway follows address changes, but a phone renews automatically only on the same Origin, while an address, certificate or listener change requires pairing through **Change network** (while LAN access runs) or takes effect the next time you enable it. Use `--address 192.168.x.x` to name the actual address only when automatic selection fails. Settings, certificates, devices, and customization files live under `$DSH_HOME/mobile-access/`.
 
 ### Install the Android app
 
@@ -144,9 +144,11 @@ Use this when the phone and computer share Wi-Fi, Ethernet, or a phone hotspot. 
 1. Connect the phone and computer to the same local network, then open **Mobile Access → Local network** in the lower-left corner of DeepSeek Harness.
 2. If needed, select **Enable local access**, then select **Generate pairing QR code**. The panel displays a pairing QR code.
 3. In the Android app, open **Local network**, scan for computers, select the device, then scan the QR code or paste the pairing key.
-4. Pairing creates persistent device trust. Later app launches discover and connect automatically; Wi-Fi, hotspot, and DHCP address changes normally do not require pairing again.
+4. Pairing creates persistent device trust. Later app launches discover and connect automatically and renew on the same Origin; an address, certificate or listener change requires pairing again through **Change network** (while LAN access runs) or takes effect the next time you enable it.
 
 LAN and HTTPS remote pairing codes show their expiry time. Generate a new code after expiry; doing so invalidates the previous code. **Copy pairing link** reuses the current valid code instead of invalidating the displayed QR. The computer-side **Device** entry lists and revokes LAN and remote authorizations in separate tabs; it does not manage the saved computer list in the App.
+
+Once LAN is configured, the panel shows **Change network**: it rescans the computer's current interfaces and, after you confirm one, keeps the private CA and paired devices while re-signing only the server certificate and updating the listen address and allowed network. Switching while LAN access is running briefly disconnects connected phones and requires reconnecting with a new pairing QR code; when it is stopped, the configuration is only saved and takes effect the next time you enable LAN access.
 
 When other plugin entries share the sidebar footer, **Mobile access** becomes a phone-icon button. Hover to read its name; clicking opens the same panel. Its text label returns when the entry is alone.
 
@@ -177,7 +179,7 @@ Use this after the phone leaves the computer's network. Remote access is disable
 
 Remote providers may impose bandwidth and connection limits: the [cpolar Free plan](https://svip.cpolar.com/pricing) currently lists 1 Mbps, while [Tailscale Funnel](https://tailscale.com/docs/features/tailscale-funnel#requirements-and-limitations) has non-configurable bandwidth limits, and a cloudflared quick tunnel is a free Cloudflare address with randomized hostnames and rate limiting. DSH Mobile uses gzip for static assets, persistent WebSockets, and load-on-scroll history to improve loading; DSH controls the Session history window and page sizes, and the plugin cannot raise provider quotas.
 
-If the page opens but stays on “Reconnecting,” distinguish WebSocket upgrade failures, slow synchronization, and heartbeat deadlines using the [slow-link and reconnection guide](docs/SLOW_CONNECTIONS.en.md). Version 0.5.4 also offers opt-in WebSocket compression per exact path, disabled by default; for long Sessions or metered links, follow the guide and compare actual transfer volume.
+If the page opens but stays on “Reconnecting,” distinguish WebSocket upgrade failures, slow synchronization, and heartbeat deadlines using the [slow-link and reconnection guide](docs/SLOW_CONNECTIONS.en.md). Version 0.5.4 introduced per-path WebSocket compression, and since 0.8.0 `/api/remote.mux` is compressed by default; set `paths` to `[]` to turn it off. For long Sessions or metered links, follow the guide and compare actual transfer volume.
 
 The usage notes below reflect the maintainer's long-term experience on a personal mainland-China network, not a universal comparison. Performance depends on the carrier, network and plan; verify the route on your own phone's network.
 
@@ -342,7 +344,7 @@ excludedClientModules:
   - '@deepseek-ai/dsh-client-ui-open-in-app'
 ```
 
-There is no default exclusion list. The plugin rejects unknown or boot-critical modules and modules still referenced through `inject` or `external` by retained entries. If a DSH or community-plugin update invalidates the selection, the mobile page returns `409 excluded_client_modules_invalid` with the conflicting module; the computer also warns so you can adjust or remove the option. Bundle sizes and dependencies change between DSH installations and versions; another user's savings are not a prediction for yours.
+There is no default exclusion list. The plugin rejects unknown or boot-critical modules and modules still referenced through `inject` or `external` by retained entries. If a DSH or community-plugin update invalidates the selection, a settings write returns `409 excluded_client_modules_invalid` with the conflicting module, while a page load that fails shows a recovery page (HTTP 200); the computer also warns so you can adjust or remove the option. Bundle sizes and dependencies change between DSH installations and versions; another user's savings are not a prediction for yours.
 
 Selection priority is device choice → computer defaults → plugin configuration. See the [module guide](docs/CLIENT_MODULES.en.md) for application and recovery rules.
 
@@ -393,7 +395,9 @@ flowchart LR
   DSH -->|"same workspace, sessions and event stream"| Phone
 ```
 
-Three layers: the Host face for discovery, pairing, HTTPS, loopback proxying, and extension registration; the Client face for the dedicated mobile layout and extension SDK; and the Android app for a narrow native bridge. The bridge uses `androidx.webkit` WebMessage, verifies the exact top-level origin and main frame on every bounded message, and never uses `addJavascriptInterface`. The plugin does not rewrite source or webpage files in the DeepSeek Harness installation. Its mobile gateway serves the startup compatibility layer and dedicated layout per request; installation and removal use the plugin mechanism. The upstream DSH Web port defaults to 3080 and is configurable through `dsh web --port`.
+Three layers: the Host face for discovery, pairing, HTTPS, loopback proxying, and extension registration; the Client face for the dedicated mobile layout and extension SDK; and the Android app for a narrow native bridge. The bridge uses `androidx.webkit` WebMessage, which verifies the exact top-level origin and main frame on every bounded message, and never uses `addJavascriptInterface`. The plugin does not rewrite source or webpage files in the DeepSeek Harness installation. Its mobile gateway serves the startup compatibility layer and dedicated layout per request; installation and removal use the plugin mechanism. The upstream DSH Web port defaults to 3080 and is configurable through `dsh web --port`.
+
+Switching sessions tears down the client Session instance and its live stream. The dedicated layout ships an opt-in, off-by-default session prefetch ([#291](https://github.com/saya-ch/dsh-mobile/issues/291)): after a switch settles, it issues one bounded, read-only `session/projections` request for the session the user just left, so a follow-back hits DSH session-query's prepared cache instead of re-parsing the whole log. Guarded by a per-session cooldown and a bounded timeout, failures are silent and never disturb normal requests or live streams; the behavior stays disabled until the "Prefetch the session you just left" switch in Settings → General is turned on (off by default; the choice is persisted).
 
 ## Security
 
@@ -445,6 +449,8 @@ On macOS, local network, cloudflared, self-hosted FRP and the own reverse proxy 
 
 | DSH Mobile plugin | Verified DeepSeek Harness version |
 | --- | --- |
+| `0.8.7` | On the `0.2.2-rc.1` packed target, add an opt-in session prefetch, close an expiring Gateway WebSocket normally with clearer authentication-failure categories, and prepare the background-reminder status and in-place notification open for Android 0.7.4; also update the plugin icon and iroh troubleshooting notes. The Android App remains 0.7.3, with 0.7.4 released separately |
+| `0.8.6` | On the `0.2.2-rc.1` packed target, forward paired third-party plugin `x-dsh-*` headers, keep the push subscription after a Disable, expose the trusted Host push-text service, and fix Windows firewall verification, iroh directory diagnostics and the LAN diagnostic scope. The Android App is 0.7.3 with opt-in background reminders |
 | `0.8.5` | Maintenance and performance update on the `0.2.2-rc.1` packed-DSH target: catalog cache, Desktop update targeting, CGNAT LAN discovery, firewall protection and a macOS permission notice. The Android App remains 0.7.2 |
 | `0.8.4` | Plugin maintenance update. The packed DSH test target remains `0.2.2-rc.1`, alongside existing compatibility checks. The upstream rc.1 npm CLI requires Node.js 24.9 or later |
 | `0.8.3` | Adapted to DSH 0.2.2-rc.1 with landscape, Plugins and Web Push settings layout fixes, shared FRP usernames and iroh pairing improvements |

@@ -28,7 +28,7 @@
   <a href="#兼容性">兼容性</a> ·
   <a href="docs/README.md">文档</a> ·
   <a href="#贡献者">贡献者</a> ·
-  <a href="https://github.com/saya-ch/dsh-mobile/releases/tag/v0.8.5">更新记录</a> ·
+  <a href="https://github.com/saya-ch/dsh-mobile/releases/tag/v0.8.7">更新记录</a> ·
   <a href="README.en.md">English</a>
 </p>
 
@@ -36,9 +36,9 @@
 >
 > **使用 iPhone 或 iPad？** 可以用 Safari 访问，或[添加到主屏幕作为 Web App（PWA）使用](<#iphone-与-ipad主屏幕-web-apppwa>)，无需下载原生 iOS App。
 >
-> **当前正式版本：0.8.5**。保留 Windows 防火墙旧规则，修复 Desktop 插件更新目标与 CGNAT 局域网识别，并加入有界目录缓存和 macOS 权限提示。插件与 Android App 独立更新。[插件更新与下载](https://github.com/saya-ch/dsh-mobile/releases/tag/v0.8.5) · [完整更新记录](CHANGELOG.md)。
+> **当前正式版本：0.8.7**。新增默认关闭的会话预取、网关到期连接正常关闭与认证失败分类，并为 Android 0.7.4 准备后台提醒的真实状态与通知就地打开；同时更新插件图标与 iroh 排障文档。插件与 Android App 独立更新；Android App 0.7.3 仍为当前正式版，0.7.4 将独立发布。[插件更新与下载](https://github.com/saya-ch/dsh-mobile/releases/tag/v0.8.7) · [完整更新记录](CHANGELOG.md)。
 >
-> **版本说明**：自插件 **0.6.2** 起，Android App 与插件独立编号、独立发布，版本号无需一致；插件升级不代表 App 需要同步升级。[兼容说明](#兼容性)。
+> **版本说明**：自插件 **0.6.2** 起，Android App 与插件改为独立发布（当时 App 仍为 0.6.1）；App 自 0.6.2 起使用独立编号，版本号无需一致；插件升级不代表 App 需要同步升级。[兼容说明](#兼容性)。
 
 <p align="center">
   <a href="https://github.com/Jlnvv-tom/quwork-dsh-mobile/releases/download/android-v0.7.2/quwork-android-v0.7.2.apk"><img src="https://raw.githubusercontent.com/saya-ch/dsh-mobile/main/assets/brand/app-icon-rounded.svg" alt="DSH Mobile 安卓应用图标" width="72" height="72"></a><br>
@@ -58,9 +58,9 @@ DSH Mobile 是一个 DeepSeek Harness 插件，让手机浏览器或 Android App
 - **用对话定制手机端**：在 DSH 对话里提出布局、交互或功能需求；文件修改完成后，自定义资源通常会自动更新。
 - **专属触屏布局**：会话抽屉、工具详情、设置、提问卡片和输入栏都按手机重新组织；侧栏列表在本页内记住位置，切换会话再打开不会总跳回顶部。App 跟随系统语言（简/英/意），插件界面跟随 DSH 语言。
 - **多种远程通道**：Tailscale、cpolar、cloudflared 快速/命名隧道、自建 FRP、自有反向代理，以及无需域名和公网端口的实验性 iroh；Windows/Linux x64 还可由插件托管 Caddy HTTPS 与证书。
-- **配对与多设备**：扫码、链接或密钥配对一次；切换 Wi-Fi、热点或 IP 后通常自动恢复；App 在一个列表中显示局域网和远程配对的电脑，定期检测可达状态，并支持切换、重新配对或删除本地记录。
+- **配对与多设备**：扫码、链接或密钥配对一次；同一 Origin 下自动续期，地址、证书或监听变化后需按「更换网络」重新配对（局域网运行时）或下次开启生效；App 在一个列表中显示局域网和远程配对的电脑，定期检测可达状态，并支持切换、重新配对或删除本地记录。
 - **一键诊断与放行**：检查版本、网关、网卡、防火墙和远程通道，生成脱敏报告；被拦截的第三方插件连接按确切路径一键放行。
-- **iPhone / iPad 网页推送**：将页面添加到主屏幕后，在 DSH“通用设置”中主动开启；支持六类提醒和分类开关，页面关闭或锁屏后也可接收，锁屏文字不含会话正文。[使用条件与设置](docs/WEB_PUSH.md)。
+- **iPhone / iPad 网页推送**：将页面添加到主屏幕后，在 DSH“通用设置”中主动开启；支持六类提醒和分类开关，页面关闭或锁屏后也可接收；默认文案不含会话正文，0.8.6 起受信 Host 插件通过 `mobilePush.notify` 投递的自定义文案由该插件提供。[使用条件与设置](docs/WEB_PUSH.md)。
 - **Android 任务通知**：在 App 内 DSH“通用设置”中开启任务完成与待输入提醒，使用独立的原生通知通道，锁屏文本脱敏。
 - **纵深安全**：局域网固定私有 CA，公开远程入口使用受信任 HTTPS；自签 FRP 入口由 0.4.6 App 固定远程 CA。凭据存 Keystore，设备令牌只发往精确 Origin，第三方 WS 默认拦截。
 
@@ -144,7 +144,7 @@ dsh plugin --profile web add dshmarket
 1. 让手机和电脑连接同一个局域网，在 DeepSeek Harness 左下角打开 **移动访问 → 局域网**。
 2. 如果尚未开启，点击 **开启局域网访问**；随后点击 **生成配对二维码**，面板会显示配对二维码。
 3. 在 Android App 中进入 **局域网访问**，扫描发现电脑并点击设备，再扫描二维码或粘贴配对密钥。
-4. 配对完成后会建立持久设备信任。以后打开 App 会自动发现并连接，切换 Wi-Fi、热点或 DHCP 地址通常不需要重新配对。
+4. 配对完成后会建立持久设备信任。以后打开 App 会自动发现并连接，并在同一 Origin 下自动续期；地址、证书或监听变化后需按「更换网络」重新配对（局域网运行时）或下次开启生效。
 
 局域网和 HTTPS 远程配对码会显示有效截止时间；超时后重新生成即可。生成新码会使旧码失效，**复制配对链接**复用当前有效码，不会另行作废二维码。电脑端的 **设备** 入口可查看和撤销局域网、远程两组授权；这与 App 中保存的电脑列表是不同的管理对象。
 
@@ -179,7 +179,7 @@ dsh plugin --profile web add dshmarket
 
 远程服务可能受带宽和连接限额影响：[cpolar 免费方案](https://svip.cpolar.com/pricing) 当前为 1 Mbps，[Tailscale Funnel](https://tailscale.com/docs/features/tailscale-funnel#requirements-and-limitations) 也存在不可配置的带宽限制，cloudflared 的 quick tunnel 由 Cloudflare 免费提供、地址随机且有限流。DSH Mobile 使用静态资源 gzip、WebSocket 长连接和顶部按需加载改善体验；会话的历史窗口与分页大小由 DSH 决定，插件无法提高服务商限额。
 
-页面能打开但一直“重连中”，应先区分 WebSocket 升级失败、慢速数据同步和心跳超时，操作见[慢链路与反复重连指南](docs/SLOW_CONNECTIONS.md)。0.5.4 还提供按确切路径启用的 WebSocket 压缩，默认关闭；长会话或计量网络可按指南尝试，并对比实际传输量。
+页面能打开但一直“重连中”，应先区分 WebSocket 升级失败、慢速数据同步和心跳超时，操作见[慢链路与反复重连指南](docs/SLOW_CONNECTIONS.md)。0.5.4 起可按确切路径启用 WebSocket 压缩，0.8.0 起默认压缩 `/api/remote.mux`；把 `paths` 设为 `[]` 可关闭。长会话或计量网络可按指南调整，并对比实际传输量。
 
 下表的使用参考来自维护者在中国大陆自用网络的长期体验，不是普适测评；实际表现受运营商、网络和套餐影响，请在自己的手机网络验证。
 
@@ -344,7 +344,7 @@ excludedClientModules:
   - '@deepseek-ai/dsh-client-ui-open-in-app'
 ```
 
-这是按安装环境选择的高级配置，没有默认排除列表。插件会拒绝不存在的包、启动必需模块，以及仍被保留模块通过 `inject` 或 `external` 引用的包；配置不匹配当前 DSH 或社区插件时，移动页面返回 `409 excluded_client_modules_invalid` 和冲突详情，电脑端也会提示，移除或调整配置即可恢复。模块内容与依赖会随 DSH 版本变化，不能把其他人的节省比例当作自己的预期。
+这是按安装环境选择的高级配置，没有默认排除列表。插件会拒绝不存在的包、启动必需模块，以及仍被保留模块通过 `inject` 或 `external` 引用的包；配置不匹配当前 DSH 或社区插件时，设置写入返回 `409 excluded_client_modules_invalid` 和冲突详情，页面加载异常时展示恢复页（HTTP 200）；电脑端也会提示，移除或调整配置即可恢复。模块内容与依赖会随 DSH 版本变化，不能把其他人的节省比例当作自己的预期。
 
 设置优先级为本设备选择 → 电脑默认 → 插件配置。详细生效与恢复规则见[模块指南](docs/CLIENT_MODULES.md)。
 
@@ -397,6 +397,8 @@ flowchart LR
 
 插件包含三层：Host face 负责发现、配对、HTTPS、回环代理和扩展注册表；Client face 提供独立的移动布局与扩展 SDK；Android App 提供受限的原生 Bridge。Bridge 使用 `androidx.webkit` WebMessage，每条消息都校验精确顶层 Origin 和主 Frame，并限制消息大小；不使用 `addJavascriptInterface`。插件不改写 DeepSeek Harness 安装目录中的源码或网页文件；移动网关按请求提供启动兼容层与专用布局，安装和卸载通过插件机制完成。DSH Web 上游端口默认为 3080，可通过 `dsh web --port` 修改。
 
+会话切换后会重建客户端 Session 与实时流。插件提供默认关闭的会话预取（对应 [#291](https://github.com/saya-ch/dsh-mobile/issues/291)）：切换稳定后，仅对刚离开的会话发起一次有界、只读的 `session/projections` 预热，让切回命中 DSH session-query 的已准备缓存，避免重新解析整个会话日志。该行为受每会话冷却与超时约束，失败静默，且绝不打扰正常请求或实时流；在「设置 → 通用」中的「预取刚离开的会话」开关显式开启后才生效（默认关闭，选择会持久化）。
+
 ## 安全
 
 - 局域网监听只用于可信家庭、办公网络或可信热点；不要自行做端口转发。
@@ -447,6 +449,8 @@ macOS 上局域网、cloudflared、自建 FRP 与自有反向代理可用；Funn
 
 | DSH Mobile 插件 | 已验证的 DeepSeek Harness 版本与范围 |
 | --- | --- |
+| `0.8.7` | 在 `0.2.2-rc.1` 打包目标上加入默认关闭的会话预取、网关到期连接正常关闭与认证失败分类，并为 Android 0.7.4 准备后台提醒真实状态与通知就地打开；同时更新插件图标与 iroh 排障文档。Android App 仍为 0.7.3，0.7.4 独立发布 |
+| `0.8.6` | 在 `0.2.2-rc.1` 打包目标上透传已配对第三方插件的 `x-dsh-*` 请求头、修正网页推送停用语义、向受信 Host 插件开放推送文案接口，并修复 Windows 防火墙校验、iroh 目录诊断与局域网诊断口径。Android App 为 0.7.3，新增可选后台提醒 |
 | `0.8.5` | 插件维护与性能更新，继续使用 `0.2.2-rc.1` 的 DSH 打包验证目标；新增目录缓存、Desktop 更新目标修复、CGNAT 局域网识别、防火墙保护与 macOS 权限提示。Android App 仍为 0.7.2 |
 | `0.8.4` | 插件维护更新，继续使用 `0.2.2-rc.1` 的 DSH 打包验证目标，并保留既有版本检查。使用 rc.1 的 npm CLI 时，按上游要求使用 Node.js 24.9 或更新版本 |
 | `0.8.3` | 当时适配 DSH 0.2.2-rc.1，修复横屏、插件页和网页推送设置布局，支持共享 FRP 用户名，并改进 iroh 配对 |

@@ -1,8 +1,9 @@
 {
   "name": "quwork-mobile",
-  "version": "0.8.5",
+  "version": "0.8.7",
   "private": false,
   "description": "QuWork 移动端适配与安全访问插件，支持局域网、远程连接、Android App 和手机浏览器。",
+  "icon": "assets/brand/plugin-icon.png",
   "type": "module",
   "workspaces": [
     "packages/question-fixes"
@@ -10,12 +11,12 @@
   "bin": {
     "quwork-mobile": "lib/cli.js"
   },
-  "main": "./lib/index.mjs",
+  "main": "./index.mjs",
   "types": "./lib/index.d.mts",
   "exports": {
     ".": {
       "types": "./lib/index.d.mts",
-      "default": "./lib/index.mjs"
+      "default": "./index.mjs"
     },
     "./client": {
       "default": "./lib/client.js"
@@ -23,6 +24,7 @@
     "./package.json": "./package.json"
   },
   "files": [
+    "index.mjs",
     "lib/**/*.mjs",
     "lib/cli.js",
     "lib/**/*.d.mts",
@@ -42,6 +44,7 @@
     "assets/mobile-push/icon-180.png",
     "assets/mobile-push/icon-192.png",
     "assets/mobile-push/icon-512.png",
+    "assets/brand/plugin-icon.png",
     "cordis.patch.yml",
     "README.md",
     "README.en.md",
@@ -115,6 +118,7 @@
     "write:android-update-descriptor": "node ./scripts/write-android-update-descriptor.mjs",
     "check:funnel-licenses": "node ./scripts/funnel-third-party-licenses.mjs",
     "check:funnel-licenses:full": "node ./scripts/funnel-third-party-licenses.mjs --full-check",
+    "check:notices": "node ./scripts/check-third-party-notices.mjs",
     "check:mobile-release": "node ./scripts/check-mobile-release.mjs",
     "check:dsh-compatibility": "node ./scripts/check-dsh-compatibility.mjs",
     "smoke:dsh-boot": "node ./scripts/smoke-dsh-mobile-boot.mjs",
@@ -168,7 +172,7 @@
     "test:watch": "vitest",
     "typecheck": "tsc --noEmit",
     "prepack": "npm run check:version && npm run check:docs && npm run check:funnel-licenses && npm run build",
-    "verify": "npm run check:version && npm run check:docs && npm run check:companion-package && npm run check:funnel-licenses && npm run check:mobile-release && npm run typecheck && npm run test && npm run build && npm pack --dry-run",
+    "verify": "npm run check:version && npm run check:docs && npm run check:companion-package && npm run check:funnel-licenses && npm run check:notices && npm run check:mobile-release && npm run typecheck && npm run test && npm run build && npm pack --dry-run",
     "smoke:plugin-portal-layers": "node ./scripts/smoke-plugin-portal-layers.mjs",
     "smoke:opaque-chrome": "node ./scripts/smoke-opaque-chrome.mjs",
     "smoke:rightbar-fullscreen": "node ./scripts/smoke-rightbar-fullscreen.mjs"

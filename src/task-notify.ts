@@ -286,10 +286,47 @@ export interface TaskNotifyWireEvent {
   readonly title: string
   readonly body: string
   readonly tag: string
+  readonly navigate?: string | undefined
 }
 
-/** Parse a `task-notify` SSE payload; rejects anything malformed or empty. */
-export function parseTaskNotifyPayload(value: unknown): { readonly sessionId: string; readonly turn: number } | undefined {
+/** Encode one opaque Session id for the App's internal notification route. */
+export function taskNotificationNavigate(sessionId: string): string | undefined {
+  if (sessionId === '') return undefined
+  const bytes = new TextEncoder().encode(sessionId)
+  let binary = ''
+  for (const byte of bytes) binary += String.fromCharCode(byte)
+  const encoded = globalThis.btoa(binary).replaceAll('+', '-').replaceAll('/', '_').replace(/=+$/u, '')
+  const route = `/?dsh-session=${encoded}`
+  return route.length <= 270 ? route : undefined
+}
+
+/** Decode only the App's bounded internal Session route. */
+export function decodeTaskNotificationNavigate(value: string | null | undefined): string | undefined {
+  if (value === null || value === undefined || !/^[A-Za-z0-9_-]{1,256}$/u.test(value)) return undefined
+  try {
+    const padded = value.replaceAll('-', '+').replaceAll('_', '/') + '='.repeat((4 - value.length % 4) % 4)
+    const binary = globalThis.atob(padded)
+    const bytes = Uint8Array.from(binary, character => character.charCodeAt(0))
+    const decoded = new TextDecoder('utf-8', { fatal: true }).decode(bytes)
+    return decoded === '' ? undefined : decoded
+  } catch {
+    return undefined
+  }
+}
+
+/** Resolve the opaque Session id carried by the App's internal notification route. */
+export function sessionIdFromNotificationRoute(route: string | null | undefined, base = 'https://mobile.invalid/'): string | undefined {
+  if (route === null || route === undefined) return undefined
+  let encoded: string | null
+  try {
+    encoded = new URL(route, base).searchParams.get('dsh-session')
+  } catch {
+    return undefined
+  }
+  return decodeTaskNotificationNavigate(encoded)
+}
+
+/** Parse a `task-notify` SSE payload; rejects anything malformed or empty. */export function parseTaskNotifyPayload(value: unknown): { readonly sessionId: string; readonly turn: number } | undefined {
   let record: Record<string, unknown> | undefined
   if (typeof value === 'string') {
     try {
@@ -348,7 +385,12 @@ export function fireTaskNotifyEvent(
     .then(() => bridge.capabilities())
     .then(capabilities => {
       if (!capabilities.includes('notification.notify')) return
-      return bridge.invoke('notification.notify', { title: event.title, body: event.body, tag: event.tag })
+      return bridge.invoke('notification.notify', {
+        title: event.title,
+        body: event.body,
+        tag: event.tag,
+        ...(event.navigate === undefined ? {} : { navigate: event.navigate }),
+      })
     })
     .then(
       () => undefined,

@@ -14,6 +14,7 @@ import { request as requestHttps } from 'node:https'
 import { isAbsolute, join, relative } from 'node:path'
 import { tmpdir } from 'node:os'
 import { connect, Socket, type AddressInfo } from 'node:net'
+import { runInNewContext, Script } from 'node:vm'
 import { gunzipSync, gzipSync } from 'node:zlib'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { parseGatewayConfig } from '../src/config.js'
@@ -254,6 +255,8 @@ async function upstream(
   secondApplicationBatchEntries = 0,
   bundleUrlOverride?: (id: string, url: string) => string,
   extraHeadLinks = '',
+  /** Repeats an unmasked upstream frame this often, so data keeps arriving during a close grace. */
+  upgradeFrameIntervalMs = 0,
 ): Promise<{
   port: number
   observations: UpstreamObservation[]
@@ -514,7 +517,17 @@ async function upstream(
     }
     upgradeResponseBytes.push(response.length)
     networkSocket.write(Buffer.concat([response, upgradeBurst]))
-    networkSocket.pipe(networkSocket)
+    if (upgradeFrameIntervalMs > 0) {
+      // Server frames are unmasked and keep flowing, so a gateway that only writes the
+      // Close frame but leaves the proxy pipe attached shows data frames after it.
+      const streaming = setInterval(() => {
+        if (!networkSocket.destroyed) networkSocket.write(websocketBinaryFrame(Buffer.from('upstream-live')))
+      }, upgradeFrameIntervalMs)
+      streaming.unref()
+      networkSocket.once('close', () => { clearInterval(streaming) })
+    } else {
+      networkSocket.pipe(networkSocket)
+    }
   })
   const port = await listen(server)
   cleanups.push(() => closeServer(server, upgraded))
@@ -694,6 +707,49 @@ async function openWebSocket(
         '',
       ].join('\r\n'))
     })
+  })
+}
+
+/** Parse the unmasked server→client WebSocket frames out of a byte stream. */
+function websocketServerFrames(stream: Buffer): { readonly opcode: number; readonly payload: Buffer }[] {
+  const frames: { opcode: number; payload: Buffer }[] = []
+  let offset = 0
+  while (offset + 2 <= stream.length) {
+    const opcode = stream[offset]! & 0x0f
+    const second = stream[offset + 1]!
+    // Server frames are never masked; a masked length byte means the stream desynchronized.
+    if ((second & 0x80) !== 0) break
+    let length = second & 0x7f
+    let cursor = offset + 2
+    if (length === 126) {
+      if (cursor + 2 > stream.length) break
+      length = stream.readUInt16BE(cursor)
+      cursor += 2
+    } else if (length === 127) {
+      if (cursor + 8 > stream.length) break
+      const wide = stream.readBigUInt64BE(cursor)
+      if (wide > BigInt(Number.MAX_SAFE_INTEGER)) break
+      length = Number(wide)
+      cursor += 8
+    }
+    if (cursor + length > stream.length) break
+    frames.push({ opcode, payload: stream.subarray(cursor, cursor + length) })
+    offset = cursor + length
+  }
+  return frames
+}
+
+/** Collect a handed-over WebSocket stream until the peer closes it. */
+async function collectWebSocketStream(socket: Socket, remainder: Buffer): Promise<Buffer> {
+  const chunks: Buffer[] = [remainder]
+  return new Promise((resolve, reject) => {
+    const timeout = setTimeout(() => {
+      socket.destroy()
+      reject(new Error('WebSocket stream collection timed out'))
+    }, 2_000)
+    socket.on('data', (chunk: Buffer) => { chunks.push(chunk) })
+    socket.once('error', () => { /* the close event below settles the assertion */ })
+    socket.once('close', () => { clearTimeout(timeout); resolve(Buffer.concat(chunks)) })
   })
 }
 
@@ -1238,6 +1294,74 @@ describe('HTTP gateway', () => {
     }
   })
 
+  it('forwards plugin x-dsh-* headers on a paired write while excluding internal and account markers', async () => {
+    const inner = await upstream()
+    const instance = await gateway(inner.port)
+    const paired = await pair(instance)
+    const headers = {
+      ...browserHeaders(instance), accept: 'application/json', 'content-type': 'application/json',
+      cookie: `${SESSION_COOKIE}=${paired.session}`,
+      'x-dsh-im-connect-client': '1',
+      'x-dsh-custom-marker': 'abc123',
+      'x-dsh-auth-token': 'must-not-forward',
+      [CSRF_HEADER]: paired.csrf,
+    }
+    const body = '{"channel":"im-1"}'
+    const result = await request(instance.address().port, '/api/plugins/im-connect/sessions/ensure', {
+      method: 'POST', headers, body,
+    })
+    expect(result.status).toBe(200)
+    const observed = inner.observations.find(entry => entry.url === '/api/plugins/im-connect/sessions/ensure')
+    expect(observed?.method).toBe('POST')
+    expect(observed?.body).toBe(body)
+    expect(observed?.headers['x-dsh-im-connect-client']).toBe('1')
+    expect(observed?.headers['x-dsh-custom-marker']).toBe('abc123')
+    expect(observed?.headers['x-dsh-auth-token']).toBeUndefined()
+    expect(observed?.headers[CSRF_HEADER]).toBeUndefined()
+  })
+
+  it('forwards plugin x-dsh-* headers on a paired read while excluding internal and account markers', async () => {
+    const inner = await upstream()
+    const instance = await gateway(inner.port)
+    const paired = await pair(instance)
+    const headers = {
+      ...browserHeaders(instance), accept: 'application/json',
+      cookie: `${SESSION_COOKIE}=${paired.session}`,
+      'x-dsh-im-connect-client': '1',
+      'x-dsh-custom-marker': 'abc123',
+      'x-dsh-auth-token': 'must-not-forward',
+      // Internal gateway markers: a read request must not relay them upstream either.
+      [CSRF_HEADER]: paired.csrf,
+      'x-dsh-mobile-catalog': 'miss-passthrough',
+    }
+    const result = await request(instance.address().port, '/api/plugins/im-connect/state', { method: 'GET', headers })
+    expect(result.status).toBe(200)
+    const observed = inner.observations.find(entry => entry.url === '/api/plugins/im-connect/state')
+    expect(observed?.method).toBe('GET')
+    expect(observed?.headers['x-dsh-im-connect-client']).toBe('1')
+    expect(observed?.headers['x-dsh-custom-marker']).toBe('abc123')
+    expect(observed?.headers['x-dsh-auth-token']).toBeUndefined()
+    expect(observed?.headers[CSRF_HEADER]).toBeUndefined()
+    expect(observed?.headers['x-dsh-mobile-catalog']).toBeUndefined()
+  })
+
+  it('forwards a duplicated plugin header as the joined value node presents instead of one arbitrary half', async () => {
+    const inner = await upstream()
+    const instance = await gateway(inner.port)
+    const paired = await pair(instance)
+    const headers = {
+      ...browserHeaders(instance), accept: 'application/json',
+      cookie: `${SESSION_COOKIE}=${paired.session}`,
+      'x-dsh-custom-marker': ['first', 'second'],
+    } as unknown as Record<string, string>
+    const result = await request(instance.address().port, '/api/plugins/im-connect/state', { method: 'GET', headers })
+    expect(result.status).toBe(200)
+    const observed = inner.observations.find(entry => entry.url === '/api/plugins/im-connect/state')
+    // Node joins duplicate request headers with ', ' before the gateway reads them,
+    // so sanitizeRequestHeaders never sees an array for x-dsh-* and drops no value.
+    expect(observed?.headers['x-dsh-custom-marker']).toBe('first, second')
+  })
+
   it('protects compatibility assets and refuses missing, oversized, or non-GET requests', async () => {
     const inner = await upstream()
     const directory = await mkdtemp(join(tmpdir(), 'dsh-mobile-compat-route-'))
@@ -1440,9 +1564,9 @@ describe('HTTP gateway', () => {
       __DSH_FILE_UPLOAD__?: { fetch: typeof fetch }
     } = { fetch: nativeFetch }
     const pageLocation = { href: `${instance.address().origin}/`, origin: instance.address().origin }
-    new Function('window', 'document', 'location', 'Request', 'Headers', 'URL', dedicated.body.slice(bootstrapStart, bootstrapEnd))(
-      page, { cookie: `${CSRF_COOKIE}=${paired.csrf}` }, pageLocation, Request, Headers, URL,
-    )
+    runInNewContext(dedicated.body.slice(bootstrapStart, bootstrapEnd), {
+      window: page, document: { cookie: `${CSRF_COOKIE}=${paired.csrf}` }, location: pageLocation, Request, Headers, URL,
+    })
     const uploadBody = new Blob(['%PDF-1.7\nmobile upload\n%%EOF\n'], { type: 'application/pdf' })
     const upload = await page.__DSH_FILE_UPLOAD__?.fetch('/api/session/uploadFileBinary?sessionId=test', {
       method: 'POST', headers: { 'content-type': 'application/octet-stream' }, body: uploadBody,
@@ -3210,7 +3334,7 @@ describe('HTTP gateway', () => {
     expect(login.body).toContain('pair it again')
     const loginScript = await request(instance.address().port, '/mobile-access/login.js', { headers: base })
     expect(loginScript.status).toBe(200)
-    expect(() => new Function(loginScript.body)).not.toThrow()
+    expect(() => new Script(loginScript.body)).not.toThrow()
     expect(loginScript.body).toContain('resolved.origin === location.origin')
 
     expect(await instance.access.revokeDevice(paired.deviceId)).toBe(true)
@@ -3826,6 +3950,39 @@ describe('WebSocket gateway', () => {
     await vi.waitFor(() => {
       expect(() => instance.access.authorizeSession(paired.session)).toThrow()
     })
+  })
+
+  it('ends an expired WebSocket with a 1000 close frame and no data frame after it', async () => {
+    const inner = await upstream('legacy', false, Buffer.alloc(0), [], undefined, undefined, 0, 0, undefined, '', 5)
+    const instance = await gateway(inner.port, {}, 150)
+    const paired = await pair(instance)
+    const opened = await openWebSocket(instance, '/api/events.mux', paired.session)
+    expect(opened.response).toContain('101 Switching Protocols')
+    const stream = await collectWebSocketStream(opened.socket, opened.remainder)
+    const frames = websocketServerFrames(stream)
+    const closeIndex = frames.findIndex(frame => frame.opcode === 0x8)
+    expect(closeIndex, `opcodes: ${frames.map(frame => frame.opcode.toString(16)).join(',')}`).toBeGreaterThanOrEqual(0)
+    const close = frames[closeIndex]!.payload
+    expect(close.length).toBeGreaterThanOrEqual(2)
+    expect(close.readUInt16BE(0)).toBe(1000)
+    // RFC 6455 §5.5.1: nothing may follow the Close frame except its own continuation.
+    expect(frames.slice(closeIndex + 1).filter(frame => frame.opcode === 0x1 || frame.opcode === 0x2)).toEqual([])
+  })
+
+  it('ends an expired compressed WebSocket with a 1000 close frame and no data frame after it', async () => {
+    const inner = await upstream('legacy', false, Buffer.alloc(0), [], undefined, undefined, 0, 0, undefined, '', 5)
+    const instance = await gateway(inner.port, { websocketCompression: { paths: ['/api/remote.mux'] } }, 150)
+    const paired = await pair(instance)
+    const opened = await openWebSocket(instance, '/api/remote.mux', paired.session)
+    expect(opened.response).toContain('101 Switching Protocols')
+    const stream = await collectWebSocketStream(opened.socket, opened.remainder)
+    const frames = websocketServerFrames(stream)
+    const closeIndex = frames.findIndex(frame => frame.opcode === 0x8)
+    expect(closeIndex, `opcodes: ${frames.map(frame => frame.opcode.toString(16)).join(',')}`).toBeGreaterThanOrEqual(0)
+    const close = frames[closeIndex]!.payload
+    expect(close.length).toBeGreaterThanOrEqual(2)
+    expect(close.readUInt16BE(0)).toBe(1000)
+    expect(frames.slice(closeIndex + 1).filter(frame => frame.opcode === 0x1 || frame.opcode === 0x2)).toEqual([])
   })
 })
 
