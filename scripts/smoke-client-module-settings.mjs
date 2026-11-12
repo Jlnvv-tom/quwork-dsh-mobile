@@ -444,7 +444,7 @@ try {
   await openSettings()
   const reopenedMinimal = await openManager()
   assert.equal(reopenedMinimal.status, 200)
-  for (const id of ['dsh-mobile', '@deepseek-ai/dsh-client-ui-layout', '@deepseek-ai/dsh-client-ui-settings']) {
+  for (const id of [MOBILE_PACKAGE_NAME, '@deepseek-ai/dsh-client-ui-layout', '@deepseek-ai/dsh-client-ui-settings']) {
     assert(reopenedMinimal.body.entries.some(entry => entry.id === id && entry.required), `Missing required mobile surface: ${id}`)
     assert(!reopenedMinimal.body.excludedClientModules.includes(id), `Required mobile surface excluded after reopen: ${id}`)
   }

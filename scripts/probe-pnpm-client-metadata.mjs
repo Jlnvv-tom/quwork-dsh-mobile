@@ -49,9 +49,9 @@ export function apply(ctx){
   const rebuilt=[];
   ctx.effect(()=>ctx.clientModules.onRebuilt((id,rev)=>rebuilt.push({id,rev})));
   ctx.effect(()=>ctx.webServer.register({kind:'exact',path:'/api/mobile-metadata-probe',handler:(_request,response)=>{
-    const entry=ctx.clientModules.graph().entries.find(entry=>entry.id==='dsh-mobile');
+    const entry=ctx.clientModules.graph().entries.find(entry=>entry.id===MOBILE_PACKAGE_NAME);
     response.writeHead(200,{'Content-Type':'application/json'});
-    response.end(JSON.stringify({entry,baseline:ctx.clientModules.artifactBaseline('dsh-mobile'),rebuilt}));
+    response.end(JSON.stringify({entry,baseline:ctx.clientModules.artifactBaseline(MOBILE_PACKAGE_NAME),rebuilt}));
   }}));
 }
 `)

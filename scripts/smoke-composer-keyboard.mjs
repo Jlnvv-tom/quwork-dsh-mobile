@@ -3,6 +3,7 @@ import { readFile } from 'node:fs/promises'
 import { resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { chromium } from 'playwright'
+import { MOBILE_PACKAGE_NAME } from './packed-profile.mjs'
 
 const mobileRoot = process.env.DSH_BOOT_SMOKE_MOBILE_ROOT === undefined
   ? fileURLToPath(new URL('..', import.meta.url)) : resolve(process.env.DSH_BOOT_SMOKE_MOBILE_ROOT)
@@ -33,13 +34,13 @@ try {
       const page = await context.newPage()
       await page.route('https://composer-keyboard.test/**', route => route.fulfill({ contentType: 'text/html', body: fixture }))
       await page.goto('https://composer-keyboard.test/')
-      await page.evaluate(() => {
+      await page.evaluate(mobileModule => {
         window.__ModuleLoader__ = { load: ({ id, factory }) => {
           const exports = factory(name => { if (name === 'react') return {}; throw new Error(`Unexpected dependency ${name}`) })
-          if (id === 'dsh-mobile') window.mobileClient = exports
+          if (id === mobileModule) window.mobileClient = exports
           else window.mobileLayout = exports
         } }
-      })
+      }, MOBILE_PACKAGE_NAME)
       await page.addScriptTag({ content: layout })
       await page.addScriptTag({ content: client })
       if (options.enter) await page.evaluate(() => {

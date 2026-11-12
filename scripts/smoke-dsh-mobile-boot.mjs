@@ -3,7 +3,7 @@ import { tmpdir } from 'node:os'
 import { join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { chromium } from 'playwright'
-import { packBundle } from './packed-profile.mjs'
+import { MOBILE_PACKAGE_NAME, packBundle } from './packed-profile.mjs'
 import { completeSmoke, recordSmokeFailure } from './negative-control.mjs'
 import {
   CLIENT_TIMEOUT_MS, createMobileProfile, dismissOnboarding, launchDsh, openMobileSettings,
@@ -249,8 +249,8 @@ async function inspectBrowser(baseUrl, logs, directoryRoot) {
     }
     const plan = await phone.evaluate(() => window.__DSH_BOOT__)
     if (injectedFailure && !injected) throw new Error('Negative control did not intercept any DSH client script')
-    if (!Array.isArray(plan?.entries) || !plan.entries.some(row => row.id === 'dsh-mobile')) {
-      throw new Error(`Real DSH boot manifest did not contain dsh-mobile: entries=${sanitized(JSON.stringify(plan?.entries?.map(row => row.id) ?? []))}`)
+    if (!Array.isArray(plan?.entries) || !plan.entries.some(row => row.id === MOBILE_PACKAGE_NAME)) {
+      throw new Error(`Real DSH boot manifest did not contain ${MOBILE_PACKAGE_NAME}: entries=${sanitized(JSON.stringify(plan?.entries?.map(row => row.id) ?? []))}`)
     }
     if (!excludedClientModules.includes('dsh-mobile-question-fixes')) {
       if (!plan.entries.some(row => row.id === 'dsh-mobile-question-fixes')) {
