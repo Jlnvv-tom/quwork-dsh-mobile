@@ -1,6 +1,7 @@
+import { existsSync } from 'node:fs'
 import { readFile } from 'node:fs/promises'
-import { createRequire } from 'node:module'
 import { dirname, join, resolve } from 'node:path'
+import { fileURLToPath } from 'node:url'
 
 export interface MobilePushAssetResponse {
   readonly contentType: 'application/manifest+json; charset=utf-8' | 'image/png'
@@ -37,9 +38,24 @@ export function createMobilePushAssetLoader(packageRoot: string): (path: string)
   }
 }
 
-// Resolve the package's exported package.json so bundled lib/index.mjs and source
-// both anchor at the package root, independent of module depth or process.cwd().
-const packageRoot = dirname(createRequire(import.meta.url).resolve('quwork-mobile/package.json'))
+// Anchor at the package root without naming the package. This build ships under
+// several installed identities (the upstream name, this fork's name, and the
+// profile-facing `quwork-mobile-plugin`), so resolving one hard-coded specifier
+// throws MODULE_NOT_FOUND at import time and takes the whole plugin down.
+// Walk up to the nearest package.json instead: `lib/index.mjs` finds the package
+// root on its first step, and the source layout resolves the same way.
+function resolvePackageRoot(moduleUrl: string): string {
+  const moduleDirectory = dirname(fileURLToPath(moduleUrl))
+  let directory = moduleDirectory
+  for (;;) {
+    if (existsSync(join(directory, 'package.json'))) return directory
+    const parent = dirname(directory)
+    if (parent === directory) return dirname(moduleDirectory)
+    directory = parent
+  }
+}
+
+const packageRoot = resolvePackageRoot(import.meta.url)
 const loadFromPackage = createMobilePushAssetLoader(packageRoot)
 
 /** Return only a known push manifest/icon; optional packageRoot enables explicit host injection. */
