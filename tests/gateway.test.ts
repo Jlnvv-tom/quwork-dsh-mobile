@@ -24,6 +24,7 @@ import { CSRF_COOKIE, CSRF_HEADER, DEVICE_COOKIE, SESSION_COOKIE } from '../src/
 import { HOST_CSRF_COOKIE, HOST_DEVICE_COOKIE, HOST_SESSION_COOKIE } from '../src/browser-auth-cookies.js'
 import { MemoryDeviceStore } from '../src/storage.js'
 import { DSH_MOBILE_VERSION, MINIMUM_ANDROID_APP_VERSION } from '../src/version.js'
+import { MOBILE_PACKAGE_NAME } from '../src/package-identity.js'
 import { createTestTlsChain } from './tls-fixtures.js'
 import { startWithMappedUdpDiscovery } from './udp-discovery-fixture.js'
 
@@ -388,7 +389,7 @@ async function upstream(
         { id: '@deepseek-ai/dsh-api-gateway', url: '/plugins/gateway.js?rev=gateway', rev: 'gateway', inject: ['@deepseek-ai/dsh-client-connection'] },
         { id: '@deepseek-ai/dsh-api-remotes', url: '/plugins/remotes.js?rev=remotes', rev: 'remotes', inject: ['@deepseek-ai/dsh-api-gateway'] },
         { id: '@deepseek-ai/dsh-client-ui-settings', url: '/plugins/settings.js?rev=settings', rev: 'settings', inject: ['@deepseek-ai/dsh-api-remotes'] },
-        { id: 'dsh-mobile', url: '/plugins/mobile.js?rev=mobile', rev: 'mobile', inject: ['@deepseek-ai/dsh-client-connection', '@deepseek-ai/dsh-client-ui-sidebar'] },
+        { id: MOBILE_PACKAGE_NAME, url: '/plugins/mobile.js?rev=mobile', rev: 'mobile', inject: ['@deepseek-ai/dsh-client-connection', '@deepseek-ai/dsh-client-ui-sidebar'] },
       )
       const batchEntryIds = entries.map(entry => entry.id)
       if (batchEntriesReversed) batchEntryIds.reverse()

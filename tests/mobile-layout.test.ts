@@ -23,6 +23,11 @@ import {
   resolveMobileLayoutLanguage,
   resolveMobileRightbarLayout,
 } from '../src/mobile-layout.js'
+import { MOBILE_PACKAGE_NAME } from '../src/package-identity.js'
+
+// The Client module-loader id is the installed package name, so the fixtures must
+// describe the same row DSH builds from this package rather than a fixed literal.
+const mobileModule = MOBILE_PACKAGE_NAME
 
 function index(entries: unknown[]): string {
   return `<!doctype html><html><head><script>window.__DSH_BOOT__ = ${JSON.stringify({ rev: 'stock', entries })};</script></head><body></body></html>`
@@ -109,7 +114,7 @@ function remoteSettingsEntries(): BootEntry[] {
       '@deepseek-ai/dsh-client-ui-session', '@deepseek-ai/dsh-client-ui-theme',
     ]),
     entry('@deepseek-ai/dsh-client-ui-sidebar', [settingsModule]),
-    { ...entry('dsh-mobile', [connectionModule, '@deepseek-ai/dsh-client-ui-sidebar']), immediately: true },
+    { ...entry(mobileModule, [connectionModule, '@deepseek-ai/dsh-client-ui-sidebar']), immediately: true },
   ]
 }
 
@@ -260,7 +265,7 @@ describe('dedicated mobile layout boot', () => {
         inject: ['@deepseek-ai/dsh-client-connection', '@deepseek-ai/dsh-client-runtime'],
       },
       {
-        id: 'dsh-mobile',
+        id: mobileModule,
         url: '/dsh-mobile.js',
         rev: 'mobile',
         inject: ['@deepseek-ai/dsh-client-connection', '@deepseek-ai/dsh-client-ui-sidebar'],
@@ -268,9 +273,9 @@ describe('dedicated mobile layout boot', () => {
       },
     ]))
 
-    expect(output).toContain('"id":"dsh-mobile","url":"/dsh-mobile.js","rev":"mobile","inject":["@deepseek-ai/dsh-client-connection","@deepseek-ai/dsh-client-runtime"]')
-    expect(output).toContain('"id":"@deepseek-ai/dsh-client-ui-settings","url":"/settings.js","rev":"settings","inject":["@deepseek-ai/dsh-client-connection","@deepseek-ai/dsh-client-runtime","dsh-mobile"]')
-    expect(output).not.toContain('"id":"dsh-mobile","url":"/dsh-mobile.js","rev":"mobile","inject":["@deepseek-ai/dsh-client-connection","@deepseek-ai/dsh-client-ui-sidebar"]')
+    expect(output).toContain(`"id":"${mobileModule}","url":"/dsh-mobile.js","rev":"mobile","inject":["@deepseek-ai/dsh-client-connection","@deepseek-ai/dsh-client-runtime"]`)
+    expect(output).toContain(`"id":"@deepseek-ai/dsh-client-ui-settings","url":"/settings.js","rev":"settings","inject":["@deepseek-ai/dsh-client-connection","@deepseek-ai/dsh-client-runtime","${mobileModule}"]`)
+    expect(output).not.toContain(`"id":"${mobileModule}","url":"/dsh-mobile.js","rev":"mobile","inject":["@deepseek-ai/dsh-client-connection","@deepseek-ai/dsh-client-ui-sidebar"]`)
   })
 
   it('rebuilds the DSH 0.1.2 application batch around the dedicated layout', () => {
@@ -295,7 +300,7 @@ describe('dedicated mobile layout boot', () => {
         inject: ['@deepseek-ai/dsh-client-connection', '@deepseek-ai/dsh-api-remotes'],
       },
       {
-        id: 'dsh-mobile',
+        id: mobileModule,
         url: '/plugins/dsh-mobile.js?rev=mobile',
         rev: 'mobile',
         inject: ['@deepseek-ai/dsh-client-connection', '@deepseek-ai/dsh-client-ui-sidebar'],
@@ -311,7 +316,7 @@ describe('dedicated mobile layout boot', () => {
 
     expect(output).toContain('"url":"/mobile-access/mobile-layout.js"')
     expect(output).toContain('"inject":["@deepseek-ai/dsh-client-connection","@deepseek-ai/dsh-client-ui-renderer"]')
-    expect(output).toContain('"inject":["@deepseek-ai/dsh-client-connection","@deepseek-ai/dsh-api-remotes","dsh-mobile"]')
+    expect(output).toContain(`"inject":["@deepseek-ai/dsh-client-connection","@deepseek-ai/dsh-api-remotes","${mobileModule}"]`)
     expect(output).toMatch(/"url":"\/mobile-access\/mobile-boot\/[a-f\d]{64}\.js"/u)
     expect(output).not.toContain('/plugins/application.js?rev=stock')
     // Rows are emitted in the canonical (id-sorted) order, not manifest order,
@@ -341,7 +346,7 @@ describe('dedicated mobile layout boot', () => {
         inject: ['@deepseek-ai/dsh-client-connection', '@deepseek-ai/dsh-api-remotes'],
       },
       {
-        id: 'dsh-mobile',
+        id: mobileModule,
         url: '/plugins/dsh-mobile.js?rev=mobile',
         rev: 'mobile',
         inject: ['@deepseek-ai/dsh-client-connection', '@deepseek-ai/dsh-client-ui-sidebar'],
@@ -383,11 +388,11 @@ describe('dedicated mobile layout boot', () => {
     if (reverse) entries.reverse()
     const output = rewriteMobileIndex(currentIndex(entries))
     const rewritten = bootEntries(output)
-    expect(rewritten.find(entry => entry.id === 'dsh-mobile')?.inject).toEqual([connectionModule, rendererModule])
+    expect(rewritten.find(entry => entry.id === mobileModule)?.inject).toEqual([connectionModule, rendererModule])
     expect(rewritten.find(entry => entry.id === gatewayModule)?.inject).toEqual([
-      '@deepseek-ai/dsh-typert-registry', connectionModule, 'dsh-mobile',
+      '@deepseek-ai/dsh-typert-registry', connectionModule, mobileModule,
     ])
-    expect(rewritten.find(entry => entry.id === settingsModule)?.inject).toEqual([remotesModule, 'dsh-mobile'])
+    expect(rewritten.find(entry => entry.id === settingsModule)?.inject).toEqual([remotesModule, mobileModule])
     expect(output.indexOf('window.__DSH_TRANSPORT__=')).toBeLessThan(output.indexOf('globalThis["__DSH_BOOT__"]'))
     const bootstrap = bootstrapPage(output)
     bootstrap.run()
@@ -1305,7 +1310,7 @@ function exclusionIndex(extra: BootEntry[] = [], separate: string[] = []): strin
     { id: '@deepseek-ai/dsh-client-ui-theme', url: '/plugins/theme.js', rev: 'theme' },
     { id: connectionModule, url: '/plugins/connection.js', rev: 'connection' },
     { id: layoutId, url: '/plugins/layout.js', rev: 'layout', inject: ['@deepseek-ai/dsh-client-runtime', '@deepseek-ai/dsh-client-ui-theme'] },
-    { id: 'dsh-mobile', url: '/plugins/dsh-mobile.js', rev: 'mobile', inject: [connectionModule, '@deepseek-ai/dsh-client-ui-sidebar'] },
+    { id: mobileModule, url: '/plugins/dsh-mobile.js', rev: 'mobile', inject: [connectionModule, '@deepseek-ai/dsh-client-ui-sidebar'] },
   ]
   const entries = [...base, ...extra]
   const graph = {
@@ -1352,7 +1357,7 @@ describe('optional mobile client module exclusion', () => {
 
   it('rejects missing, core, immediate, and bootstrap modules', () => {
     const html = exclusionIndex([leaf, { id: '@example/urgent', url: '/plugins/urgent.js', rev: 'urgent', immediately: true }])
-    for (const id of [layoutId, connectionModule, 'dsh-mobile', '@example/urgent', 'bootstrap']) {
+    for (const id of [layoutId, connectionModule, mobileModule, '@example/urgent', 'bootstrap']) {
       expect(() => rewriteMobileIndex(html, [id])).toThrow(`module ${id} is required for mobile boot or belongs to a bootstrap batch`)
     }
     expect(() => rewriteMobileIndex(html, ['@example/missing'])).toThrow('module @example/missing is not installed')

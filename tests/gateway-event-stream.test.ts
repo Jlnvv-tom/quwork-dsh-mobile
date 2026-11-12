@@ -9,6 +9,7 @@ import { parseGatewayConfig } from '../src/config.js'
 import { MobileAccessGateway } from '../src/gateway.js'
 import { CSRF_HEADER, SESSION_COOKIE } from '../src/http-security.js'
 import { DSH_MOBILE_VERSION } from '../src/version.js'
+import { MOBILE_PACKAGE_NAME } from '../src/package-identity.js'
 import { MemoryDeviceStore } from '../src/storage.js'
 import { startWithMappedUdpDiscovery } from './udp-discovery-fixture.js'
 
@@ -26,7 +27,7 @@ function graph(featureRev = 'feature') {
     { id: '@deepseek-ai/dsh-api-gateway', rev: 'gateway', url: '/plugins/gateway.js?rev=gateway', inject: ['@deepseek-ai/dsh-client-connection'] },
     { id: '@deepseek-ai/dsh-api-remotes', rev: 'remotes', url: '/plugins/remotes.js?rev=remotes', inject: ['@deepseek-ai/dsh-api-gateway'] },
     { id: '@deepseek-ai/dsh-client-ui-settings', rev: 'settings', url: '/plugins/settings.js?rev=settings', inject: ['@deepseek-ai/dsh-api-remotes'] },
-    { id: 'dsh-mobile', rev: 'mobile', url: '/plugins/mobile.js?rev=mobile', inject: ['@deepseek-ai/dsh-client-connection', '@deepseek-ai/dsh-client-ui-sidebar'] },
+    { id: MOBILE_PACKAGE_NAME, rev: 'mobile', url: '/plugins/mobile.js?rev=mobile', inject: ['@deepseek-ai/dsh-client-connection', '@deepseek-ai/dsh-client-ui-sidebar'] },
     { id: 'feature', rev: featureRev, url: `/plugins/feature.js?rev=${featureRev}` },
   ]
   return { rev: 'upstream', entries, batches: [{ phase: 'application', rev: 'upstream-batch', url: '/plugins/all.js?rev=upstream', entries: entries.map(entry => entry.id) }] }

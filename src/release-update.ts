@@ -4,6 +4,7 @@ import { createRequire } from 'node:module'
 import { fileURLToPath } from 'node:url'
 import type { Context } from '@deepseek-ai/cordis'
 import { BRAND } from './brand.js'
+import { MOBILE_PACKAGE_NAME } from './package-identity.js'
 import { DSH_MOBILE_VERSION } from './version.js'
 
 /**
@@ -12,7 +13,7 @@ import { DSH_MOBILE_VERSION } from './version.js'
  * versions only; it never contacts an upstream registry and never replaces the
  * installed profile package. Update discovery belongs to the QuWork client.
  */
-const PACKAGE_NAME: string = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8')).name
+const PACKAGE_NAME = MOBILE_PACKAGE_NAME
 
 const bundledAndroidRelease: unknown = createRequire(import.meta.url)('../apps/mobile/release.json')
 

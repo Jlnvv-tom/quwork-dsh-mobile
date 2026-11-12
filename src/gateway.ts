@@ -18,6 +18,7 @@ import {
 import { createServer as createHttpsServer, type Server as HttpsServer, type ServerOptions } from 'node:https'
 import { connect, type AddressInfo, type Socket } from 'node:net'
 import { isIP } from './ip.js'
+import { MOBILE_PACKAGE_NAME } from './package-identity.js'
 import { Transform, type TransformCallback } from 'node:stream'
 import { pipeline } from 'node:stream/promises'
 import { promisify } from 'node:util'
@@ -306,7 +307,10 @@ const CUSTOM_STYLE_FALLBACK = '/* Add mobile overrides in the DSH home mobile-ac
 const CUSTOM_SCRIPT_FALLBACK = 'window.dshMobile?.register(() => undefined)\n'
 const EXTENSION_CHANGE_POLL_MS = 2_000
 const EXTENSION_EVENT_HEARTBEAT_MS = 15_000
-const MOBILE_CLIENT_MODULE = 'dsh-mobile'
+// The profile row, the `/plugins` URL and the module-loader id all use the package
+// name. A literal here silently skipped the authenticated settings ordering and
+// dropped this bundle from the core boot set when the installed name differed.
+const MOBILE_CLIENT_MODULE = MOBILE_PACKAGE_NAME
 const CONNECTION_MODULE = '@deepseek-ai/dsh-client-connection'
 const RUNTIME_MODULE = '@deepseek-ai/dsh-client-runtime'
 const RENDERER_MODULE = '@deepseek-ai/dsh-client-ui-renderer'
