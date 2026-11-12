@@ -7,7 +7,7 @@ import { tmpdir } from 'node:os'
 import { dirname, isAbsolute, join, relative, resolve, sep } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { chromium } from 'playwright'
-import { installPackedBundle, packBundle, packedManifest } from './packed-profile.mjs'
+import { installPackedBundle, MOBILE_PACKAGE_NAME, packBundle, packedManifest } from './packed-profile.mjs'
 import { completeSmoke, recordSmokeFailure } from './negative-control.mjs'
 import {
   createMobileProfile, launchDsh, openPairing, pairMobilePage, removeTemporaryRoot,
@@ -71,7 +71,7 @@ try {
   const mobileTarball = process.env.DSH_BOOT_SMOKE_MOBILE_TARBALL === undefined
     ? await packBundle(repository, root) : resolve(process.env.DSH_BOOT_SMOKE_MOBILE_TARBALL)
   const mobileManifest = await packedManifest(mobileTarball)
-  assert.equal(mobileManifest.name, 'dsh-mobile')
+  assert.equal(mobileManifest.name, MOBILE_PACKAGE_NAME)
   const home = await createMobileProfile(root, { tarball: mobileTarball, dshBin })
   const profile = join(home, 'profiles', 'web')
   await installPackedBundle(await authTarball(), profile, { dshBin })
