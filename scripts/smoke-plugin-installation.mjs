@@ -32,9 +32,14 @@ try {
   assert.equal(manifest.bundledDependencies, undefined)
   if (registryInstallation) registry = await tarballRegistry(tarball)
   const previous = process.env.DSH_BOOT_SMOKE_PREVIOUS_MOBILE_TARBALL
+  let previousName
   if (previous !== undefined) {
     const previousManifest = await packedManifest(previous)
+    // The published predecessor ships under the upstream name; this bundle is a
+    // separate package, so installing it beside that one keeps the upstream
+    // patch entries, which claim the same ids and shadow this plugin.
     assert.equal(previousManifest.name, 'dsh-mobile')
+    previousName = previousManifest.name
     assert.notEqual(previousManifest.version, manifest.version)
     await runPackagingCommand(process.execPath, [dshBin, 'plugin', '--profile', 'web', 'add', resolve(previous), '--ignore-scripts'], profile, { DSH_HOME: home, DSH_TELEMETRY_DISABLED: '1' })
   }
@@ -48,6 +53,21 @@ try {
     if (!response.ok || body.result?.ok !== true) throw new Error(`Plugin-manager RPC failed: ${JSON.stringify(body)}`)
     return body.result.value
   }, { method, args })
+  // Moving a profile off the upstream bundle is the documented migration: drop the
+  // previous selection so its patch entries stop claiming this plugin's ids.
+  if (previousName !== undefined) {
+    const removed = await rpc('removeBundle', { name: previousName })
+    assert.equal(removed.error, undefined, JSON.stringify(removed))
+    assert.ok(['applied', 'restart-required'].includes(removed.application), JSON.stringify(removed))
+    if (removed.application === 'restart-required') {
+      await processOwner.close()
+      processOwner = launchDsh(root, home, dshBin)
+      await page.goto(await processOwner.ready(), { waitUntil: 'domcontentloaded' })
+    }
+    const migrated = JSON.parse(await readFile(join(profile, 'package.json'), 'utf8'))
+    assert.ok(!migrated.dsh.profile.bundles.includes(previousName), 'Migration kept the upstream bundle selected')
+    assert.equal(migrated.dependencies?.[previousName], undefined, 'Migration kept the upstream package installed')
+  }
   const installed = await rpc('installBundle', registryInstallation ? { spec: `${MOBILE_PACKAGE_NAME}@${manifest.version}`, options: { registry: registry.origin } } : { spec: resolve(tarball) })
   assert.equal(installed.packageResult?.exitCode, 0, JSON.stringify(installed))
   if (previous === undefined) assert.equal(installed.application, 'applied', JSON.stringify(installed))
@@ -73,7 +93,7 @@ try {
   }
   const rows = await rpc('listPlugins', {})
   const row = rows.find(candidate => candidate.patchId === 'dsh-ui-fixes')
-  assert.ok(row?.entryId, 'The independently toggled question-card component must appear in the live plugin inventory')
+  assert.ok(row?.entryId, `The independently toggled question-card component must appear in the live plugin inventory (patch ids: ${JSON.stringify(rows.map(candidate => candidate.patchId))})`)
   assert.equal(row.enabled, true)
   for (const enabled of [false, true]) {
     const toggle = await rpc('setPluginEnabled', { id: row.entryId, enabled })

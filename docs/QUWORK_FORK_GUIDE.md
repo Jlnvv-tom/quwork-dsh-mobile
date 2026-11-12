@@ -300,6 +300,8 @@ if (conflictingShell !== null) {
 
 升级说明中必须写清楚：在 QuWork 插件管理里禁用 `dsh-pocket`，或从 `~/.qurwork-desktop-dsh/.dsh/profiles/web/package.json` 的 `dsh.bundle.bundles` 中删除该条目后重启。仅靠 `quwork-mobile` 内置无法自动清理用户既有 profile。
 
+上游同名插件同理：`quwork-mobile` 与 `dsh-mobile` 是不同包名，装在一起时 profile 会同时保留两条 bundle 记录；上游那条的 `mobile-access`、`dsh-ui-fixes` 条目会占住同一个 patch id，让本插件的条目被丢弃（表现为移动访问整块消失）。迁移必须先移除上游 bundle 再安装本插件，这一步由 CI 的「migrating off the published 0.6.2 bundle」用例覆盖。
+
 ## 9 阶段六：发布流水线迁移
 
 ### 9.1 现有工作流
