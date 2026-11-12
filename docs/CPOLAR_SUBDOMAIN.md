@@ -26,7 +26,7 @@ DSH 加载器会整体替换条目的 `config`，不是逐键合并。因此不�
 
 ```yaml
 - id: mobile-access
-  name: dsh-mobile
+  name: quwork-mobile
   config:
     setupFile: !!js dshHomePath('mobile-access/setup.json')
     stateFile: !!js dshHomePath('mobile-access/devices.json')

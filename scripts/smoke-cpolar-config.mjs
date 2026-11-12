@@ -100,7 +100,7 @@ try {
   await stopDsh()
 
   // This is the original two-field example: DSH replaces config, not its keys.
-  await writeFile(patchFile, '- id: mobile-access\n  name: dsh-mobile\n  config:\n    cpolarSubdomain: your-reserved-name\n    cpolarRegion: cn_vip\n')
+  await writeFile(patchFile, `- id: mobile-access\n  name: ${MOBILE_PACKAGE_NAME}\n  config:\n    cpolarSubdomain: your-reserved-name\n    cpolarRegion: cn_vip\n`)
   owner = launchDsh(root, home, dshBin)
   let negativeUrl
   try {

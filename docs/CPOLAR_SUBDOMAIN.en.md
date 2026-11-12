@@ -26,7 +26,7 @@ The DSH loader replaces an entry's entire `config`, rather than merging individu
 
 ```yaml
 - id: mobile-access
-  name: dsh-mobile
+  name: quwork-mobile
   config:
     setupFile: !!js dshHomePath('mobile-access/setup.json')
     stateFile: !!js dshHomePath('mobile-access/devices.json')
