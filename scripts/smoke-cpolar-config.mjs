@@ -58,7 +58,7 @@ async function control(session, route) {
 
 /** Require the deliberately incomplete config's loader failure, not another boot error. */
 function assertMissingConfig(logs) {
-  assert.match(logs, /mobile-access[\s\S]*dsh-mobile|dsh-mobile[\s\S]*mobile-access/u)
+  assert.match(logs, new RegExp(`mobile-access[\\s\\S]*${MOBILE_PACKAGE_NAME}|${MOBILE_PACKAGE_NAME}[\\s\\S]*mobile-access`, 'u'))
   assert.match(logs, /invalid config/u)
   assert.match(logs, /\$\.stateFile missing required value \(at stateFile\)/u)
 }
