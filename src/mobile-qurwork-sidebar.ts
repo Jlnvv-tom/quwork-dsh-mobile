@@ -68,8 +68,7 @@ export function hideQuworkSidebarMoreItems(menu: ParentNode): number {
 export function installMobileQuworkSidebarHiding(options: MobileQuworkSidebarOptions): () => void {
   const { page } = options
   const style = page.createElement('style')
-  style.dataset.plugin = 'dsh-mobile'
-  style.dataset.part = 'qurwork-sidebar'
+  style.dataset.plugin = 'dsh-mobile-qurwork-sidebar'
   style.textContent = QUWORK_SIDEBAR_HIDE_STYLES
   page.head.append(style)
 

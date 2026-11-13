@@ -112,6 +112,10 @@ describe('installMobileQuworkSidebarHiding', () => {
     const { page, observers } = fakePage(true, menu([content]))
     installMobileQuworkSidebarHiding({ page: page as unknown as Document })
     expect(page.head.append).toHaveBeenCalledTimes(1)
+    // The shared `data-plugin="dsh-mobile"` marker identifies the main stylesheet to
+    // smoke tests; a second element with it breaks their strict single-match locator.
+    const style = page.head.children[0] as { dataset: Record<string, string> }
+    expect(style.dataset.plugin).toBe('dsh-mobile-qurwork-sidebar')
     expect(content.row?.getAttribute(QUWORK_HIDDEN_ATTRIBUTE)).toBe('true')
     expect(observers[0]?.observed).toBe(true)
     expect(QUWORK_SIDEBAR_HIDE_STYLES).toContain(QUWORK_SIDEBAR_ACTIONS_SELECTOR)
