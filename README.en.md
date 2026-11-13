@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/saya-ch/dsh-mobile/main/assets/brand/repository-hero.png?v=0bfc8f909993" alt="Use DeepSeek Harness from a phone" width="100%">
+  <img src="https://raw.githubusercontent.com/Jlnvv-tom/quwork-dsh-mobile/main/assets/brand/repository-hero.png?v=0bfc8f909993" alt="Use DeepSeek Harness from a phone" width="100%">
 </p>
 
 <h1 align="center">DSH Mobile</h1>
@@ -9,8 +9,8 @@
 <p align="center">
   <a href="https://www.npmjs.com/package/dsh-mobile"><img src="https://img.shields.io/npm/v/dsh-mobile?label=npm&amp;color=CB3837" alt="npm version"></a>
   <a href="https://www.npmjs.com/package/dsh-mobile"><img src="https://img.shields.io/npm/dt/dsh-mobile?label=downloads&amp;color=2563EB" alt="total npm downloads"></a>
-  <a href="https://github.com/saya-ch/dsh-mobile/actions/workflows/ci.yml"><img src="https://github.com/saya-ch/dsh-mobile/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
-  <a href="https://github.com/saya-ch/dsh-mobile/releases"><img src="https://img.shields.io/badge/Android-10%2B-3DDC84?logo=android&amp;logoColor=white" alt="Android 10+"></a>
+  <a href="https://github.com/Jlnvv-tom/quwork-dsh-mobile/actions/workflows/ci.yml"><img src="https://github.com/Jlnvv-tom/quwork-dsh-mobile/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://github.com/Jlnvv-tom/quwork-dsh-mobile/releases"><img src="https://img.shields.io/badge/Android-10%2B-3DDC84?logo=android&amp;logoColor=white" alt="Android 10+"></a>
   <a href="#iphone-and-ipad-home-screen-web-app-pwa"><img src="https://img.shields.io/badge/iOS%20%2F%20iPadOS-PWA-111111?logo=apple&amp;logoColor=white" alt="iOS / iPadOS Home Screen web app (PWA)"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-Apache--2.0-0F172A" alt="Apache-2.0"></a>
   <a href="https://github.com/awesome-dsh-plugin/awesome-dsh-plugin"><img src="https://awesome-dsh-plugin.com/badge.svg" alt="Awesome DSH Plugin"></a>
@@ -28,7 +28,7 @@
   <a href="#compatibility">Compatibility</a> ·
   <a href="docs/README.md">Documentation</a> ·
   <a href="#contributors">Contributors</a> ·
-  <a href="https://github.com/saya-ch/dsh-mobile/releases/tag/v0.8.7">Release notes</a> ·
+  <a href="https://github.com/Jlnvv-tom/quwork-dsh-mobile/releases/tag/v0.8.7">Release notes</a> ·
   <a href="README.md">简体中文</a>
 </p>
 
@@ -36,12 +36,12 @@
 >
 > **Using an iPhone or iPad?** Use Safari or [add DSH Mobile to your Home Screen as a web app (PWA)](<#iphone-and-ipad-home-screen-web-app-pwa>)—no native iOS download needed.
 >
-> **Current stable release: 0.8.7**. Add an opt-in session prefetch, close an expiring Gateway WebSocket normally with clearer authentication-failure categories, and prepare the background-reminder status and in-place notification open for Android 0.7.4; also update the plugin icon and iroh troubleshooting notes. Plugin and Android App releases remain independent; Android App 0.7.4 is now published with the device-side page cache, real background-reminder status and in-place notification open. [Plugin release notes and downloads](https://github.com/saya-ch/dsh-mobile/releases/tag/v0.8.7) · [Full changelog](CHANGELOG.md).
+> **Current stable release: 0.8.7**. Add an opt-in session prefetch, close an expiring Gateway WebSocket normally with clearer authentication-failure categories, and prepare the background-reminder status and in-place notification open for Android 0.7.4; also update the plugin icon and iroh troubleshooting notes. Plugin and Android App releases remain independent; Android App 0.7.4 is now published with the device-side page cache, real background-reminder status and in-place notification open. [Plugin release notes and downloads](https://github.com/Jlnvv-tom/quwork-dsh-mobile/releases/tag/v0.8.7) · [Full changelog](CHANGELOG.md).
 >
 > **Version policy**: from plugin **0.6.2** the Android app and plugin ship as independent releases (the app was still 0.6.1 then), and the app has used its own version numbers since app **0.6.2**. Their numbers do not need to match, and a plugin update does not imply an app update. [Compatibility notes](#compatibility).
 
 <p align="center">
-  <a href="https://github.com/Jlnvv-tom/quwork-dsh-mobile/releases/download/android-v0.7.4/quwork-android-v0.7.4.apk"><img src="https://raw.githubusercontent.com/saya-ch/dsh-mobile/main/assets/brand/app-icon-rounded.svg" alt="DSH Mobile Android app icon" width="72" height="72"></a><br>
+  <a href="https://github.com/Jlnvv-tom/quwork-dsh-mobile/releases/download/android-v0.7.4/quwork-android-v0.7.4.apk"><img src="https://raw.githubusercontent.com/Jlnvv-tom/quwork-dsh-mobile/main/assets/brand/app-icon-rounded.svg" alt="DSH Mobile Android app icon" width="72" height="72"></a><br>
   <a href="https://github.com/Jlnvv-tom/quwork-dsh-mobile/releases/download/android-v0.7.4/quwork-android-v0.7.4.apk"><strong>Download Android app 0.7.4 (compatibility)</strong></a><br>
   <sub><a href="https://github.com/Jlnvv-tom/quwork-dsh-mobile/releases/download/android-v0.7.4/quwork-android-v0.7.4-iroh.apk">64-bit full APK (experimental iroh)</a> · <a href="https://github.com/Jlnvv-tom/quwork-dsh-mobile/releases/tag/android-v0.7.4">Release notes and checksums</a></sub>
 </p>
@@ -138,7 +138,7 @@ LAN and remote access are independent connections. Prefer LAN while the phone is
 Use this when the phone and computer share Wi-Fi, Ethernet, or a phone hotspot. It is the default and simplest path.
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/saya-ch/dsh-mobile/main/assets/screenshots/lan-access-en.png" width="82%" alt="DSH Mobile LAN access, pairing QR code, and device management">
+  <img src="https://raw.githubusercontent.com/Jlnvv-tom/quwork-dsh-mobile/main/assets/screenshots/lan-access-en.png" width="82%" alt="DSH Mobile LAN access, pairing QR code, and device management">
 </p>
 
 1. Connect the phone and computer to the same local network, then open **Mobile Access → Local network** in the lower-left corner of DeepSeek Harness.
@@ -195,7 +195,7 @@ The usage notes below reflect the maintainer's long-term experience on a persona
 | Managed Caddy | Tencent Cloud DNSPod-managed domain and reachable public ingress | Plugin-managed HTTPS and certificates on Windows/Linux x64; [guide](docs/CADDY_MANAGED.en.md) | Does not traverse NAT; check inbound ports and forwarding. Existing Cloudflared users do not need to migrate |
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/saya-ch/dsh-mobile/main/assets/screenshots/remote-access-en.png" width="82%" alt="DSH Mobile remote access and provider selection">
+  <img src="https://raw.githubusercontent.com/Jlnvv-tom/quwork-dsh-mobile/main/assets/screenshots/remote-access-en.png" width="82%" alt="DSH Mobile remote access and provider selection">
 </p>
 
 The following steps cover HTTPS remote channels. **iroh uses its own “Generate iroh pairing QR code” action and the full App, as described below.** Do not open its descriptor as an ordinary browser URL.
@@ -257,13 +257,13 @@ Two kinds of changes are supported: the phone UI itself (theme, layout, buttons)
 
 Open customizations through the **Mobile Access pairing entry**. Opening an ordinary DSH page or selecting a phone-sized browser viewport is not mobile pairing, and a file's presence does not establish that the current page loaded it. If extension requests return `401`, check the entry and pairing state; do not enable anonymous access or share Cookies or Tokens.
 
-An old `mobile.css` patch can override a newer built-in fix. Back up that file and compare the same session, orientation and font settings with and without its styles before adding more rules. Scope CSS Modules selectors to an inspected ancestor, such as `[data-dsh-mobile-header] [class*="_titleRow"]`, rather than matching bare class suffixes/substrings across the page. Hiding an action area with `display: none` removes access to its controls; it is not a collapsible presentation. Thanks for the controlled comparison in [#219](https://github.com/saya-ch/dsh-mobile/issues/219).
+An old `mobile.css` patch can override a newer built-in fix. Back up that file and compare the same session, orientation and font settings with and without its styles before adding more rules. Scope CSS Modules selectors to an inspected ancestor, such as `[data-dsh-mobile-header] [class*="_titleRow"]`, rather than matching bare class suffixes/substrings across the page. Hiding an action area with `display: none` removes access to its controls; it is not a collapsible presentation. Thanks for the controlled comparison in [#219](https://github.com/Jlnvv-tom/quwork-dsh-mobile/issues/219).
 
 Extension manifests, scripts, styles, and assets are revisioned. When the plugin observes a `/mobile` or extension-file change, it notifies authenticated phones to refresh immediately; 45-second visible and 5-minute hidden checks remain only as recovery fallbacks. A failed Host staging pass keeps the current version; if the Host has changed but the new phone UI cannot activate, that extension closes and retries instead of mixing generations.
 
 An extension action's `input` may use a callable Schemastery schema such as `api.schema.object(...)` or an adapter with `parse(value)`; mobile `api.host.invoke()` sends JSON explicitly, and the input is validated and normalized before the computer-side action runs.
 
-Prefer DSH's built-in file upload for attachments. If an extension must simulate a drop, its `dataTransfer` needs iterable `items` (file items) as well as `files`; a `files` array alone is insufficient. Some WebViews have incomplete native drag-and-drop constructors; see the [plugin's file-delivery implementation](https://github.com/saya-ch/dsh-mobile/blob/main/src/native-mobile.ts) for compatibility handling. An accepted `dragover` or successfully dispatched event does not confirm attachment delivery: check the composer's attachments and previews.
+Prefer DSH's built-in file upload for attachments. If an extension must simulate a drop, its `dataTransfer` needs iterable `items` (file items) as well as `files`; a `files` array alone is insufficient. Some WebViews have incomplete native drag-and-drop constructors; see the [plugin's file-delivery implementation](https://github.com/Jlnvv-tom/quwork-dsh-mobile/blob/main/src/native-mobile.ts) for compatibility handling. An accepted `dragover` or successfully dispatched event does not confirm attachment delivery: check the composer's attachments and previews.
 
 The 0.6.3 release adds optional [Worker execution](docs/EXTENSION_WORKERS.en.md) for trusted local JavaScript hosts. It is disabled by default, selectable by extension, and recovers explicitly without replaying interrupted actions. It is not a permission sandbox and does not require a matching App version.
 
@@ -272,10 +272,10 @@ The 0.6.3 release adds optional [Worker execution](docs/EXTENSION_WORKERS.en.md)
 The examples above, applied:
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/saya-ch/dsh-mobile/main/assets/screenshots/crt-terminal-2.png" width="22%" alt="Mobile UI customized into an old CRT terminal">
-  <img src="https://raw.githubusercontent.com/saya-ch/dsh-mobile/main/assets/screenshots/crt-terminal-1.png" width="22%" alt="Mobile UI customized into an old CRT terminal">
-  <img src="https://raw.githubusercontent.com/saya-ch/dsh-mobile/main/assets/screenshots/cyberpunk-monitor-2.png" width="22%" style="margin-left:10px" alt="Mobile UI customized into a cyberpunk computer monitor">
-  <img src="https://raw.githubusercontent.com/saya-ch/dsh-mobile/main/assets/screenshots/cyberpunk-monitor-1.png" width="22%" style="margin-left:8px" alt="Mobile UI customized into a cyberpunk computer monitor">
+  <img src="https://raw.githubusercontent.com/Jlnvv-tom/quwork-dsh-mobile/main/assets/screenshots/crt-terminal-2.png" width="22%" alt="Mobile UI customized into an old CRT terminal">
+  <img src="https://raw.githubusercontent.com/Jlnvv-tom/quwork-dsh-mobile/main/assets/screenshots/crt-terminal-1.png" width="22%" alt="Mobile UI customized into an old CRT terminal">
+  <img src="https://raw.githubusercontent.com/Jlnvv-tom/quwork-dsh-mobile/main/assets/screenshots/cyberpunk-monitor-2.png" width="22%" style="margin-left:10px" alt="Mobile UI customized into a cyberpunk computer monitor">
+  <img src="https://raw.githubusercontent.com/Jlnvv-tom/quwork-dsh-mobile/main/assets/screenshots/cyberpunk-monitor-1.png" width="22%" style="margin-left:8px" alt="Mobile UI customized into a cyberpunk computer monitor">
 </p>
 
 ## Device management
@@ -299,11 +299,11 @@ Revoking a device permanently deletes its durable record and token digest instea
 <table>
   <tr>
     <td align="center" valign="top" width="50%">
-      <img src="https://raw.githubusercontent.com/saya-ch/dsh-mobile/main/assets/screenshots/device-management.jpg" width="44%" alt="Paired computer list in the Android app"><br>
+      <img src="https://raw.githubusercontent.com/Jlnvv-tom/quwork-dsh-mobile/main/assets/screenshots/device-management.jpg" width="44%" alt="Paired computer list in the Android app"><br>
       <sub>Device management: paired computers, transport, and reachability</sub>
     </td>
     <td align="center" valign="top" width="50%">
-      <img src="https://raw.githubusercontent.com/saya-ch/dsh-mobile/main/assets/screenshots/startup-behavior.jpg" width="44%" alt="Startup behavior settings in the Android app"><br>
+      <img src="https://raw.githubusercontent.com/Jlnvv-tom/quwork-dsh-mobile/main/assets/screenshots/startup-behavior.jpg" width="44%" alt="Startup behavior settings in the Android app"><br>
       <sub>Startup behavior: open DSH directly or show the device list</sub>
     </td>
   </tr>
@@ -325,7 +325,7 @@ A skin tied to stock layout containers may not mount its backgrounds or decorati
 - In **Connection diagnostics → Third-party WebSocket paths**, select **Allow** only for an exact path you have verified. Query strings and fuzzy prefixes are rejected; **Allow all** is not recommended. Approved paths can be removed at any time, and the same policy applies to LAN and remote connections.
 - Approval only lets that path pass through the authenticated, same-origin DSH Mobile gateway. It does not open arbitrary TCP/UDP ports or bypass device pairing. If a community plugin still fails, check the path recorded by Diagnostics and approve one path at a time.
 
-If another remote-access plugin shows its own “not paired” page inside DSH Mobile, the two authorization systems are separate. Temporarily turn off the other plugin's remote access on the computer to check whether the Mobile path recovers; do not enter a DSH Mobile pairing key on that page. Excluding its client module below does not necessarily remove a request-rewriting script injected before client boot. See [#111](https://github.com/saya-ch/dsh-mobile/issues/111).
+If another remote-access plugin shows its own “not paired” page inside DSH Mobile, the two authorization systems are separate. Temporarily turn off the other plugin's remote access on the computer to check whether the Mobile path recovers; do not enter a DSH Mobile pairing key on that page. Excluding its client module below does not necessarily remove a request-rewriting script injected before client boot. See [#111](https://github.com/Jlnvv-tom/quwork-dsh-mobile/issues/111).
 
 Allowing HTTP frames in the gateway does not make every client load them: the content is unencrypted, Android still blocks HTTP mixed content inside HTTPS pages, and browsers may block it too. Prefer HTTPS. The remote panel shows this risk when opened through an HTTPS administration entry.
 
@@ -353,11 +353,11 @@ Selection priority is device choice → computer defaults → plugin configurati
 <table>
   <tr>
     <td align="center" valign="top" width="50%">
-      <img src="https://raw.githubusercontent.com/saya-ch/dsh-mobile/main/assets/screenshots/third-party-plugin-adaptation.png" width="96%" alt="Android app wide layout with a community sidebar plugin adapted"><br>
+      <img src="https://raw.githubusercontent.com/Jlnvv-tom/quwork-dsh-mobile/main/assets/screenshots/third-party-plugin-adaptation.png" width="96%" alt="Android app wide layout with a community sidebar plugin adapted"><br>
       <sub>Community sidebar plugin compatibility in the Android app</sub>
     </td>
     <td align="center" valign="top" width="50%">
-      <img src="https://raw.githubusercontent.com/saya-ch/dsh-mobile/main/assets/screenshots/websocket-diagnostics.png" width="96%" alt="Third-party WebSocket path diagnostics in the Android app"><br>
+      <img src="https://raw.githubusercontent.com/Jlnvv-tom/quwork-dsh-mobile/main/assets/screenshots/websocket-diagnostics.png" width="96%" alt="Third-party WebSocket path diagnostics in the Android app"><br>
       <sub>Connection diagnostics: review and allow third-party WebSocket paths</sub>
     </td>
   </tr>
@@ -397,7 +397,7 @@ flowchart LR
 
 Three layers: the Host face for discovery, pairing, HTTPS, loopback proxying, and extension registration; the Client face for the dedicated mobile layout and extension SDK; and the Android app for a narrow native bridge. The bridge uses `androidx.webkit` WebMessage, which verifies the exact top-level origin and main frame on every bounded message, and never uses `addJavascriptInterface`. The plugin does not rewrite source or webpage files in the DeepSeek Harness installation. Its mobile gateway serves the startup compatibility layer and dedicated layout per request; installation and removal use the plugin mechanism. The upstream DSH Web port defaults to 3080 and is configurable through `dsh web --port`.
 
-Switching sessions tears down the client Session instance and its live stream. The dedicated layout ships an opt-in, off-by-default session prefetch ([#291](https://github.com/saya-ch/dsh-mobile/issues/291)): after a switch settles, it issues one bounded, read-only `session/projections` request for the session the user just left, so a follow-back hits DSH session-query's prepared cache instead of re-parsing the whole log. Guarded by a per-session cooldown and a bounded timeout, failures are silent and never disturb normal requests or live streams; the behavior stays disabled until the "Prefetch the session you just left" switch in Settings → General is turned on (off by default; the choice is persisted).
+Switching sessions tears down the client Session instance and its live stream. The dedicated layout ships an opt-in, off-by-default session prefetch ([#291](https://github.com/Jlnvv-tom/quwork-dsh-mobile/issues/291)): after a switch settles, it issues one bounded, read-only `session/projections` request for the session the user just left, so a follow-back hits DSH session-query's prepared cache instead of re-parsing the whole log. Guarded by a per-session cooldown and a bounded timeout, failures are silent and never disturb normal requests or live streams; the behavior stays disabled until the "Prefetch the session you just left" switch in Settings → General is turned on (off by default; the choice is persisted).
 
 ## Security
 
@@ -415,14 +415,14 @@ See [SECURITY.md](SECURITY.md).
 
 ## Troubleshooting
 
-- **Pairing a second computer overwrites the first**: see [#213](https://github.com/saya-ch/dsh-mobile/issues/213). Update to plugin 0.6.8 or newer, restart DSH normally, then scan each affected computer's current QR code. An App credential already overwritten cannot be recovered automatically; working old rows need no re-pairing. If the same address has both an old and a new row, confirm the new one works, then delete only the extra local App row. Do not reset remote access. Read the [device-state backup and downgrade precautions](SECURITY.md#installation-identity-and-device-state-upgrades) before upgrading.
+- **Pairing a second computer overwrites the first**: see [#213](https://github.com/Jlnvv-tom/quwork-dsh-mobile/issues/213). Update to plugin 0.6.8 or newer, restart DSH normally, then scan each affected computer's current QR code. An App credential already overwritten cannot be recovered automatically; working old rows need no re-pairing. If the same address has both an old and a new row, confirm the new one works, then delete only the extra local App row. Do not reset remote access. Read the [device-state backup and downgrade precautions](SECURITY.md#installation-identity-and-device-state-upgrades) before upgrading.
 - **Pairing succeeds but renewal returns `401` or repeatedly asks to pair again**: other services on the same hostname or stale Cookies may interfere with authentication. Update to the latest plugin and app, then retry through the current Mobile Access entry. In a browser, scanning the current QR code again refreshes this plugin's authentication Cookies without clearing all website data. If it still fails, inspect the failed request and sanitized logs; other authentication or proxy errors can also return `401`.
 - **The testing notice cannot be confirmed or settings cannot be saved**: open DSH directly at its local address on the computer, then inspect the terminal log or the failed settings request in the browser's Network panel. Connection diagnostics do not test settings writes. Keep the existing configuration and `settings.yaml.imported`, and investigate the specific error; the same UI message can have different causes. See [DSH #860](https://github.com/deepseek-ai/deepseek-harness/discussions/860).
 - **A settings request returns HTTP `403`**: first inspect DSH's Host/Origin trust checks and any proxy response. Check whether an iframe, proxy, or browser extension changes the request's origin, and verify direct local access. Keep the trust checks enabled.
-- **The error contains `profile reload requires the root Include entry`**: this error occurs while DSH reloads the profile. [Issue #132](https://github.com/saya-ch/dsh-mobile/issues/132) reports it after two copies of `dsh-app-boot` were loaded, but the message alone does not establish that cause. Compare the versions and installation paths used by the running DSH command and the active profile; keep the configuration and follow the [official DSH documentation](https://deepseek-harness.github.io/deepseek-harness/) to repair the dependencies. If it still fails, report the versions, module paths, and full sanitized error upstream.
+- **The error contains `profile reload requires the root Include entry`**: this error occurs while DSH reloads the profile. [Issue #132](https://github.com/Jlnvv-tom/quwork-dsh-mobile/issues/132) reports it after two copies of `dsh-app-boot` were loaded, but the message alone does not establish that cause. Compare the versions and installation paths used by the running DSH command and the active profile; keep the configuration and follow the [official DSH documentation](https://deepseek-harness.github.io/deepseek-harness/) to repair the dependencies. If it still fails, report the versions, module paths, and full sanitized error upstream.
 - **The settings error contains `EACCES`, `EPERM`, or a lock-file failure**: inspect the reported file's permissions and any file-operation tools injected into the launch environment. Lock cleanup can fail after a write, so check what was actually saved.
 - **The phone shows another plugin’s pairing-code page**: `dsh-remote-web-ui` and DSH Mobile have separate remote channels and pairing codes; they cannot be mixed. If DSH Mobile diagnostics warn about a competing remote plugin, turn off that plugin’s remote access on the computer, refresh, and scan the current DSH Mobile QR code. Merely installing the other plugin without enabling its remote channel does not trigger this warning.
-- **Windows initialization waits on permissions or fails**: `sid-query` identifies the current-account SID lookup and `acl-apply` identifies private-file permission setup; failures also report the full wait duration for that stage. Do not disable permission checks or make sensitive files readable by everyone. Share the redacted stage, duration, error code and DSH version for diagnosis. These diagnostics do not establish a fix for the startup-contention problem in [#128](https://github.com/saya-ch/dsh-mobile/issues/128).
+- **Windows initialization waits on permissions or fails**: `sid-query` identifies the current-account SID lookup and `acl-apply` identifies private-file permission setup; failures also report the full wait duration for that stage. Do not disable permission checks or make sensitive files readable by everyone. Share the redacted stage, duration, error code and DSH version for diagnosis. These diagnostics do not establish a fix for the startup-contention problem in [#128](https://github.com/Jlnvv-tom/quwork-dsh-mobile/issues/128).
 - **Remote diagnostics say “reachable through the computer's proxy”**: the check tries a direct request first, then an HTTP proxy from the DSH process environment only if direct access fails; `NO_PROXY` may exclude the target. This proves only that the computer completed an HTTPS probe through the proxy, not that the phone or actual tunnel can connect. Test from the phone's mobile network. If both paths fail, diagnostics continue to report the endpoint unreachable instead of treating an offline route as ready.
 - **LAN access stops after switching networks**: if the log reports `saved LAN interface "XXX" is not connected`, the saved adapter is unavailable. DSH keeps running while Mobile Access stays dormant and retries when the adapter returns. If you have moved to a different adapter, configure LAN again or re-run `setup`. If mobile access is not needed, disable `mobile-access` in `cordis.patch.yml`.
 
@@ -455,8 +455,8 @@ On macOS, local network, cloudflared, self-hosted FRP and the own reverse proxy 
 | `0.8.4` | Plugin maintenance update. The packed DSH test target remains `0.2.2-rc.1`, alongside existing compatibility checks. The upstream rc.1 npm CLI requires Node.js 24.9 or later |
 | `0.8.3` | Adapted to DSH 0.2.2-rc.1 with landscape, Plugins and Web Push settings layout fixes, shared FRP usernames and iroh pairing improvements |
 | `0.8.2` | The DSH 0.2.2 preview target for this release was `0.2.2-alpha.3`. Fresh `0.2.2-alpha.2` installs can fail to save settings because of an upstream dependency mismatch; see the [independent reproduction](https://github.com/deepseek-ai/deepseek-harness/discussions/11994#discussioncomment-19373554). Users still on alpha.2 should upgrade to rc.1 |
-| `0.8.1` | Add packed boot, settings, directory selection, attachments, sidebar and compressed Workspace checks on `0.2.1-rc.5` and `0.2.2-alpha.2`; see [CI](https://github.com/saya-ch/dsh-mobile/actions/workflows/ci.yml) for the complete version matrix |
-| `0.8.0` | Push public-contract, settings, encrypted-payload and tap-ownership checks are pinned to `0.2.1-rc.2 / rc.3`; see [CI](https://github.com/saya-ch/dsh-mobile/actions/workflows/ci.yml) for the general boot/layout matrix. iOS device results accept contributor testing; browser checks do not establish every phone, plugin or public route |
+| `0.8.1` | Add packed boot, settings, directory selection, attachments, sidebar and compressed Workspace checks on `0.2.1-rc.5` and `0.2.2-alpha.2`; see [CI](https://github.com/Jlnvv-tom/quwork-dsh-mobile/actions/workflows/ci.yml) for the complete version matrix |
+| `0.8.0` | Push public-contract, settings, encrypted-payload and tap-ownership checks are pinned to `0.2.1-rc.2 / rc.3`; see [CI](https://github.com/Jlnvv-tom/quwork-dsh-mobile/actions/workflows/ci.yml) for the general boot/layout matrix. iOS device results accept contributor testing; browser checks do not establish every phone, plugin or public route |
 
 <details>
 <summary>Earlier release checks</summary>
@@ -542,6 +542,6 @@ npm ci
 npm run verify
 ```
 
-Use `npm run check:docs` for quick documentation checks. [CONTRIBUTING.md](https://github.com/saya-ch/dsh-mobile/blob/main/CONTRIBUTING.md) covers behavior-specific browser tests, isolated packed DSH acceptance, captures and release steps; the [Android manual](apps/mobile/README.md#build) covers app builds. Do not substitute real user profiles or official app data for test fixtures.
+Use `npm run check:docs` for quick documentation checks. [CONTRIBUTING.md](https://github.com/Jlnvv-tom/quwork-dsh-mobile/blob/main/CONTRIBUTING.md) covers behavior-specific browser tests, isolated packed DSH acceptance, captures and release steps; the [Android manual](apps/mobile/README.md#build) covers app builds. Do not substitute real user profiles or official app data for test fixtures.
 
 Licensed under [Apache-2.0](LICENSE).

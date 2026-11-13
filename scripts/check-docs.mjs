@@ -107,7 +107,9 @@ function inspectMarkdown(source, file, errors) {
 
 function localTarget(target) {
   if (/^[a-z][a-z\d+.-]*:/iu.test(target) || target.startsWith('//')) {
-    const ownAsset = /^https:\/\/raw\.githubusercontent\.com\/saya-ch\/dsh-mobile\/[^/]+\/(assets\/[^?#]+)(?:\?[^#]*)?(#.*)?$/iu.exec(target)
+    // The upstream project and this fork publish the same asset tree, so a raw link to either
+    // repository is validated against the local file instead of being treated as external.
+    const ownAsset = /^https:\/\/raw\.githubusercontent\.com\/(?:saya-ch\/dsh-mobile|Jlnvv-tom\/quwork-dsh-mobile)\/[^/]+\/(assets\/[^?#]+)(?:\?[^#]*)?(#.*)?$/iu.exec(target)
     return ownAsset === null ? undefined : `/${ownAsset[1]}${ownAsset[2] ?? ''}`
   }
   return target

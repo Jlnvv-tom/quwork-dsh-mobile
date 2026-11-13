@@ -12,6 +12,11 @@ Notable changes are recorded here. GitHub Releases provide the downloadable pack
 - Declare a plugin icon so DSH shows the DSH Mobile picture in its plugin metadata instead of the default plugin glyph. The shipped `assets/brand/plugin-icon.png` is package-relative, within DSH's 256 KiB icon limit, and read without evaluating plugin code.
 - The page-side halves of the background-reminder status and in-place notification navigation ship in this plugin release; their native halves are prepared as Android 0.7.4 below and released separately. Android 0.7.3 remains the published App until then.
 
+## Android 0.7.5 - 2026-11-13
+
+- Publish the Android App from this repository's own release workflow for the first time. The page-side and native behaviour is the same as Android 0.7.4; the version moves to 0.7.5 (build 90) so an installed App upgrades in place, and the compatibility and full iroh APKs are built, signed, checked and attached to a GitHub release with their checksums, dependency reports and update descriptor.
+- Point the download, release-notes, CI-badge and asset links in `README.md`, `README.en.md` and the App READMEs at this repository instead of the upstream project, which hosts neither this plugin nor this App.
+
 ## Android 0.7.4 - 2026-11-11
 
 - Cache the revision-addressed mobile page payload on the device, independently of the WebView's own HTTP cache. For a revalidated boot batch the App sends `If-None-Match` and serves the stored body after a 304; a revision-named plugin combo bundle is addressed by its ordered module list and revision and needs no round-trip. A body is stored only after its size and SHA-256 match the fetched bytes, a cache miss or any integrity, epoch or ownership failure falls back to the ordinary request, documents, API responses, credentials and non-revisioned assets never qualify, and clearing site data or removing the paired device clears the store. Thanks @LUgABeEEE for the implementation and the LAN measurements in [#350](https://github.com/saya-ch/dsh-mobile/pull/350).

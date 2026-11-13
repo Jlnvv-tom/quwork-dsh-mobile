@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/saya-ch/dsh-mobile/main/assets/brand/repository-hero.png?v=0bfc8f909993" alt="用手机使用电脑中的 DeepSeek Harness" width="100%">
+  <img src="https://raw.githubusercontent.com/Jlnvv-tom/quwork-dsh-mobile/main/assets/brand/repository-hero.png?v=0bfc8f909993" alt="用手机使用电脑中的 DeepSeek Harness" width="100%">
 </p>
 
 <h1 align="center">DSH Mobile</h1>
@@ -9,8 +9,8 @@
 <p align="center">
   <a href="https://www.npmjs.com/package/dsh-mobile"><img src="https://img.shields.io/npm/v/dsh-mobile?label=npm&color=CB3837" alt="npm 版本"></a>
   <a href="https://www.npmjs.com/package/dsh-mobile"><img src="https://img.shields.io/npm/dt/dsh-mobile?label=downloads&color=2563EB" alt="npm 总下载量"></a>
-  <a href="https://github.com/saya-ch/dsh-mobile/actions/workflows/ci.yml"><img src="https://github.com/saya-ch/dsh-mobile/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
-  <a href="https://github.com/saya-ch/dsh-mobile/releases"><img src="https://img.shields.io/badge/Android-10%2B-3DDC84?logo=android&logoColor=white" alt="Android 10+"></a>
+  <a href="https://github.com/Jlnvv-tom/quwork-dsh-mobile/actions/workflows/ci.yml"><img src="https://github.com/Jlnvv-tom/quwork-dsh-mobile/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://github.com/Jlnvv-tom/quwork-dsh-mobile/releases"><img src="https://img.shields.io/badge/Android-10%2B-3DDC84?logo=android&logoColor=white" alt="Android 10+"></a>
   <a href="#iphone-与-ipad主屏幕-web-apppwa"><img src="https://img.shields.io/badge/iOS%20%2F%20iPadOS-PWA-111111?logo=apple&amp;logoColor=white" alt="iOS / iPadOS 主屏幕 Web App（PWA）"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-Apache--2.0-0F172A" alt="Apache-2.0"></a>
   <a href="https://github.com/awesome-dsh-plugin/awesome-dsh-plugin"><img src="https://awesome-dsh-plugin.com/badge.svg" alt="Awesome DSH Plugin"></a>
@@ -28,7 +28,7 @@
   <a href="#兼容性">兼容性</a> ·
   <a href="docs/README.md">文档</a> ·
   <a href="#贡献者">贡献者</a> ·
-  <a href="https://github.com/saya-ch/dsh-mobile/releases/tag/v0.8.7">更新记录</a> ·
+  <a href="https://github.com/Jlnvv-tom/quwork-dsh-mobile/releases/tag/v0.8.7">更新记录</a> ·
   <a href="README.en.md">English</a>
 </p>
 
@@ -36,12 +36,12 @@
 >
 > **使用 iPhone 或 iPad？** 可以用 Safari 访问，或[添加到主屏幕作为 Web App（PWA）使用](<#iphone-与-ipad主屏幕-web-apppwa>)，无需下载原生 iOS App。
 >
-> **当前正式版本：0.8.7**。新增默认关闭的会话预取、网关到期连接正常关闭与认证失败分类，并为 Android 0.7.4 准备后台提醒的真实状态与通知就地打开；同时更新插件图标与 iroh 排障文档。插件与 Android App 独立更新；Android App 0.7.4 已发布，新增设备端页面缓存、后台提醒真实状态与通知就地打开。[插件更新与下载](https://github.com/saya-ch/dsh-mobile/releases/tag/v0.8.7) · [完整更新记录](CHANGELOG.md)。
+> **当前正式版本：0.8.7**。新增默认关闭的会话预取、网关到期连接正常关闭与认证失败分类，并为 Android 0.7.4 准备后台提醒的真实状态与通知就地打开；同时更新插件图标与 iroh 排障文档。插件与 Android App 独立更新；Android App 0.7.4 已发布，新增设备端页面缓存、后台提醒真实状态与通知就地打开。[插件更新与下载](https://github.com/Jlnvv-tom/quwork-dsh-mobile/releases/tag/v0.8.7) · [完整更新记录](CHANGELOG.md)。
 >
 > **版本说明**：自插件 **0.6.2** 起，Android App 与插件改为独立发布（当时 App 仍为 0.6.1）；App 自 0.6.2 起使用独立编号，版本号无需一致；插件升级不代表 App 需要同步升级。[兼容说明](#兼容性)。
 
 <p align="center">
-  <a href="https://github.com/Jlnvv-tom/quwork-dsh-mobile/releases/download/android-v0.7.4/quwork-android-v0.7.4.apk"><img src="https://raw.githubusercontent.com/saya-ch/dsh-mobile/main/assets/brand/app-icon-rounded.svg" alt="DSH Mobile 安卓应用图标" width="72" height="72"></a><br>
+  <a href="https://github.com/Jlnvv-tom/quwork-dsh-mobile/releases/download/android-v0.7.4/quwork-android-v0.7.4.apk"><img src="https://raw.githubusercontent.com/Jlnvv-tom/quwork-dsh-mobile/main/assets/brand/app-icon-rounded.svg" alt="DSH Mobile 安卓应用图标" width="72" height="72"></a><br>
   <a href="https://github.com/Jlnvv-tom/quwork-dsh-mobile/releases/download/android-v0.7.4/quwork-android-v0.7.4.apk"><strong>下载 Android App 0.7.4（兼容版）</strong></a><br>
   <sub><a href="https://github.com/Jlnvv-tom/quwork-dsh-mobile/releases/download/android-v0.7.4/quwork-android-v0.7.4-iroh.apk">64 位完整版（含实验性 iroh）</a> · <a href="https://github.com/Jlnvv-tom/quwork-dsh-mobile/releases/tag/android-v0.7.4">版本说明与校验文件</a></sub>
 </p>
@@ -138,7 +138,7 @@ dsh plugin --profile web add dshmarket
 适合同一 Wi-Fi、以太网或手机热点，是默认且最简单的连接方式。
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/saya-ch/dsh-mobile/main/assets/screenshots/lan-access.png" width="82%" alt="DSH Mobile 局域网访问、配对二维码与设备管理">
+  <img src="https://raw.githubusercontent.com/Jlnvv-tom/quwork-dsh-mobile/main/assets/screenshots/lan-access.png" width="82%" alt="DSH Mobile 局域网访问、配对二维码与设备管理">
 </p>
 
 1. 让手机和电脑连接同一个局域网，在 DeepSeek Harness 左下角打开 **移动访问 → 局域网**。
@@ -195,7 +195,7 @@ dsh plugin --profile web add dshmarket
 | 托管 Caddy | 腾讯云 DNSPod 管理的域名与公网入站 | 插件管理 HTTPS 与证书；Windows/Linux x64；[配置指南](docs/CADDY_MANAGED.md) | 不提供内网穿透，需自行确认入站端口和映射；已有 Cloudflared 用户不必迁移 |
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/saya-ch/dsh-mobile/main/assets/screenshots/remote-access.png" width="82%" alt="DSH Mobile 远程访问与通道选择">
+  <img src="https://raw.githubusercontent.com/Jlnvv-tom/quwork-dsh-mobile/main/assets/screenshots/remote-access.png" width="82%" alt="DSH Mobile 远程访问与通道选择">
 </p>
 
 下面的扫码步骤适用于 HTTPS 远程通道；**iroh 使用独立的「生成 iroh 配对二维码」和完整版 App，按下方 iroh 步骤操作**，不要把其描述符当成普通网址在浏览器打开。
@@ -257,13 +257,13 @@ Funnel 的运行组件把公开监听生命周期绑定到父进程和受限控�
 
 定制需要从 **移动访问的配对入口**进入。直接打开普通 DSH 网页或调整浏览器为手机视口，不等于完成移动配对；文件存在也不代表当前页面已加载。若扩展接口返回 `401`，先核对入口与配对状态，不要开放匿名访问或公开 Cookie、Token。
 
-旧的 `mobile.css` 补丁可能覆盖新版内置修复。排查布局时先备份文件，在同一会话、方向和字号下对比有无该样式的效果，不要先叠加更多规则。匹配 CSS Modules 类名时应限定到已核对的区域祖先，例如 `[data-dsh-mobile-header] [class*="_titleRow"]`，不要裸用后缀／子串选择器；用 `display: none` 隐藏操作区会移除其中功能，不等于折叠。感谢 [#219](https://github.com/saya-ch/dsh-mobile/issues/219) 提供的对照记录。
+旧的 `mobile.css` 补丁可能覆盖新版内置修复。排查布局时先备份文件，在同一会话、方向和字号下对比有无该样式的效果，不要先叠加更多规则。匹配 CSS Modules 类名时应限定到已核对的区域祖先，例如 `[data-dsh-mobile-header] [class*="_titleRow"]`，不要裸用后缀／子串选择器；用 `display: none` 隐藏操作区会移除其中功能，不等于折叠。感谢 [#219](https://github.com/Jlnvv-tom/quwork-dsh-mobile/issues/219) 提供的对照记录。
 
 扩展清单及其脚本、样式和资源按版本标识刷新。插件监听到 `/mobile` 或扩展文件变化后，会通过已认证连接通知手机立即更新；页面可见时每 45 秒、隐藏时每 5 分钟的检查只作为断线兜底。Host 暂存失败会继续使用现有版本；若 Host 已更新但新手机界面激活失败，则关闭该扩展并自动重试，避免混用新旧能力。
 
 扩展动作的 `input` 可以直接使用 `api.schema.object(...)` 等 Schemastery schema，也可以使用带 `parse(value)` 的适配器；手机端 `api.host.invoke()` 会按 JSON 请求发送，输入会在电脑端动作执行前完成校验和规范化。
 
-附件功能优先复用 DSH 自带的文件上传。扩展若需模拟拖放，`dataTransfer` 除了 `files`，还须提供可迭代的 `items`（文件项列表），不能只拼一个 `files` 数组。部分 WebView 的原生拖放构造不完整，兼容处理可参考[插件内的文件投递实现](https://github.com/saya-ch/dsh-mobile/blob/main/src/native-mobile.ts)；`dragover` 接受或事件派发成功不代表附件已加入，应检查输入框中的附件与预览。
+附件功能优先复用 DSH 自带的文件上传。扩展若需模拟拖放，`dataTransfer` 除了 `files`，还须提供可迭代的 `items`（文件项列表），不能只拼一个 `files` 数组。部分 WebView 的原生拖放构造不完整，兼容处理可参考[插件内的文件投递实现](https://github.com/Jlnvv-tom/quwork-dsh-mobile/blob/main/src/native-mobile.ts)；`dragover` 接受或事件派发成功不代表附件已加入，应检查输入框中的附件与预览。
 
 0.6.3 新增可选的 [Worker 执行模式](docs/EXTENSION_WORKERS.md)，用于约束可信本地扩展的 JavaScript 阻塞；默认关闭，按扩展选择，故障后显式恢复，不自动重放操作。这不是权限沙箱，也不要求 App 同步版本。
 
@@ -272,10 +272,10 @@ Funnel 的运行组件把公开监听生命周期绑定到父进程和受限控�
 示例的实际效果：
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/saya-ch/dsh-mobile/main/assets/screenshots/crt-terminal-2.png" width="22%" alt="/mobile 定制为老式终端界面">
-  <img src="https://raw.githubusercontent.com/saya-ch/dsh-mobile/main/assets/screenshots/crt-terminal-1.png" width="22%" alt="/mobile 定制为老式终端界面">
-  <img src="https://raw.githubusercontent.com/saya-ch/dsh-mobile/main/assets/screenshots/cyberpunk-monitor-2.png" width="22%" style="margin-left:10px" alt="/mobile 定制为赛博朋克监控面板">
-  <img src="https://raw.githubusercontent.com/saya-ch/dsh-mobile/main/assets/screenshots/cyberpunk-monitor-1.png" width="22%" style="margin-left:8px" alt="/mobile 定制为赛博朋克监控面板">
+  <img src="https://raw.githubusercontent.com/Jlnvv-tom/quwork-dsh-mobile/main/assets/screenshots/crt-terminal-2.png" width="22%" alt="/mobile 定制为老式终端界面">
+  <img src="https://raw.githubusercontent.com/Jlnvv-tom/quwork-dsh-mobile/main/assets/screenshots/crt-terminal-1.png" width="22%" alt="/mobile 定制为老式终端界面">
+  <img src="https://raw.githubusercontent.com/Jlnvv-tom/quwork-dsh-mobile/main/assets/screenshots/cyberpunk-monitor-2.png" width="22%" style="margin-left:10px" alt="/mobile 定制为赛博朋克监控面板">
+  <img src="https://raw.githubusercontent.com/Jlnvv-tom/quwork-dsh-mobile/main/assets/screenshots/cyberpunk-monitor-1.png" width="22%" style="margin-left:8px" alt="/mobile 定制为赛博朋克监控面板">
 </p>
 
 ## 设备管理
@@ -299,11 +299,11 @@ App 0.6.7 配合插件 0.6.16，可在列表 **设置 → 同电脑自动连接*
 <table>
   <tr>
     <td align="center" valign="top" width="50%">
-      <img src="https://raw.githubusercontent.com/saya-ch/dsh-mobile/main/assets/screenshots/device-management.jpg" width="44%" alt="Android App 已配对设备列表"><br>
+      <img src="https://raw.githubusercontent.com/Jlnvv-tom/quwork-dsh-mobile/main/assets/screenshots/device-management.jpg" width="44%" alt="Android App 已配对设备列表"><br>
       <sub>设备管理列表：查看已配对电脑、连接方式和可达状态</sub>
     </td>
     <td align="center" valign="top" width="50%">
-      <img src="https://raw.githubusercontent.com/saya-ch/dsh-mobile/main/assets/screenshots/startup-behavior.jpg" width="44%" alt="Android App 启动行为设置"><br>
+      <img src="https://raw.githubusercontent.com/Jlnvv-tom/quwork-dsh-mobile/main/assets/screenshots/startup-behavior.jpg" width="44%" alt="Android App 启动行为设置"><br>
       <sub>启动行为设置：选择直接进入 DSH 或显示设备列表</sub>
     </td>
   </tr>
@@ -325,7 +325,7 @@ DSH Mobile 保留工作区、任务管理、终端和文件面板入口，第三
 - 在 **连接诊断 → 第三方 WebSocket 路径** 中，只对确认过的精确路径点击 **允许**。系统不接受带查询字符串或模糊前缀的路径；不建议使用“全部允许”。已允许的路径可以随时移除，局域网和远程连接使用同一套规则。
 - 放行只代表该路径可以通过已认证、同源的 DSH Mobile 网关，不会开放任意 TCP/UDP 端口，也不会绕过设备配对。若社区插件仍然连接失败，先看诊断页的实际拦截路径，再按一条路径放行。
 
-若另一个远程访问插件在 DSH Mobile 页面上显示自己的“未配对”提示，那是两套不同的授权。可先在电脑端暂时关闭另一插件的远程访问，确认 Mobile 链路是否恢复；不要把 DSH Mobile 密钥输入它的配对页。仅用下面的模块排除选项不能保证移除该插件在页面启动前注入的请求改写脚本，参见 [#111](https://github.com/saya-ch/dsh-mobile/issues/111)。
+若另一个远程访问插件在 DSH Mobile 页面上显示自己的“未配对”提示，那是两套不同的授权。可先在电脑端暂时关闭另一插件的远程访问，确认 Mobile 链路是否恢复；不要把 DSH Mobile 密钥输入它的配对页。仅用下面的模块排除选项不能保证移除该插件在页面启动前注入的请求改写脚本，参见 [#111](https://github.com/Jlnvv-tom/quwork-dsh-mobile/issues/111)。
 
 网关允许部分 HTTP iframe 不代表客户端会加载它：内容未加密，Android App 仍阻止 HTTPS 页面中的 HTTP 混合内容，浏览器也可能拦截。请优先配置 HTTPS；通过 HTTPS 管理入口打开远程面板时会显示相同风险提醒。
 
@@ -353,11 +353,11 @@ excludedClientModules:
 <table>
   <tr>
     <td align="center" valign="top" width="50%">
-      <img src="https://raw.githubusercontent.com/saya-ch/dsh-mobile/main/assets/screenshots/third-party-plugin-adaptation.png" width="96%" alt="Android App 宽屏布局与社区侧边栏插件适配"><br>
+      <img src="https://raw.githubusercontent.com/Jlnvv-tom/quwork-dsh-mobile/main/assets/screenshots/third-party-plugin-adaptation.png" width="96%" alt="Android App 宽屏布局与社区侧边栏插件适配"><br>
       <sub>Android App 下社区侧边栏插件的兼容</sub>
     </td>
     <td align="center" valign="top" width="50%">
-      <img src="https://raw.githubusercontent.com/saya-ch/dsh-mobile/main/assets/screenshots/websocket-diagnostics.png" width="96%" alt="Android App 第三方 WebSocket 路径诊断"><br>
+      <img src="https://raw.githubusercontent.com/Jlnvv-tom/quwork-dsh-mobile/main/assets/screenshots/websocket-diagnostics.png" width="96%" alt="Android App 第三方 WebSocket 路径诊断"><br>
       <sub>连接诊断：检查第三方 WebSocket 路径并按需放行</sub>
     </td>
   </tr>
@@ -397,7 +397,7 @@ flowchart LR
 
 插件包含三层：Host face 负责发现、配对、HTTPS、回环代理和扩展注册表；Client face 提供独立的移动布局与扩展 SDK；Android App 提供受限的原生 Bridge。Bridge 使用 `androidx.webkit` WebMessage，每条消息都校验精确顶层 Origin 和主 Frame，并限制消息大小；不使用 `addJavascriptInterface`。插件不改写 DeepSeek Harness 安装目录中的源码或网页文件；移动网关按请求提供启动兼容层与专用布局，安装和卸载通过插件机制完成。DSH Web 上游端口默认为 3080，可通过 `dsh web --port` 修改。
 
-会话切换后会重建客户端 Session 与实时流。插件提供默认关闭的会话预取（对应 [#291](https://github.com/saya-ch/dsh-mobile/issues/291)）：切换稳定后，仅对刚离开的会话发起一次有界、只读的 `session/projections` 预热，让切回命中 DSH session-query 的已准备缓存，避免重新解析整个会话日志。该行为受每会话冷却与超时约束，失败静默，且绝不打扰正常请求或实时流；在「设置 → 通用」中的「预取刚离开的会话」开关显式开启后才生效（默认关闭，选择会持久化）。
+会话切换后会重建客户端 Session 与实时流。插件提供默认关闭的会话预取（对应 [#291](https://github.com/Jlnvv-tom/quwork-dsh-mobile/issues/291)）：切换稳定后，仅对刚离开的会话发起一次有界、只读的 `session/projections` 预热，让切回命中 DSH session-query 的已准备缓存，避免重新解析整个会话日志。该行为受每会话冷却与超时约束，失败静默，且绝不打扰正常请求或实时流；在「设置 → 通用」中的「预取刚离开的会话」开关显式开启后才生效（默认关闭，选择会持久化）。
 
 ## 安全
 
@@ -415,14 +415,14 @@ flowchart LR
 
 ## 故障排查
 
-- **配对第二台电脑后，第一台被覆盖**：见 [#213](https://github.com/saya-ch/dsh-mobile/issues/213)；请升级至插件 0.6.8 或更新版本并正常重启 DSH，再分别扫描受影响电脑当前的二维码。已经被覆盖的 App 本地凭据不能自动找回；仍可连接的旧条目无需重配。若同一地址出现新旧两条记录，确认新条目正常后，只删除 App 中多余的本地条目，不要重置远程访问。升级前请阅读[设备状态备份与降级注意事项](SECURITY.md#installation-identity-and-device-state-upgrades)。
+- **配对第二台电脑后，第一台被覆盖**：见 [#213](https://github.com/Jlnvv-tom/quwork-dsh-mobile/issues/213)；请升级至插件 0.6.8 或更新版本并正常重启 DSH，再分别扫描受影响电脑当前的二维码。已经被覆盖的 App 本地凭据不能自动找回；仍可连接的旧条目无需重配。若同一地址出现新旧两条记录，确认新条目正常后，只删除 App 中多余的本地条目，不要重置远程访问。升级前请阅读[设备状态备份与降级注意事项](SECURITY.md#installation-identity-and-device-state-upgrades)。
 - **配对成功后仍反复提示重新配对或续期 `401`**：同一域名上的其他服务或旧 Cookie 可能干扰认证。更新至最新插件及 App，再从当前移动访问入口重试；浏览器重新扫描当前二维码可更新本插件的认证 Cookie，无需清除所有网站数据。若仍失败，查看失败请求与脱敏日志，其他认证或代理错误也可能返回 `401`。
 - **内测声明无法确认或设置无法保存**：先在电脑端直接打开 DSH 的本机地址，查看终端日志或浏览器 Network 中失败的设置请求。连接诊断不检查设置写入；保留现有配置及 `settings.yaml.imported`，按具体错误排查。相同界面提示可能有不同原因，见 [DSH #860](https://github.com/deepseek-ai/deepseek-harness/discussions/860)。
 - **设置请求返回 HTTP `403`**：先检查 DSH 的 Host/Origin 信任校验及代理响应。检查 iframe、代理和浏览器扩展是否改变请求来源，使用本机直接访问验证；保持信任检查启用。
-- **错误包含 `profile reload requires the root Include entry`**：该错误发生在 DSH 重载 profile 时。[Issue #132](https://github.com/saya-ch/dsh-mobile/issues/132) 报告过加载两份 `dsh-app-boot` 导致此错误，但单凭提示不能确认原因。核对实际运行的 DSH 命令与当前 profile 的版本和安装路径，保留配置并按 [DSH 官方文档](https://deepseek-harness.github.io/deepseek-harness/)修复依赖；仍失败时将版本、模块路径及脱敏后的完整错误提交上游。
+- **错误包含 `profile reload requires the root Include entry`**：该错误发生在 DSH 重载 profile 时。[Issue #132](https://github.com/Jlnvv-tom/quwork-dsh-mobile/issues/132) 报告过加载两份 `dsh-app-boot` 导致此错误，但单凭提示不能确认原因。核对实际运行的 DSH 命令与当前 profile 的版本和安装路径，保留配置并按 [DSH 官方文档](https://deepseek-harness.github.io/deepseek-harness/)修复依赖；仍失败时将版本、模块路径及脱敏后的完整错误提交上游。
 - **设置错误包含 `EACCES`、`EPERM` 或锁文件操作失败**：检查报错文件的权限及启动环境注入的文件操作工具。锁清理失败也可能发生在写入之后，先核对实际保存结果。
 - **手机出现另一插件的“输入配对码”页面**：`dsh-remote-web-ui` 与 DSH Mobile 各有独立的远程通道和配对码，不能交叉使用。若电脑端连接诊断提示“第三方远程插件”，先关闭该插件的远程访问并刷新，再扫描 DSH Mobile 当前二维码。仅安装该插件而未启用它的远程接管，不会触发这条诊断。
-- **Windows 初始化停在权限处理或失败**：日志中的 `sid-query` 表示查询当前账户 SID，`acl-apply` 表示应用私有文件权限，错误同时记录该阶段的完整等待耗时。不要关闭权限检查或把敏感文件改为所有人可读；提供脱敏后的阶段、耗时、错误码和 DSH 版本以继续定位。分阶段诊断不代表 [#128](https://github.com/saya-ch/dsh-mobile/issues/128) 的启动争抢问题已经解决。
+- **Windows 初始化停在权限处理或失败**：日志中的 `sid-query` 表示查询当前账户 SID，`acl-apply` 表示应用私有文件权限，错误同时记录该阶段的完整等待耗时。不要关闭权限检查或把敏感文件改为所有人可读；提供脱敏后的阶段、耗时、错误码和 DSH 版本以继续定位。分阶段诊断不代表 [#128](https://github.com/Jlnvv-tom/quwork-dsh-mobile/issues/128) 的启动争抢问题已经解决。
 - **远程诊断显示“电脑经代理可访问”**：诊断先直连，失败后才尝试 DSH 进程环境变量中的 HTTP 代理；`NO_PROXY` 可排除目标。此结果只说明电脑经代理完成 HTTPS 探测，不代表手机或实际隧道可用。请用手机流量实际连接；若直连和代理都失败，报告仍为不可达，不会把离线误报为就绪。
 - **切换网络后局域网访问不可用**：如果日志提示 `saved LAN interface "XXX" is not connected`，表示保存的网卡当前未连接。DSH 会继续运行，移动访问暂时休眠，原网卡恢复后会自动重试；若已改用新网卡，请重新完成局域网配置或重跑 `setup`。暂时不用移动访问时，可以在 `cordis.patch.yml` 中禁用 `mobile-access`。
 
@@ -455,8 +455,8 @@ macOS 上局域网、cloudflared、自建 FRP 与自有反向代理可用；Funn
 | `0.8.4` | 插件维护更新，继续使用 `0.2.2-rc.1` 的 DSH 打包验证目标，并保留既有版本检查。使用 rc.1 的 npm CLI 时，按上游要求使用 Node.js 24.9 或更新版本 |
 | `0.8.3` | 当时适配 DSH 0.2.2-rc.1，修复横屏、插件页和网页推送设置布局，支持共享 FRP 用户名，并改进 iroh 配对 |
 | `0.8.2` | 当时的 DSH 0.2.2 预览目标是 `0.2.2-alpha.3`。`0.2.2-alpha.2` 全新安装可能因上游依赖组合不一致而无法保存设置；[独立复现](https://github.com/deepseek-ai/deepseek-harness/discussions/11994#discussioncomment-19373554)。仍在使用 alpha.2 的用户建议升级到 rc.1 |
-| `0.8.1` | 新增 `0.2.1-rc.5`、`0.2.2-alpha.2` 的打包启动与设置、目录选择、附件、侧栏、压缩 Workspace 连接检查；完整版本矩阵见 [CI](https://github.com/saya-ch/dsh-mobile/actions/workflows/ci.yml) |
-| `0.8.0` | 网页推送的公共接口、设置、加密载荷与点击归属检查固定在 `0.2.1-rc.2 / rc.3`；通用启动与布局矩阵见 [CI](https://github.com/saya-ch/dsh-mobile/actions/workflows/ci.yml)。iOS 真机结果采信贡献者实测；浏览器检查不代表所有手机、第三方插件或公网线路已验收 |
+| `0.8.1` | 新增 `0.2.1-rc.5`、`0.2.2-alpha.2` 的打包启动与设置、目录选择、附件、侧栏、压缩 Workspace 连接检查；完整版本矩阵见 [CI](https://github.com/Jlnvv-tom/quwork-dsh-mobile/actions/workflows/ci.yml) |
+| `0.8.0` | 网页推送的公共接口、设置、加密载荷与点击归属检查固定在 `0.2.1-rc.2 / rc.3`；通用启动与布局矩阵见 [CI](https://github.com/Jlnvv-tom/quwork-dsh-mobile/actions/workflows/ci.yml)。iOS 真机结果采信贡献者实测；浏览器检查不代表所有手机、第三方插件或公网线路已验收 |
 
 <details>
 <summary>较早版本的验证记录</summary>
@@ -542,6 +542,6 @@ npm ci
 npm run verify
 ```
 
-文档快速检查使用 `npm run check:docs`。按改动选择的浏览器测试、隔离 DSH 打包验收、截图和正式发布流程见 [CONTRIBUTING.md](https://github.com/saya-ch/dsh-mobile/blob/main/CONTRIBUTING.md)；Android 构建见 [App 手册](apps/mobile/README.zh-CN.md#构建)。不要用真实用户配置或正式 App 数据替代测试资料。
+文档快速检查使用 `npm run check:docs`。按改动选择的浏览器测试、隔离 DSH 打包验收、截图和正式发布流程见 [CONTRIBUTING.md](https://github.com/Jlnvv-tom/quwork-dsh-mobile/blob/main/CONTRIBUTING.md)；Android 构建见 [App 手册](apps/mobile/README.zh-CN.md#构建)。不要用真实用户配置或正式 App 数据替代测试资料。
 
 Apache-2.0，详见 [LICENSE](LICENSE)。

@@ -11,7 +11,7 @@ DeepSeek Harness 是这个社区维护的 Android WebView App 的显示名称。
 ## 安装与配对
 
 1. 按[项目快速开始](../../README.md#快速开始)安装并启用插件。局域网配置可通过命令行或电脑端的 **移动访问** 面板完成。
-2. 从 [GitHub Releases](https://github.com/saya-ch/dsh-mobile/releases/tag/android-v0.7.4) 安装已签名 APK。原有 HTTPS 通道可选兼容版 `.apk`；arm64-v8a/x86_64 设备使用实验性 iroh 时选完整版 `-iroh.apk`。两包使用相同包名和正式签名，选一个原位升级即可保留配对；不同签名的 Debug 包不能直接覆盖正式版，不要为绕过签名不匹配而卸载或清除数据。
+2. 从 [GitHub Releases](https://github.com/Jlnvv-tom/quwork-dsh-mobile/releases/tag/android-v0.7.4) 安装已签名 APK。原有 HTTPS 通道可选兼容版 `.apk`；arm64-v8a/x86_64 设备使用实验性 iroh 时选完整版 `-iroh.apk`。两包使用相同包名和正式签名，选一个原位升级即可保留配对；不同签名的 Debug 包不能直接覆盖正式版，不要为绕过签名不匹配而卸载或清除数据。
 3. 在电脑 **移动访问 → 局域网访问** 中生成密钥／配对链接，或配置远程通道并生成远程配对二维码。在 App 选择对应方式，扫码或粘贴链接。
 4. 为电脑命名。每条局域网或远程配对单独保存；手机无需安装 cpolar、Cloudflare 或 Tailscale App。
 
@@ -186,7 +186,7 @@ Set-Location apps/mobile/android
 
 当前源码的 Debug 构建使用包名 `io.github.sayach.dshmobile.debug` 与 `-debug` 版本后缀，可与正式 App 并存，存储和配对彼此独立。它不会升级或迁移旧版无后缀 Debug 应用；切换包名时应保留旧应用和数据，不要为此卸载或清除。Release 构建继续使用 `io.github.sayach.dshmobile` 与既定正式签名。
 
-已核验的正式版本为 [Android 0.7.4](https://github.com/saya-ch/dsh-mobile/releases/tag/android-v0.7.4)，构建 89。兼容版与完整版分别附有对应的 `.sha256` 校验文件；两个公开下载均沿用正式发布签名及包名 `io.github.sayach.dshmobile`。旧版本历史集中在 [CHANGELOG](../../CHANGELOG.md)。
+已核验的正式版本为 [Android 0.7.4](https://github.com/Jlnvv-tom/quwork-dsh-mobile/releases/tag/android-v0.7.4)，构建 89。兼容版与完整版分别附有对应的 `.sha256` 校验文件；两个公开下载均沿用正式发布签名及包名 `io.github.sayach.dshmobile`。旧版本历史集中在 [CHANGELOG](../../CHANGELOG.md)。
 
 ## 验收与已知限制
 
