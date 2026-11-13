@@ -112,10 +112,10 @@ jobs:
           version="${GITHUB_REF_NAME#android-v}"
           for apk in quwork-android-v*.apk; do sha256sum "$apk" > "$apk.sha256"; done
           node scripts/write-android-update-descriptor.mjs quwork-android-v*.apk \
-            --repo "$GITHUB_REPOSITORY" \
-            --release-tag "$GITHUB_REF_NAME" \
+            --repo="$GITHUB_REPOSITORY" \
+            --release-tag="$GITHUB_REF_NAME" \
             ${MOBILE_DOWNLOAD_BASE_URL:+--base-url="$MOBILE_DOWNLOAD_BASE_URL"} \
-            --out quwork-android-release.json
+            --out=quwork-android-release.json
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
           name: android-package

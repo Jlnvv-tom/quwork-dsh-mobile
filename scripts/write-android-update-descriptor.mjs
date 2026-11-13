@@ -27,20 +27,37 @@ function fail(message) {
   process.exit(1)
 }
 
+const VALUE_OPTIONS = new Set(['out', 'base-url', 'repo', 'release-tag', 'version', 'version-code', 'notes-url'])
+
 function parseArguments(argv) {
   const options = { apks: [], out: undefined, baseUrl: undefined, github: false, repo: undefined, releaseTag: undefined, version: undefined, versionCode: undefined, notesUrl: undefined }
-  for (const argument of argv) {
-    if (argument.startsWith('--out=')) options.out = argument.slice(6)
-    else if (argument === '--github') options.github = true
-    else if (argument.startsWith('--base-url=')) options.baseUrl = argument.slice(11)
-    else if (argument.startsWith('--repo=')) options.repo = argument.slice(7)
-    else if (argument.startsWith('--release-tag=')) options.releaseTag = argument.slice(14)
-    else if (argument.startsWith('--version=')) options.version = argument.slice(10)
-    else if (argument.startsWith('--version-code=')) options.versionCode = Number(argument.slice(15))
-    else if (argument.startsWith('--notes-url=')) options.notesUrl = argument.slice(12)
+  const assign = (name, value) => {
+    if (name === 'out') options.out = value
+    else if (name === 'base-url') options.baseUrl = value
+    else if (name === 'repo') options.repo = value
+    else if (name === 'release-tag') options.releaseTag = value
+    else if (name === 'version') options.version = value
+    else if (name === 'version-code') options.versionCode = Number(value)
+    else options.notesUrl = value
+  }
+  for (let index = 0; index < argv.length; index += 1) {
+    const argument = argv[index]
+    if (argument === '--github') options.github = true
     else if (argument === '--help' || argument === '-h') options.help = true
-    else if (argument.startsWith('--')) fail(`unsupported option ${argument}`)
-    else options.apks.push(argument)
+    else if (argument.startsWith('--')) {
+      // Both `--name=value` and `--name value` are accepted: a shell wrapper may quote either form.
+      const separator = argument.indexOf('=')
+      const name = argument.slice(2, separator < 0 ? undefined : separator)
+      if (!VALUE_OPTIONS.has(name)) fail(`unsupported option ${argument}`)
+      let value
+      if (separator >= 0) value = argument.slice(separator + 1)
+      else {
+        index += 1
+        value = argv[index]
+        if (value === undefined) fail(`${argument} requires a value`)
+      }
+      assign(name, value)
+    } else options.apks.push(argument)
   }
   return options
 }
