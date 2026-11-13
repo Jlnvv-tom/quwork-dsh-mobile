@@ -4,14 +4,14 @@
 
 DeepSeek Harness 是这个社区维护的 Android WebView App 的显示名称。它直接打开插件提供的已认证 HTTPS 页面，不打包另一套 DSH 前端；App 与手机浏览器获得相同的 DSH 功能，以及电脑端配置的移动页面定制。
 
-当前正式 App 为 **0.7.5**；构建号为 90。npm 插件与 Android App 独立编号、独立更新；插件升级不代表需要重新安装 APK。此次改进见 [0.7.5 更新](#075-更新)。
+当前正式 App 为 **0.7.6**；构建号为 91。npm 插件与 Android App 独立编号、独立更新；插件升级不代表需要重新安装 APK。此次改进见 [0.7.6 更新](#076-更新)。
 
 此 APK 支持 Android 10 及以上系统。iPhone 和 iPad 使用 [Safari 主屏幕 Web App 与可选网页推送](../../docs/WEB_PUSH.md)，不安装 Android 包；本项目不分发原生 iOS App。
 
 ## 安装与配对
 
 1. 按[项目快速开始](../../README.md#快速开始)安装并启用插件。局域网配置可通过命令行或电脑端的 **移动访问** 面板完成。
-2. 从 [GitHub Releases](https://github.com/Jlnvv-tom/quwork-dsh-mobile/releases/tag/android-v0.7.5) 安装已签名 APK。原有 HTTPS 通道可选兼容版 `.apk`；arm64-v8a/x86_64 设备使用实验性 iroh 时选完整版 `-iroh.apk`。两包使用相同包名和签名，选一个原位升级即可保留配对；已安装上游版本的设备签名不同，需先卸载再安装。不同签名的 Debug 包也不能直接覆盖正式版。
+2. 从 [GitHub Releases](https://github.com/Jlnvv-tom/quwork-dsh-mobile/releases/tag/android-v0.7.6) 安装已签名 APK。原有 HTTPS 通道可选兼容版 `.apk`；arm64-v8a/x86_64 设备使用实验性 iroh 时选完整版 `-iroh.apk`。两包使用相同包名和签名，选一个原位升级即可保留配对；已安装上游版本的设备签名不同，需先卸载再安装。不同签名的 Debug 包也不能直接覆盖正式版。
 3. 在电脑 **移动访问 → 局域网访问** 中生成密钥／配对链接，或配置远程通道并生成远程配对二维码。在 App 选择对应方式，扫码或粘贴链接。
 4. 为电脑命名。每条局域网或远程配对单独保存；手机无需安装 cpolar、Cloudflare 或 Tailscale App。
 
@@ -35,6 +35,10 @@ DeepSeek Harness 是这个社区维护的 Android WebView App 的显示名称。
 页面缩放影响整个网页，与按地址保存的文字偏好不同。App 专属操作只在原生 Bridge 支持时显示。原生页面跟随 Android 系统语言，支持简体中文、英文和意大利文；网页跟随 DSH 选择的语言，当前 DSH 尚未提供意大利语。
 
 删除本机记录会移除保存的设备令牌和固定 CA，不等于撤销电脑授权或清除所有 WebView 短期 Cookie。需要立即终止访问时，请在电脑的 **移动访问** 中撤销设备。Android“清除应用数据”会删除全部配对和网页数据，不是普通重连的处理步骤。
+
+## 0.7.6 更新
+
+本次构建的 DSH 页面、WebView 外壳与原生代码与 0.7.5 相同，只把版本提升到 0.7.6（构建 91），使已发布的 APK 与更新描述文件一致。仍使用本仓库的 QuWork 正式签名与既有包名；已安装上游 App 的设备必须先卸载再安装，因为 Android 不允许更换签名的覆盖安装。插件与 App 版本仍各自独立。
 
 ## 0.7.5 更新
 

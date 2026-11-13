@@ -23,6 +23,15 @@ function singleMatch(source, pattern, label) {
   return matches[0][1]
 }
 
+function compareVersions(left, right) {
+  const a = String(left).split('.').map(Number)
+  const b = String(right).split('.').map(Number)
+  for (let index = 0; index < 3; index += 1) {
+    if (a[index] !== b[index]) return Math.sign(a[index] - b[index])
+  }
+  return 0
+}
+
 function androidResourceNames(source, element) {
   return [...source.matchAll(new RegExp(`<${element}\\s+name="([^"]+)"`, 'gu'))]
     .map(match => match[1])
@@ -91,7 +100,7 @@ async function checkBrandAndStoreIcon() {
 }
 
 async function checkAndroid() {
-  const [gradle, manifest, networkSecurity, discovery, nativeAuth, nsdDiscovery, credentialStore, pairedDeviceStore, credentialStorage, webViewClient, scanActivity, qrDecoder, nativeBridge, taskNotificationPublisher, backgroundNotificationService, nativeBridgePolicy, mainActivity, defaultStrings, chineseStrings, italianStrings, defaultColors, nightColors, clientSource, mobileLayoutSource, nativeMobileSource] = await Promise.all([
+  const [gradle, manifest, networkSecurity, discovery, nativeAuth, nsdDiscovery, credentialStore, pairedDeviceStore, credentialStorage, webViewClient, scanActivity, qrDecoder, nativeBridge, taskNotificationPublisher, backgroundNotificationService, nativeBridgePolicy, mainActivity, defaultStrings, chineseStrings, italianStrings, defaultColors, nightColors, clientSource, mobileLayoutSource, nativeMobileSource, releaseSource] = await Promise.all([
     read('apps/mobile/android/app/build.gradle.kts', 'utf8'),
     read('apps/mobile/android/app/src/main/AndroidManifest.xml', 'utf8'),
     read('apps/mobile/android/app/src/main/res/xml/network_security_config.xml', 'utf8'),
@@ -117,6 +126,7 @@ async function checkAndroid() {
     read('src/client.ts', 'utf8'),
     read('src/mobile-layout.ts', 'utf8'),
     read('src/native-mobile.ts', 'utf8'),
+    read('apps/mobile/release.json', 'utf8'),
   ])
   const compileSdk = singleMatch(gradle, /^\s*compileSdk\s*=\s*(\d+)\s*$/gm, 'Android compileSdk')
   const targetSdk = singleMatch(gradle, /^\s*targetSdk\s*=\s*(\d+)\s*$/gm, 'Android targetSdk')
@@ -126,6 +136,21 @@ async function checkAndroid() {
   }
   if (!/^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/.test(versionName)) {
     fail('Android versionName must be a stable numeric SemVer independent of the plugin version')
+  }
+  const versionCode = singleMatch(gradle, /^\s*versionCode\s*=\s*(\d+)\s*$/gm, 'Android versionCode')
+  const release = JSON.parse(releaseSource)
+  // apps/mobile/release.json names an already published APK, so it may trail the
+  // Gradle candidate (which becomes the next APK) but never lead it: a descriptor
+  // ahead of the build names an asset that does not exist. It must also be
+  // self-consistent, because that tag is what phones download from.
+  if (typeof release !== 'object' || release === null) {
+    fail('apps/mobile/release.json must be a JSON object')
+  }
+  if (release.releaseTag !== `android-v${release.version}`) {
+    fail(`apps/mobile/release.json releaseTag must be android-v${release.version}, got ${release.releaseTag}`)
+  }
+  if (compareVersions(release.version, versionName) > 0 || Number(release.versionCode) > Number(versionCode)) {
+    fail(`apps/mobile/release.json (${release.version}/${release.versionCode}) must not lead app/build.gradle.kts (${versionName}/${versionCode})`)
   }
   if (!/android:icon="@mipmap\/ic_launcher"/.test(manifest)
     || !/android:roundIcon="@mipmap\/ic_launcher"/.test(manifest)) {

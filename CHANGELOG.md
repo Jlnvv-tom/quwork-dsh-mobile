@@ -2,6 +2,13 @@
 
 Notable changes are recorded here. GitHub Releases provide the downloadable packages and generated commit notes.
 
+## 0.8.8 - 2026-11-13
+
+- Remove DSH's own 「更多」 panel trigger from the dedicated Mobile drawer together with the QuWork-only entries already hidden there: it only opens the panel menu those entries belong to, and its collapsed state is a rail icon a phone cannot reach. The rule matches DSH's stable `_panelList` / `_moreAnchor` class suffixes and stays under the mobile layout class, so a wide desktop browser keeps the stock sidebar.
+- Hide the buttons the QuWork bridge injects into `[data-qurwork-sidebar-actions]`. The bridge pins that container to `display: contents !important` through a wider selector, so the earlier container-only rule left 「插件 · 技能」 visible in the drawer.
+- Send the App download action to the QuWork site instead of the placeholder URL.
+- Android App 0.7.7 (build 92) is prepared separately and only changes the launcher label to QuWork; the DSH page and native behaviour are unchanged.
+
 ## 0.8.7 - 2026-11-11
 
 - Add an opt-in, off-by-default session prefetch for the dedicated Mobile layout. After a session switch settles, the page issues one bounded, read-only `session/projections` request for the session the user just left (the most likely switch-back target), so a follow-back hits DSH session-query's prepared-session cache warm instead of re-parsing the whole log. Guarded by a per-session cooldown and a bounded timeout; failures are silent and are not retried. It stays disabled until the new "Prefetch the session you just left" switch in Settings → General is turned on; the choice is persisted and applies without a reload. Thanks @eeeggplant for the measurement and proposal in [#291](https://github.com/saya-ch/dsh-mobile/issues/291), and @lnuxe for the implementation in [#383](https://github.com/saya-ch/dsh-mobile/pull/383).

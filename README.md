@@ -36,14 +36,14 @@
 >
 > **使用 iPhone 或 iPad？** 可以用 Safari 访问，或[添加到主屏幕作为 Web App（PWA）使用](<#iphone-与-ipad主屏幕-web-apppwa>)，无需下载原生 iOS App。
 >
-> **当前正式版本：0.8.7**。新增默认关闭的会话预取、网关到期连接正常关闭与认证失败分类，并为 Android 0.7.4 准备后台提醒的真实状态与通知就地打开；同时更新插件图标与 iroh 排障文档。插件与 Android App 独立更新；Android App 0.7.5 已发布，页面与原生行为同 0.7.4，但改用本仓库的 QuWork 签名，安装过上游版本者需先卸载再装。[插件更新与下载](https://github.com/Jlnvv-tom/quwork-dsh-mobile/releases/tag/v0.8.7) · [完整更新记录](CHANGELOG.md)。
+> **当前正式版本：0.8.8**。移动页隐藏 DSH 自带的「更多」面板入口，并修好被 bridge 的 `display: contents` 覆盖、一直在侧栏残留的「插件 · 技能」按钮；App 下载入口改指 QuWork 站点。插件与 Android App 独立更新；Android App 0.7.6 已发布（构建号 91），页面与原生行为同 0.7.5，仅版本标记变化；自 0.7.5 起改用本仓库的 QuWork 签名，安装过上游版本者需先卸载再装。[插件更新与下载](https://github.com/Jlnvv-tom/quwork-dsh-mobile/releases/tag/v0.8.8) · [完整更新记录](CHANGELOG.md)。
 >
 > **版本说明**：自插件 **0.6.2** 起，Android App 与插件改为独立发布（当时 App 仍为 0.6.1）；App 自 0.6.2 起使用独立编号，版本号无需一致；插件升级不代表 App 需要同步升级。[兼容说明](#兼容性)。
 
 <p align="center">
-  <a href="https://github.com/Jlnvv-tom/quwork-dsh-mobile/releases/download/android-v0.7.5/quwork-android-v0.7.5.apk"><img src="https://raw.githubusercontent.com/Jlnvv-tom/quwork-dsh-mobile/main/assets/brand/app-icon-rounded.svg" alt="QuWork 安卓应用图标" width="72" height="72"></a><br>
-  <a href="https://github.com/Jlnvv-tom/quwork-dsh-mobile/releases/download/android-v0.7.5/quwork-android-v0.7.5.apk"><strong>下载 Android App 0.7.5（兼容版）</strong></a><br>
-  <sub><a href="https://github.com/Jlnvv-tom/quwork-dsh-mobile/releases/download/android-v0.7.5/quwork-android-v0.7.5-iroh.apk">64 位完整版（含实验性 iroh）</a> · <a href="https://github.com/Jlnvv-tom/quwork-dsh-mobile/releases/tag/android-v0.7.5">版本说明与校验文件</a></sub>
+  <a href="https://github.com/Jlnvv-tom/quwork-dsh-mobile/releases/download/android-v0.7.6/quwork-android-v0.7.6.apk"><img src="https://raw.githubusercontent.com/Jlnvv-tom/quwork-dsh-mobile/main/assets/brand/app-icon-rounded.svg" alt="QuWork 安卓应用图标" width="72" height="72"></a><br>
+  <a href="https://github.com/Jlnvv-tom/quwork-dsh-mobile/releases/download/android-v0.7.6/quwork-android-v0.7.6.apk"><strong>下载 Android App 0.7.6（兼容版）</strong></a><br>
+  <sub><a href="https://github.com/Jlnvv-tom/quwork-dsh-mobile/releases/download/android-v0.7.6/quwork-android-v0.7.6-iroh.apk">64 位完整版（含实验性 iroh）</a> · <a href="https://github.com/Jlnvv-tom/quwork-dsh-mobile/releases/tag/android-v0.7.6">版本说明与校验文件</a></sub>
 </p>
 
 QuWork 是一个 DeepSeek Harness 插件，让手机浏览器或 Android App 通过局域网，或可选的 Tailscale Funnel、cpolar、cloudflared、自建 FRP、自有反向代理远程通道连接电脑；Android 完整版还支持实验性 iroh 加密直连与中继。手机可以继续使用电脑上的会话、工作区、消息和工具。电脑端分别启停局域网与远程访问、分别管理配对授权；Android App 统一显示已配对电脑。插件不修改 DeepSeek Harness 源码。
