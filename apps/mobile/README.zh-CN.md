@@ -170,7 +170,7 @@ Bridge 文件／相机操作串行执行，最长等待五分钟。取消、文�
 
 ## 构建
 
-使用 Android Studio 或 Android SDK 36 与 JDK 17；仓库包含 Gradle 9.8.2 Wrapper。
+使用 Android Studio 或 Android SDK 36 与 JDK 17；仓库包含 Gradle 9.8.2 Wrapper。完整的工具链版本、三档构建与产物校验见 [Android 构建环境](../../docs/ANDROID_BUILD.md)；下面的命令只是最短路径。
 
 ```powershell
 Set-Location apps/mobile/android

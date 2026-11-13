@@ -43,6 +43,7 @@
 
 ## 开发与安全 / Development and security
 
+[Android 构建环境](ANDROID_BUILD.md)／[Android build setup](ANDROID_BUILD.en.md) 列出本地打包需要的 JDK、SDK、NDK 与 Rust 版本、三档构建命令和产物验证方式，并说明为什么本地产物不是发布证据。
 0.6.3 的 [扩展 Worker 指南](EXTENSION_WORKERS.md)／[Worker guide](EXTENSION_WORKERS.en.md) 介绍按扩展启用、预算与显式恢复；此功能不迁移普通 Cordis 插件，也不是权限沙箱。
 [插件移动端基线](MOBILE_PLUGIN_BASELINE.md)／[Plugin mobile baseline](MOBILE_PLUGIN_BASELINE.en.md) 把「小屏可用、桌面不回退」拆成三级要求与验收证据；做法与示例见[适配指南](MOBILE_PLUGIN_ADAPTATION.md)／[guide](MOBILE_PLUGIN_ADAPTATION.en.md)。
 

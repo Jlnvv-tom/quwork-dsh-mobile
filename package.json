@@ -51,6 +51,8 @@
     "CHANGELOG.md",
     "CONTRIBUTORS.md",
     "docs/README.md",
+    "docs/ANDROID_BUILD.md",
+    "docs/ANDROID_BUILD.en.md",
     "docs/SKIN_COMPATIBILITY.md",
     "docs/SKIN_COMPATIBILITY.en.md",
     "docs/DSH_0.1.5_LAN.md",

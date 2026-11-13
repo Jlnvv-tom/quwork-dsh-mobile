@@ -129,7 +129,7 @@ The compatibility, viewport and missing-companion negative lanes emit a final `D
 
 ## Android and optional components
 
-Follow the [Android build instructions](apps/mobile/README.md#build) and keep both app manuals aligned. Preserve application identity, stable signing and stored pairings. Never uninstall or clear a user's app to bypass a signing mismatch. Ask before altering real device data; use a separate test package for destructive test flows.
+Follow the [Android build instructions](apps/mobile/README.md#build); the [Android build setup](docs/ANDROID_BUILD.en.md) guide holds the toolchain versions, build lanes and artifact checks. Keep both app manuals aligned. Preserve application identity, stable signing and stored pairings. Never uninstall or clear a user's app to bypass a signing mismatch. Ask before altering real device data; use a separate test package for destructive test flows.
 
 Current Debug builds use `io.github.sayach.dshmobile.debug` and a `-debug` version suffix, with data separate from the official App and older unsuffixed Debug installs. Do not describe their pairings as migrated or remove the older app to install them. Release package identity and signing remain unchanged.
 
