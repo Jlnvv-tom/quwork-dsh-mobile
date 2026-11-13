@@ -78,7 +78,19 @@ jobs:
         with:
           name: plugin-package
           path: release-assets
+      - name: Detect npm credentials
+        id: registry
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          if [ -n "$NPM_TOKEN" ]; then
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+            echo "NPM_TOKEN is not configured; keeping this release GitHub-only." >> "$GITHUB_STEP_SUMMARY"
+          fi
       - name: Publish npm package
+        if: steps.registry.outputs.enabled == 'true'
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
@@ -125,12 +137,16 @@ jobs:
             exit 1
           else
             previous_plugin_tag="$(gh release list --repo "$GITHUB_REPOSITORY" --limit 100 --json tagName,isDraft,isPrerelease --jq '[.[] | select(.isDraft == false and .isPrerelease == false) | .tagName | select(test("^v[0-9]+\\.[0-9]+\\.[0-9]+$"))][0] // empty')"
-            test -n "$previous_plugin_tag"
+            # The first release of this repository has no predecessor to compare against.
+            notes_start=()
+            if [ -n "$previous_plugin_tag" ]; then
+              notes_start=(--notes-start-tag "$previous_plugin_tag")
+            fi
             gh release create "$GITHUB_REF_NAME" release-assets/* \
               --repo "$GITHUB_REPOSITORY" \
               --verify-tag \
               --generate-notes \
-              --notes-start-tag "$previous_plugin_tag" \
+              "${notes_start[@]}" \
               --notes "$release_note" \
               --title "$GITHUB_REF_NAME"
           fi
