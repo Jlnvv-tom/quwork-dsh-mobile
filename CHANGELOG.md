@@ -12,6 +12,10 @@ Notable changes are recorded here. GitHub Releases provide the downloadable pack
 - Declare a plugin icon so DSH shows the DSH Mobile picture in its plugin metadata instead of the default plugin glyph. The shipped `assets/brand/plugin-icon.png` is package-relative, within DSH's 256 KiB icon limit, and read without evaluating plugin code.
 - The page-side halves of the background-reminder status and in-place notification navigation ship in this plugin release; their native halves are prepared as Android 0.7.4 below and released separately. Android 0.7.3 remains the published App until then.
 
+## Android 0.7.6 - 2026-11-13
+
+- Rebuild the App package as `android-v0.7.6` (build 91) through this repository's own release workflow. No native code changed since 0.7.5 and the App ships no page code, so the APK behaves like 0.7.5 apart from the version stamp; the package ID, signer and pairing data are unchanged, and it installs over 0.7.5.
+
 ## Android 0.7.5 - 2026-11-13
 
 - Publish the Android App from this repository's own release workflow for the first time. The page-side and native behaviour is the same as Android 0.7.4; the version moves to 0.7.5 (build 90) and the compatibility and full iroh APKs are built, signed, checked and attached to a GitHub release with their checksums, dependency reports and update descriptor.

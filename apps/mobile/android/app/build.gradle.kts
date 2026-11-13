@@ -83,8 +83,8 @@ android {
         applicationId = "io.github.sayach.dshmobile"
         minSdk = 29
         targetSdk = 36
-        versionCode = 90
-        versionName = "0.7.5"
+        versionCode = 91
+        versionName = "0.7.6"
         buildConfigField("boolean", "IROH_NATIVE_ENABLED", irohNativeEnabled.toString())
         buildConfigField("String", "DOWNLOAD_PAGE_URL", "\"$downloadPageUrl\"")
         buildConfigField("String", "UPDATE_DESCRIPTOR_URL", "\"$updateDescriptorUrl\"")
