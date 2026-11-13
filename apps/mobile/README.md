@@ -4,14 +4,14 @@
 
 DeepSeek Harness is the display name of this community-maintained Android WebView app. It opens the plugin's authenticated HTTPS page rather than bundling another DSH frontend. The app and mobile browsers receive the same DSH features and computer-side mobile customizations.
 
-The current stable app is **0.7.4** (build 89). The npm plugin and Android App have independent versions: a plugin update does not automatically require another APK. See the [0.7.4 changes](#074-update).
+The current stable app is **0.7.5** (build 90). The npm plugin and Android App have independent versions: a plugin update does not automatically require another APK. See the [0.7.5 changes](#075-update).
 
 This APK supports Android 10 or later. iPhone and iPad use the [Safari Home Screen web app and optional Web Push](../../docs/WEB_PUSH.en.md), not this Android package; no native iOS app is distributed.
 
 ## Install and pair
 
 1. Install and enable the plugin using the [project quick start](../../README.en.md#quick-start). Complete LAN setup from the command line or the computer's **Mobile Access** panel.
-2. Install a signed Android APK from [GitHub Releases](https://github.com/Jlnvv-tom/quwork-dsh-mobile/releases/tag/android-v0.7.4). Choose the compatibility `.apk` for existing HTTPS channels, or the full `-iroh.apk` for experimental iroh on arm64-v8a/x86_64. Both have the same package ID and official signer; install only one and upgrade in place to retain pairings. A differently signed Debug APK cannot replace it; do not uninstall or clear data just to bypass that mismatch.
+2. Install a signed Android APK from [GitHub Releases](https://github.com/Jlnvv-tom/quwork-dsh-mobile/releases/tag/android-v0.7.5). Choose the compatibility `.apk` for existing HTTPS channels, or the full `-iroh.apk` for experimental iroh on arm64-v8a/x86_64. Both have the same package ID and signer; install only one and upgrade in place to retain pairings. An App installed from the upstream project has a different signer, so uninstall it first. A differently signed Debug APK cannot replace it; do not uninstall or clear data just to bypass that mismatch.
 3. On the computer, generate a pairing key/link under **Mobile Access → Local network**, or configure a remote provider and generate its remote pairing QR code. In the app, choose the matching connection mode and scan or paste the link.
 4. Name the computer. The app stores each LAN or remote pairing as its own record. The phone does not need a cpolar, Cloudflare or Tailscale app.
 
@@ -35,6 +35,12 @@ The **Paired computers** list shows names, connection types, addresses, reachabi
 Page zoom changes the whole page and is separate from per-address text preferences. App-only actions are shown only when the native bridge supports them. Native screens follow the Android system language in Simplified Chinese, English or Italian; webpage copy follows DSH's selected locale. DSH does not currently expose Italian.
 
 Deleting a local record removes its saved token and pinned CA, not the computer's authorization or every short-lived WebView cookie. Use **Mobile Access** on the computer to revoke access immediately. A full Android clear-app-data reset removes all pairings and web data and is not a normal reconnection step.
+
+## 0.7.5 update
+
+This is the first App build produced and published by this repository's own `Android Release` workflow. The DSH page, WebView shell and native code are unchanged from 0.7.4; the version moves to 0.7.5 (build 90) so the App can be published from here and later builds have room to move.
+
+The release carries both APKs with their `.sha256` files, dependency reports and update descriptor. They are signed with this repository's QuWork release key rather than the upstream project's key: the package ID is unchanged, but a device with the upstream App must uninstall it before installing this build, and uninstalling removes local pairings and web data, so pair again afterwards.
 
 ## 0.7.4 update
 
@@ -184,11 +190,13 @@ Pass `-PirohNative=false` for a fast toolchain-free lane that builds the origina
 
 Native builds also include the JVM TLS verifier matching `native/Cargo.lock`, from the revision-pinned official Maven archive. Preserve its JNI/Proguard rules: compiling and packaging the `.so` alone is insufficient. The APK verifier checks the retained JVM classes and native entry names in both Debug and minified Release builds.
 
-Current-source Debug builds use package `io.github.sayach.dshmobile.debug` with a `-debug` version suffix. They install beside the official App with separate storage and pairings. They do not upgrade or migrate an older unsuffixed Debug installation; preserve that app and its data rather than uninstalling or clearing it to switch packages. Release builds keep `io.github.sayach.dshmobile` and the established signer.
+Current-source Debug builds use package `io.github.sayach.dshmobile.debug` with a `-debug` version suffix. They install beside the official App with separate storage and pairings. They do not upgrade or migrate an older unsuffixed Debug installation; preserve that app and its data rather than uninstalling or clearing it to switch packages. Release builds keep `io.github.sayach.dshmobile`; from 0.7.5 on they carry this repository's QuWork release key, which is not the upstream project's key.
 
-The verified stable release is [Android 0.7.4](https://github.com/Jlnvv-tom/quwork-dsh-mobile/releases/tag/android-v0.7.4), build 89. The compatibility and full APKs each have a matching `.sha256` asset. Both public downloads retain the established release signer and package `io.github.sayach.dshmobile`. Earlier release history belongs in [CHANGELOG](../../CHANGELOG.md).
+The verified stable release is [Android 0.7.5](https://github.com/Jlnvv-tom/quwork-dsh-mobile/releases/tag/android-v0.7.5), build 90. The compatibility and full APKs each have a matching `.sha256` asset. Both public downloads use the QuWork release signer and the package `io.github.sayach.dshmobile`; a device that still carries the upstream App must uninstall it first, because the signers differ and Android refuses to replace one with the other. Earlier release history belongs in [CHANGELOG](../../CHANGELOG.md).
 
 ## Acceptance and known limits
+
+- Both public App 0.7.5 APKs were built and signed by the `Android Release` workflow and passed its checksum, manifest, signer and size checks; the compatibility APK contains no native libraries and the full APK carries only the two iroh transport ABIs. No new physical-device or public-network run was performed for 0.7.5, whose page and native behaviour is unchanged from 0.7.4.
 
 - Both public App 0.7.4 APKs passed checksum, manifest, established-signer and size checks; the compatibility APK contains no native libraries and the full APK carries only the two iroh transport ABIs. There is no new physical-device or public-network run for 0.7.4: the device cache, background-reminder status and in-place notification tap paths are covered by the Android unit tests and CI release builds only, and the Debug-device evidence below belongs to 0.7.3.
 

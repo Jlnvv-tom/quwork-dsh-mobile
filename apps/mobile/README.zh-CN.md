@@ -4,14 +4,14 @@
 
 DeepSeek Harness 是这个社区维护的 Android WebView App 的显示名称。它直接打开插件提供的已认证 HTTPS 页面，不打包另一套 DSH 前端；App 与手机浏览器获得相同的 DSH 功能，以及电脑端配置的移动页面定制。
 
-当前正式 App 为 **0.7.4**；构建号为 89。npm 插件与 Android App 独立编号、独立更新；插件升级不代表需要重新安装 APK。此次改进见 [0.7.4 更新](#074-更新)。
+当前正式 App 为 **0.7.5**；构建号为 90。npm 插件与 Android App 独立编号、独立更新；插件升级不代表需要重新安装 APK。此次改进见 [0.7.5 更新](#075-更新)。
 
 此 APK 支持 Android 10 及以上系统。iPhone 和 iPad 使用 [Safari 主屏幕 Web App 与可选网页推送](../../docs/WEB_PUSH.md)，不安装 Android 包；本项目不分发原生 iOS App。
 
 ## 安装与配对
 
 1. 按[项目快速开始](../../README.md#快速开始)安装并启用插件。局域网配置可通过命令行或电脑端的 **移动访问** 面板完成。
-2. 从 [GitHub Releases](https://github.com/Jlnvv-tom/quwork-dsh-mobile/releases/tag/android-v0.7.4) 安装已签名 APK。原有 HTTPS 通道可选兼容版 `.apk`；arm64-v8a/x86_64 设备使用实验性 iroh 时选完整版 `-iroh.apk`。两包使用相同包名和正式签名，选一个原位升级即可保留配对；不同签名的 Debug 包不能直接覆盖正式版，不要为绕过签名不匹配而卸载或清除数据。
+2. 从 [GitHub Releases](https://github.com/Jlnvv-tom/quwork-dsh-mobile/releases/tag/android-v0.7.5) 安装已签名 APK。原有 HTTPS 通道可选兼容版 `.apk`；arm64-v8a/x86_64 设备使用实验性 iroh 时选完整版 `-iroh.apk`。两包使用相同包名和签名，选一个原位升级即可保留配对；已安装上游版本的设备签名不同，需先卸载再安装。不同签名的 Debug 包也不能直接覆盖正式版。
 3. 在电脑 **移动访问 → 局域网访问** 中生成密钥／配对链接，或配置远程通道并生成远程配对二维码。在 App 选择对应方式，扫码或粘贴链接。
 4. 为电脑命名。每条局域网或远程配对单独保存；手机无需安装 cpolar、Cloudflare 或 Tailscale App。
 
@@ -35,6 +35,12 @@ DeepSeek Harness 是这个社区维护的 Android WebView App 的显示名称。
 页面缩放影响整个网页，与按地址保存的文字偏好不同。App 专属操作只在原生 Bridge 支持时显示。原生页面跟随 Android 系统语言，支持简体中文、英文和意大利文；网页跟随 DSH 选择的语言，当前 DSH 尚未提供意大利语。
 
 删除本机记录会移除保存的设备令牌和固定 CA，不等于撤销电脑授权或清除所有 WebView 短期 Cookie。需要立即终止访问时，请在电脑的 **移动访问** 中撤销设备。Android“清除应用数据”会删除全部配对和网页数据，不是普通重连的处理步骤。
+
+## 0.7.5 更新
+
+这是本仓库 `Android Release` 流水线首次自行产出并发布的 App 构建。DSH 页面、WebView 外壳与原生代码与 0.7.4 相同；版本号提升到 0.7.5（构建 90），以便从这里发布并为后续版本留出空间。
+
+发布附带两份 APK 及其 `.sha256`、依赖清单与更新描述文件。它们使用本仓库的 QuWork 正式签名，而不是上游项目的签名：包名未变，但已安装上游 App 的设备必须先卸载再安装，卸载会清除本机配对与网页数据，装好后需要重新配对。
 
 ## 0.7.4 更新
 
@@ -184,11 +190,13 @@ Set-Location apps/mobile/android
 
 原生构建还会从固定提交的官方 Maven 归档引入与 `native/Cargo.lock` 匹配的 JVM TLS 校验组件。必须保留其 JNI／Proguard 规则，仅打包 `.so` 不足以完成接入。APK 验证会检查 Debug 和压缩后的 Release 是否保留所需 JVM 类和原生入口名称。
 
-当前源码的 Debug 构建使用包名 `io.github.sayach.dshmobile.debug` 与 `-debug` 版本后缀，可与正式 App 并存，存储和配对彼此独立。它不会升级或迁移旧版无后缀 Debug 应用；切换包名时应保留旧应用和数据，不要为此卸载或清除。Release 构建继续使用 `io.github.sayach.dshmobile` 与既定正式签名。
+当前源码的 Debug 构建使用包名 `io.github.sayach.dshmobile.debug` 与 `-debug` 版本后缀，可与正式 App 并存，存储和配对彼此独立。它不会升级或迁移旧版无后缀 Debug 应用；切换包名时应保留旧应用和数据，不要为此卸载或清除。Release 构建继续使用 `io.github.sayach.dshmobile`；从 0.7.5 起使用本仓库的 QuWork 正式签名，与上游项目的签名不同。
 
-已核验的正式版本为 [Android 0.7.4](https://github.com/Jlnvv-tom/quwork-dsh-mobile/releases/tag/android-v0.7.4)，构建 89。兼容版与完整版分别附有对应的 `.sha256` 校验文件；两个公开下载均沿用正式发布签名及包名 `io.github.sayach.dshmobile`。旧版本历史集中在 [CHANGELOG](../../CHANGELOG.md)。
+已核验的正式版本为 [Android 0.7.5](https://github.com/Jlnvv-tom/quwork-dsh-mobile/releases/tag/android-v0.7.5)，构建 90。兼容版与完整版分别附有对应的 `.sha256` 校验文件；两个公开下载均使用 QuWork 正式签名与包名 `io.github.sayach.dshmobile`，仍装有上游 App 的设备须先卸载，因为两者签名不同、Android 不允许互相覆盖。旧版本历史集中在 [CHANGELOG](../../CHANGELOG.md)。
 
 ## 验收与已知限制
+
+- App 0.7.5 的两份公开 APK 均由 `Android Release` 流水线构建并签名，通过校验值、Manifest、签名与体积检查；兼容版不含原生库，完整版只携带两个 iroh 传输 ABI。0.7.5 未新增真机或公网回归，其页面与原生行为与 0.7.4 相同。
 
 - App 0.7.4 的两份公开 APK 均通过校验值、Manifest、既定正式签名与体积检查；兼容版不含原生库，完整版只携带两个 iroh 传输 ABI。本版未新增真机或公网回归：设备端缓存、后台提醒状态与通知就地打开仅由 Android 单元测试与 CI 发布构建覆盖，下方的真机 Debug 证据属于 0.7.3。
 

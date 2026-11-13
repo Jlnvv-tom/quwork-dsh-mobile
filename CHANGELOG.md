@@ -14,7 +14,8 @@ Notable changes are recorded here. GitHub Releases provide the downloadable pack
 
 ## Android 0.7.5 - 2026-11-13
 
-- Publish the Android App from this repository's own release workflow for the first time. The page-side and native behaviour is the same as Android 0.7.4; the version moves to 0.7.5 (build 90) so an installed App upgrades in place, and the compatibility and full iroh APKs are built, signed, checked and attached to a GitHub release with their checksums, dependency reports and update descriptor.
+- Publish the Android App from this repository's own release workflow for the first time. The page-side and native behaviour is the same as Android 0.7.4; the version moves to 0.7.5 (build 90) and the compatibility and full iroh APKs are built, signed, checked and attached to a GitHub release with their checksums, dependency reports and update descriptor.
+- The App now carries this repository's QuWork release key instead of the upstream project's key. The package ID is unchanged, but a device that still has the upstream App has to uninstall it before installing this build, because Android refuses to replace one signer with another.
 - Point the download, release-notes, CI-badge and asset links in `README.md`, `README.en.md` and the App READMEs at this repository instead of the upstream project, which hosts neither this plugin nor this App.
 
 ## Android 0.7.4 - 2026-11-11
