@@ -8,13 +8,25 @@
  * mobile drawer. The account entry is the exception — `mobile-qurwork-panel`
  * owns that tap and renders a mobile sheet, so it stays visible.
  *
+ * DSH's own 「更多」 panel trigger (`PanelMoreMenu`) only opens the menu of
+ * panels this page already hides, and it expands to a rail icon with no
+ * reachable action on a phone, so it goes with them.
+ *
  * The injected container carries a bridge marker and hides by stylesheet; the
  * More menu is DSH's own markup, so the matching row is tagged with an
- * attribute instead of guessed at by CSS.
+ * attribute instead of guessed at by CSS. DSH hashes the CSS-module prefix of
+ * its class names but keeps the `_panelList` / `_moreAnchor` suffixes, which is
+ * the same contract the bridge itself relies on.
  */
 
 /** Container the bridge appends to the DSH sidebar root. */
 export const QUWORK_SIDEBAR_ACTIONS_SELECTOR = '[data-qurwork-sidebar-actions]'
+/** DSH sidebar panel list that owns the rail's panel triggers. */
+export const QUWORK_PANEL_LIST_SELECTOR = '[class*="_panelList"]'
+/** DSH 「更多」 panel trigger wrapper (`PanelMoreMenu` anchors the menu here). */
+export const QUWORK_PANEL_MORE_SELECTOR = `${QUWORK_PANEL_LIST_SELECTOR} [class*="_moreAnchor"]`
+/** The trigger button itself, in case a DSH build drops the wrapper class. */
+export const QUWORK_PANEL_MORE_BUTTON_SELECTOR = `${QUWORK_PANEL_LIST_SELECTOR} button[aria-haspopup="menu"]`
 /** DSH sidebar More popup, which the bridge extends with its own entries. */
 export const QUWORK_MORE_MENU_SELECTOR = '[class*="_moreMenu"]'
 export const QUWORK_MORE_ITEM_LABEL_SELECTOR = '[class*="_itemLabel"]'
@@ -29,8 +41,16 @@ export const QUWORK_HIDDEN_ATTRIBUTE = 'data-dsh-mobile-quwork-hidden'
  */
 const MOBILE_LAYOUT_CLASS = 'dsh-native-mobile-active'
 
+/**
+ * The bridge pins the injected container to `display:contents !important` on a
+ * wider selector, so hiding the container alone leaves its buttons in the grid;
+ * the children get their own rule for that reason.
+ */
 export const QUWORK_SIDEBAR_HIDE_STYLES = `
-  html.${MOBILE_LAYOUT_CLASS} ${QUWORK_SIDEBAR_ACTIONS_SELECTOR} { display:none !important; }
+  html.${MOBILE_LAYOUT_CLASS} ${QUWORK_SIDEBAR_ACTIONS_SELECTOR},
+  html.${MOBILE_LAYOUT_CLASS} ${QUWORK_SIDEBAR_ACTIONS_SELECTOR} > * { display:none !important; }
+  html.${MOBILE_LAYOUT_CLASS} ${QUWORK_PANEL_MORE_SELECTOR},
+  html.${MOBILE_LAYOUT_CLASS} ${QUWORK_PANEL_MORE_BUTTON_SELECTOR} { display:none !important; }
   [${QUWORK_HIDDEN_ATTRIBUTE}="true"] { display:none !important; }
 `
 

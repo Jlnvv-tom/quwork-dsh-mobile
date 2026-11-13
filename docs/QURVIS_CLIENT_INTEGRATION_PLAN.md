@@ -92,6 +92,7 @@
 
 - `[data-qurwork-sidebar-actions]`（「插件 · 技能」→ `plugin-market/open`）整块隐藏；
 - DSH 自带 More 菜单里 bridge 追加的「内容创作」行按标签打标记后隐藏（`content-creation/open`）；
+- DSH 自带的「更多」面板入口（`PanelMoreMenu`，`[class*="_panelList"]` 下的 `[class*="_moreAnchor"]`，兜底 `button[aria-haspopup="menu"]`）一并隐藏：它打开的正是已隐藏的面板，折叠态还会缩成一个够不着的图标；
 - 规则写在 `html.dsh-native-mobile-active` 之下，宽屏桌面浏览器仍保留原侧栏；
 - `tests/mobile-qurwork-sidebar.test.ts` 覆盖标记、幂等、菜单延迟渲染、桌面不生效与销毁。
 

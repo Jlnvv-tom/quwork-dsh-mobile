@@ -11,7 +11,7 @@ export const BRAND = {
   androidAppName: 'QuWork',
   brandColor: '#1F6FEB',
   helpUrl: 'https://quwork.example.com/help/mobile',
-  downloadPageUrl: 'https://quwork.example.com/download/mobile',
+  downloadPageUrl: 'https://quwork.cn/',
   releaseDescriptorUrl: 'https://quwork.example.com/api/mobile/release.json',
   releaseNotesUrl: 'https://quwork.example.com/mobile/releases',
 } as const

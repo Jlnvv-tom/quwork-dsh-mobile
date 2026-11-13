@@ -2,7 +2,7 @@
   <img src="https://raw.githubusercontent.com/Jlnvv-tom/quwork-dsh-mobile/main/assets/brand/repository-hero.png?v=0bfc8f909993" alt="用手机使用电脑中的 DeepSeek Harness" width="100%">
 </p>
 
-<h1 align="center">DSH Mobile</h1>
+<h1 align="center">QuWork</h1>
 
 <p align="center">在手机上安全、实时地使用电脑中的 DeepSeek Harness。</p>
 
@@ -32,7 +32,7 @@
   <a href="README.en.md">English</a>
 </p>
 
-> DSH Mobile 是 DeepSeek Harness 社区插件，原生 App 仅支持 Android。
+> QuWork 是 DeepSeek Harness 社区插件，原生 App 仅支持 Android。
 >
 > **使用 iPhone 或 iPad？** 可以用 Safari 访问，或[添加到主屏幕作为 Web App（PWA）使用](<#iphone-与-ipad主屏幕-web-apppwa>)，无需下载原生 iOS App。
 >
@@ -41,12 +41,12 @@
 > **版本说明**：自插件 **0.6.2** 起，Android App 与插件改为独立发布（当时 App 仍为 0.6.1）；App 自 0.6.2 起使用独立编号，版本号无需一致；插件升级不代表 App 需要同步升级。[兼容说明](#兼容性)。
 
 <p align="center">
-  <a href="https://github.com/Jlnvv-tom/quwork-dsh-mobile/releases/download/android-v0.7.5/quwork-android-v0.7.5.apk"><img src="https://raw.githubusercontent.com/Jlnvv-tom/quwork-dsh-mobile/main/assets/brand/app-icon-rounded.svg" alt="DSH Mobile 安卓应用图标" width="72" height="72"></a><br>
+  <a href="https://github.com/Jlnvv-tom/quwork-dsh-mobile/releases/download/android-v0.7.5/quwork-android-v0.7.5.apk"><img src="https://raw.githubusercontent.com/Jlnvv-tom/quwork-dsh-mobile/main/assets/brand/app-icon-rounded.svg" alt="QuWork 安卓应用图标" width="72" height="72"></a><br>
   <a href="https://github.com/Jlnvv-tom/quwork-dsh-mobile/releases/download/android-v0.7.5/quwork-android-v0.7.5.apk"><strong>下载 Android App 0.7.5（兼容版）</strong></a><br>
   <sub><a href="https://github.com/Jlnvv-tom/quwork-dsh-mobile/releases/download/android-v0.7.5/quwork-android-v0.7.5-iroh.apk">64 位完整版（含实验性 iroh）</a> · <a href="https://github.com/Jlnvv-tom/quwork-dsh-mobile/releases/tag/android-v0.7.5">版本说明与校验文件</a></sub>
 </p>
 
-DSH Mobile 是一个 DeepSeek Harness 插件，让手机浏览器或 Android App 通过局域网，或可选的 Tailscale Funnel、cpolar、cloudflared、自建 FRP、自有反向代理远程通道连接电脑；Android 完整版还支持实验性 iroh 加密直连与中继。手机可以继续使用电脑上的会话、工作区、消息和工具。电脑端分别启停局域网与远程访问、分别管理配对授权；Android App 统一显示已配对电脑。插件不修改 DeepSeek Harness 源码。
+QuWork 是一个 DeepSeek Harness 插件，让手机浏览器或 Android App 通过局域网，或可选的 Tailscale Funnel、cpolar、cloudflared、自建 FRP、自有反向代理远程通道连接电脑；Android 完整版还支持实验性 iroh 加密直连与中继。手机可以继续使用电脑上的会话、工作区、消息和工具。电脑端分别启停局域网与远程访问、分别管理配对授权；Android App 统一显示已配对电脑。插件不修改 DeepSeek Harness 源码。
 
 移动访问使用独立 HTTPS 与设备配对；Android App 固定局域网私有 CA，公开远程通道使用系统信任的证书；自签 FRP 入口还需由 0.4.6 App 在配对时固定远程 CA。
 
@@ -138,7 +138,7 @@ dsh plugin --profile web add dshmarket
 适合同一 Wi-Fi、以太网或手机热点，是默认且最简单的连接方式。
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/Jlnvv-tom/quwork-dsh-mobile/main/assets/screenshots/lan-access.png" width="82%" alt="DSH Mobile 局域网访问、配对二维码与设备管理">
+  <img src="https://raw.githubusercontent.com/Jlnvv-tom/quwork-dsh-mobile/main/assets/screenshots/lan-access.png" width="82%" alt="QuWork 局域网访问、配对二维码与设备管理">
 </p>
 
 1. 让手机和电脑连接同一个局域网，在 DeepSeek Harness 左下角打开 **移动访问 → 局域网**。
@@ -177,7 +177,7 @@ dsh plugin --profile web add dshmarket
 
 **没有域名或公网入站，也可以尝试 iroh（实验性）**：电脑安装固定版本的 iroh 组件，手机安装 **Android App 0.7.0 完整版**，即可通过加密直连、必要时中继连接电脑。电脑端目前支持 Windows/Linux x64；兼容版 APK 和手机浏览器不能使用 iroh。它不是保证连通的加速线路，VPN、代理和两端网络仍可能影响连接。详见 [iroh 使用与排障](docs/IROH.md)。
 
-远程服务可能受带宽和连接限额影响：[cpolar 免费方案](https://svip.cpolar.com/pricing) 当前为 1 Mbps，[Tailscale Funnel](https://tailscale.com/docs/features/tailscale-funnel#requirements-and-limitations) 也存在不可配置的带宽限制，cloudflared 的 quick tunnel 由 Cloudflare 免费提供、地址随机且有限流。DSH Mobile 使用静态资源 gzip、WebSocket 长连接和顶部按需加载改善体验；会话的历史窗口与分页大小由 DSH 决定，插件无法提高服务商限额。
+远程服务可能受带宽和连接限额影响：[cpolar 免费方案](https://svip.cpolar.com/pricing) 当前为 1 Mbps，[Tailscale Funnel](https://tailscale.com/docs/features/tailscale-funnel#requirements-and-limitations) 也存在不可配置的带宽限制，cloudflared 的 quick tunnel 由 Cloudflare 免费提供、地址随机且有限流。QuWork 使用静态资源 gzip、WebSocket 长连接和顶部按需加载改善体验；会话的历史窗口与分页大小由 DSH 决定，插件无法提高服务商限额。
 
 页面能打开但一直“重连中”，应先区分 WebSocket 升级失败、慢速数据同步和心跳超时，操作见[慢链路与反复重连指南](docs/SLOW_CONNECTIONS.md)。0.5.4 起可按确切路径启用 WebSocket 压缩，0.8.0 起默认压缩 `/api/remote.mux`；把 `paths` 设为 `[]` 可关闭。长会话或计量网络可按指南调整，并对比实际传输量。
 
@@ -195,7 +195,7 @@ dsh plugin --profile web add dshmarket
 | 托管 Caddy | 腾讯云 DNSPod 管理的域名与公网入站 | 插件管理 HTTPS 与证书；Windows/Linux x64；[配置指南](docs/CADDY_MANAGED.md) | 不提供内网穿透，需自行确认入站端口和映射；已有 Cloudflared 用户不必迁移 |
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/Jlnvv-tom/quwork-dsh-mobile/main/assets/screenshots/remote-access.png" width="82%" alt="DSH Mobile 远程访问与通道选择">
+  <img src="https://raw.githubusercontent.com/Jlnvv-tom/quwork-dsh-mobile/main/assets/screenshots/remote-access.png" width="82%" alt="QuWork 远程访问与通道选择">
 </p>
 
 下面的扫码步骤适用于 HTTPS 远程通道；**iroh 使用独立的「生成 iroh 配对二维码」和完整版 App，按下方 iroh 步骤操作**，不要把其描述符当成普通网址在浏览器打开。
@@ -313,7 +313,7 @@ App 0.6.7 配合插件 0.6.16，可在列表 **设置 → 同电脑自动连接*
 
 0.5.3 包含默认启用、可独立启停的 `dsh-mobile-question-fixes` 提问卡片组件。在 DSH 插件详情的组件列表中关闭它，可立即恢复原卡片样式。长问题、选项和底部按钮在有限高度的卡片内共同滚动，收起时标题最多显示两行；手机浏览器的触屏 Enter 保留换行，Android App 则仅在软键盘已打开且未连接实体键盘时使用该行为。答案草稿仍由 DSH 管理，不另存到浏览器 localStorage。
 
-DSH Mobile 保留工作区、任务管理、终端和文件面板入口，第三方插件仍由 DSH 加载。移动层适配布局与连接，不修改 DeepSeek Harness 源码；具体插件在小屏上是否易用，仍取决于它自身的布局与交互。
+QuWork 保留工作区、任务管理、终端和文件面板入口，第三方插件仍由 DSH 加载。移动层适配布局与连接，不修改 DeepSeek Harness 源码；具体插件在小屏上是否易用，仍取决于它自身的布局与交互。
 
 第三方插件需要能在 DSH Web 页面中运行，并使用可达的 HTTP／WebSocket 接口。移动层不保证把所有插件的自定义布局自动改成手机布局，也不能替代插件依赖的桌面原生窗口。
 
@@ -323,9 +323,9 @@ DSH Mobile 保留工作区、任务管理、终端和文件面板入口，第三
 
 - 网关默认只允许 DSH 内置的第一方 WebSocket 路径，包括 `/sidebar/ws/terminal`。社区侧边栏插件使用的其他路径默认拦截，通常会在诊断页显示为待处理项目；截图中的 `/sidebar/ws/agent-opens` 和 `/sidebar/ws/agent-terminals` 就属于这类需要按实际插件确认的路径。
 - 在 **连接诊断 → 第三方 WebSocket 路径** 中，只对确认过的精确路径点击 **允许**。系统不接受带查询字符串或模糊前缀的路径；不建议使用“全部允许”。已允许的路径可以随时移除，局域网和远程连接使用同一套规则。
-- 放行只代表该路径可以通过已认证、同源的 DSH Mobile 网关，不会开放任意 TCP/UDP 端口，也不会绕过设备配对。若社区插件仍然连接失败，先看诊断页的实际拦截路径，再按一条路径放行。
+- 放行只代表该路径可以通过已认证、同源的 QuWork 网关，不会开放任意 TCP/UDP 端口，也不会绕过设备配对。若社区插件仍然连接失败，先看诊断页的实际拦截路径，再按一条路径放行。
 
-若另一个远程访问插件在 DSH Mobile 页面上显示自己的“未配对”提示，那是两套不同的授权。可先在电脑端暂时关闭另一插件的远程访问，确认 Mobile 链路是否恢复；不要把 DSH Mobile 密钥输入它的配对页。仅用下面的模块排除选项不能保证移除该插件在页面启动前注入的请求改写脚本，参见 [#111](https://github.com/Jlnvv-tom/quwork-dsh-mobile/issues/111)。
+若另一个远程访问插件在 QuWork 页面上显示自己的“未配对”提示，那是两套不同的授权。可先在电脑端暂时关闭另一插件的远程访问，确认 QuWork 链路是否恢复；不要把 QuWork 密钥输入它的配对页。仅用下面的模块排除选项不能保证移除该插件在页面启动前注入的请求改写脚本，参见 [#111](https://github.com/Jlnvv-tom/quwork-dsh-mobile/issues/111)。
 
 网关允许部分 HTTP iframe 不代表客户端会加载它：内容未加密，Android App 仍阻止 HTTPS 页面中的 HTTP 混合内容，浏览器也可能拦截。请优先配置 HTTPS；通过 HTTPS 管理入口打开远程面板时会显示相同风险提醒。
 
@@ -389,7 +389,7 @@ Android App 只是 Kotlin WebView 薄壳，不内置另一份网页；手机浏�
 flowchart LR
   Phone["Android App / 手机浏览器"] -->|"局域网 HTTPS"| Lan["局域网网关"]
   Phone -->|"远程 HTTPS"| Remote["独立远程网关"]
-  Lan --> Gateway["DSH Mobile Gateway Core"]
+  Lan --> Gateway["QuWork Gateway Core"]
   Remote --> Gateway
   Gateway -->|"回环代理"| DSH["原生 DSH Web 与 Host"]
   DSH -->|"同一工作区、会话和事件流"| Phone
@@ -405,7 +405,7 @@ flowchart LR
 - 远程地址可从公网到达，但未配对请求无法进入 DSH；不使用时应关闭远程开关。
 - cpolar 仅在用户确认后下载固定官方版本并校验大小和 SHA-256；不会安装系统服务、写入 PATH 或设置开机启动，插件清理会删除其托管文件。
 - cloudflared 同样仅在用户确认后从官方 GitHub Release 下载固定版本并校验精确大小和 SHA-256，且启动时关闭自动更新，以保证运行的始终是已校验的那份二进制；快速隧道不需要账号、Token 或 DNS 记录；命名隧道令牌只存插件私有目录、只经环境变量传给 cloudflared，清理时删除插件托管的全部文件。
-- 托管 Caddy 从 DSH Mobile 审核发布的固定组件下载，安装前需确认，下载后校验大小、SHA-256、核心与 DNS 模块版本。DNS 凭据和证书保存在私有目录，不安装系统服务、不修改 PATH 或系统证书信任；移除组件不会删除其他通道和设备配对。
+- 托管 Caddy 从 QuWork 审核发布的固定组件下载，安装前需确认，下载后校验大小、SHA-256、核心与 DNS 模块版本。DNS 凭据和证书保存在私有目录，不安装系统服务、不修改 PATH 或系统证书信任；移除组件不会删除其他通道和设备配对。
 - 自建 FRP 仅在用户确认后从官方 Release 下载固定版本 `frpc`，校验来源、精确大小、SHA-256、压缩包路径和可执行文件版本；共享 Token 不会出现在状态、诊断或接入清单响应中。复制服务器模板，或重新输入 Token 后显式复制含 Token 的接入配置时，它会进入系统剪贴板，请粘贴后及时清除。本机清理只删除插件管理的文件；托管部署的 VPS 需用面板卸载脚本或一键清理单独清除，接入既有 frps 则不会改动或清理你的 VPS。自动部署与一键清理前都需核对 SSH 主机指纹。
 - 配对设备拥有控制电脑端 DeepSeek Harness 的能力，应视为完全可信设备；丢失手机后应在电脑端撤销设备。
 - 移动网关以 DSH 本机操作者身份代理请求，支持普通插件路由的 `GET`、`HEAD`、`POST`、`PUT`、`PATCH`、`DELETE`；写请求仍校验配对 Session、精确 Origin 与 CSRF。第三方插件不能把上游回环 Host 当成请求来自电脑物理本机的证明。
@@ -421,7 +421,7 @@ flowchart LR
 - **设置请求返回 HTTP `403`**：先检查 DSH 的 Host/Origin 信任校验及代理响应。检查 iframe、代理和浏览器扩展是否改变请求来源，使用本机直接访问验证；保持信任检查启用。
 - **错误包含 `profile reload requires the root Include entry`**：该错误发生在 DSH 重载 profile 时。[Issue #132](https://github.com/Jlnvv-tom/quwork-dsh-mobile/issues/132) 报告过加载两份 `dsh-app-boot` 导致此错误，但单凭提示不能确认原因。核对实际运行的 DSH 命令与当前 profile 的版本和安装路径，保留配置并按 [DSH 官方文档](https://deepseek-harness.github.io/deepseek-harness/)修复依赖；仍失败时将版本、模块路径及脱敏后的完整错误提交上游。
 - **设置错误包含 `EACCES`、`EPERM` 或锁文件操作失败**：检查报错文件的权限及启动环境注入的文件操作工具。锁清理失败也可能发生在写入之后，先核对实际保存结果。
-- **手机出现另一插件的“输入配对码”页面**：`dsh-remote-web-ui` 与 DSH Mobile 各有独立的远程通道和配对码，不能交叉使用。若电脑端连接诊断提示“第三方远程插件”，先关闭该插件的远程访问并刷新，再扫描 DSH Mobile 当前二维码。仅安装该插件而未启用它的远程接管，不会触发这条诊断。
+- **手机出现另一插件的“输入配对码”页面**：`dsh-remote-web-ui` 与 QuWork 各有独立的远程通道和配对码，不能交叉使用。若电脑端连接诊断提示“第三方远程插件”，先关闭该插件的远程访问并刷新，再扫描 QuWork 当前二维码。仅安装该插件而未启用它的远程接管，不会触发这条诊断。
 - **Windows 初始化停在权限处理或失败**：日志中的 `sid-query` 表示查询当前账户 SID，`acl-apply` 表示应用私有文件权限，错误同时记录该阶段的完整等待耗时。不要关闭权限检查或把敏感文件改为所有人可读；提供脱敏后的阶段、耗时、错误码和 DSH 版本以继续定位。分阶段诊断不代表 [#128](https://github.com/Jlnvv-tom/quwork-dsh-mobile/issues/128) 的启动争抢问题已经解决。
 - **远程诊断显示“电脑经代理可访问”**：诊断先直连，失败后才尝试 DSH 进程环境变量中的 HTTP 代理；`NO_PROXY` 可排除目标。此结果只说明电脑经代理完成 HTTPS 探测，不代表手机或实际隧道可用。请用手机流量实际连接；若直连和代理都失败，报告仍为不可达，不会把离线误报为就绪。
 - **切换网络后局域网访问不可用**：如果日志提示 `saved LAN interface "XXX" is not connected`，表示保存的网卡当前未连接。DSH 会继续运行，移动访问暂时休眠，原网卡恢复后会自动重试；若已改用新网卡，请重新完成局域网配置或重跑 `setup`。暂时不用移动访问时，可以在 `cordis.patch.yml` 中禁用 `mobile-access`。
@@ -447,7 +447,7 @@ flowchart LR
 
 macOS 上局域网、cloudflared、自建 FRP 与自有反向代理可用；Funnel 与 cpolar 暂未提供 macOS 组件。诊断页的防火墙检查目前仅覆盖 Windows，其他系统显示“不适用”。
 
-| DSH Mobile 插件 | 已验证的 DeepSeek Harness 版本与范围 |
+| QuWork 插件 | 已验证的 DeepSeek Harness 版本与范围 |
 | --- | --- |
 | `0.8.7` | 在 `0.2.2-rc.1` 打包目标上加入默认关闭的会话预取、网关到期连接正常关闭与认证失败分类，并为 Android 0.7.4 准备后台提醒真实状态与通知就地打开；同时更新插件图标与 iroh 排障文档。Android App 为 0.7.4，新增设备端页面缓存与后台提醒真实状态 |
 | `0.8.6` | 在 `0.2.2-rc.1` 打包目标上透传已配对第三方插件的 `x-dsh-*` 请求头、修正网页推送停用语义、向受信 Host 插件开放推送文案接口，并修复 Windows 防火墙校验、iroh 目录诊断与局域网诊断口径。Android App 为 0.7.3，新增可选后台提醒 |
@@ -461,7 +461,7 @@ macOS 上局域网、cloudflared、自建 FRP 与自有反向代理可用；Funn
 <details>
 <summary>较早版本的验证记录</summary>
 
-| DSH Mobile 插件 | 已验证的 DeepSeek Harness 版本与范围 |
+| QuWork 插件 | 已验证的 DeepSeek Harness 版本与范围 |
 | --- | --- |
 | `0.7.1` | `0.2.1-rc.3` 的隔离打包安装、手机侧栏与断点命中回归；另验证访问面板、配对有效期和组件清理 |
 | `0.6.11` | `0.1.7-alpha.2`、`0.1.7-rc.1`、`0.1.7-rc.2`、`0.2.0-rc.1`、`0.2.0-rc.2`、`0.2.1-alpha.2`、`0.2.1-alpha.3` 的隔离打包浏览器 CI；`0.2.0-rc.2` 与 `0.2.1-alpha.3` 另通过真实历史分页、滚动位置保持和手动加载检查。浏览器检查不代表所有手机内核、第三方插件或公网线路已验收 |
@@ -474,7 +474,7 @@ macOS 上局域网、cloudflared、自建 FRP 与自有反向代理可用；Funn
 | `0.6.18` | `0.2.1-rc.2` 上的 18 项真实打包 Chromium 目录选择检查，含紧凑布局、目录创建和取消；本机官方 Desktop `0.2.1-rc.3` 已装入候选并启用局域网与 Cloudflare 网关 |
 | `0.7.0` | 8 个 DSH 版本（`0.1.7-alpha.2`–`0.2.1-rc.2`）的打包浏览器 CI；Windows/Linux Gateway 与 iroh Host、Android 双 ABI 和兼容版包检查。设备与网络范围见 [iroh 说明](docs/IROH.md) |
 
-| DSH Mobile 插件                         | 验证支持的 DeepSeek Harness 版本                             |
+| QuWork 插件                         | 验证支持的 DeepSeek Harness 版本                             |
 | ----------------------------------------- | -------------------------------------------------------------- |
 | `0.6.8` | `0.2.1-alpha.3` 的打包移动页面、旧 WebView API 模拟、WebSocket 工作区读取、移动设置、模块管理、侧栏及输入栏回归；身份修复另有真实 HTTP/TLS 与旧凭据升级测试。本机官方 Desktop `0.2.0-rc.2` 已加载该版本插件，原配对保留；不代表手机 5G 或全部第三方插件组合已验收 |
 | `0.6.6` | `0.2.0-rc.2`、`0.2.1-alpha.2` 的打包附件接收与图片预览回归，覆盖多图、取消、迟到结果和旧请求；Android 系统选择器改进独立发布，不包含在 npm 更新中 |

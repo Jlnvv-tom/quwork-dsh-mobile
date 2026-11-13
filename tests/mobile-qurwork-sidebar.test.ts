@@ -4,6 +4,9 @@ import {
   QUWORK_MORE_ITEM_LABEL_SELECTOR,
   QUWORK_MORE_ITEM_ROW_SELECTOR,
   QUWORK_MORE_MENU_SELECTOR,
+  QUWORK_PANEL_LIST_SELECTOR,
+  QUWORK_PANEL_MORE_BUTTON_SELECTOR,
+  QUWORK_PANEL_MORE_SELECTOR,
   QUWORK_SIDEBAR_ACTIONS_SELECTOR,
   QUWORK_SIDEBAR_HIDE_STYLES,
   hideQuworkSidebarMoreItems,
@@ -120,6 +123,17 @@ describe('installMobileQuworkSidebarHiding', () => {
     expect(observers[0]?.observed).toBe(true)
     expect(QUWORK_SIDEBAR_HIDE_STYLES).toContain(QUWORK_SIDEBAR_ACTIONS_SELECTOR)
     expect(QUWORK_SIDEBAR_HIDE_STYLES).toContain(`html.dsh-native-mobile-active ${QUWORK_SIDEBAR_ACTIONS_SELECTOR}`)
+    // The bridge forces `display:contents !important` on the container, so the
+    // injected buttons need their own rule to leave the mobile rail.
+    expect(QUWORK_SIDEBAR_HIDE_STYLES).toContain(`html.dsh-native-mobile-active ${QUWORK_SIDEBAR_ACTIONS_SELECTOR} > *`)
+  })
+
+  it('hides the sidebar 更多 trigger via the mobile layout class only', () => {
+    expect(QUWORK_PANEL_MORE_SELECTOR).toBe(`${QUWORK_PANEL_LIST_SELECTOR} [class*="_moreAnchor"]`)
+    expect(QUWORK_PANEL_MORE_BUTTON_SELECTOR).toBe(`${QUWORK_PANEL_LIST_SELECTOR} button[aria-haspopup="menu"]`)
+    expect(QUWORK_SIDEBAR_HIDE_STYLES).toContain(`html.dsh-native-mobile-active ${QUWORK_PANEL_MORE_SELECTOR}`)
+    expect(QUWORK_SIDEBAR_HIDE_STYLES).toContain(`html.dsh-native-mobile-active ${QUWORK_PANEL_MORE_BUTTON_SELECTOR}`)
+    expect(QUWORK_SIDEBAR_HIDE_STYLES).not.toMatch(/^\s*\[class\*="_panelList"\]/m)
   })
 
   it('keeps the desktop sidebar untouched when the mobile layout is not active', () => {

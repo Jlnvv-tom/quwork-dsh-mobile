@@ -2,7 +2,7 @@
   <img src="https://raw.githubusercontent.com/Jlnvv-tom/quwork-dsh-mobile/main/assets/brand/repository-hero.png?v=0bfc8f909993" alt="Use DeepSeek Harness from a phone" width="100%">
 </p>
 
-<h1 align="center">DSH Mobile</h1>
+<h1 align="center">QuWork</h1>
 
 <p align="center">Secure, live access to DeepSeek Harness from a phone.</p>
 
@@ -32,21 +32,21 @@
   <a href="README.md">简体中文</a>
 </p>
 
-> DSH Mobile is a DeepSeek Harness community plugin; the native app supports Android only.
+> QuWork is a DeepSeek Harness community plugin; the native app supports Android only.
 >
-> **Using an iPhone or iPad?** Use Safari or [add DSH Mobile to your Home Screen as a web app (PWA)](<#iphone-and-ipad-home-screen-web-app-pwa>)—no native iOS download needed.
+> **Using an iPhone or iPad?** Use Safari or [add QuWork to your Home Screen as a web app (PWA)](<#iphone-and-ipad-home-screen-web-app-pwa>)—no native iOS download needed.
 >
 > **Current stable release: 0.8.7**. Add an opt-in session prefetch, close an expiring Gateway WebSocket normally with clearer authentication-failure categories, and prepare the background-reminder status and in-place notification open for Android 0.7.4; also update the plugin icon and iroh troubleshooting notes. Plugin and Android App releases remain independent; Android App 0.7.5 is now published with the same page and native behaviour as 0.7.4, signed by this repository's QuWork key, so a device with the upstream App must uninstall it before installing this build. [Plugin release notes and downloads](https://github.com/Jlnvv-tom/quwork-dsh-mobile/releases/tag/v0.8.7) · [Full changelog](CHANGELOG.md).
 >
 > **Version policy**: from plugin **0.6.2** the Android app and plugin ship as independent releases (the app was still 0.6.1 then), and the app has used its own version numbers since app **0.6.2**. Their numbers do not need to match, and a plugin update does not imply an app update. [Compatibility notes](#compatibility).
 
 <p align="center">
-  <a href="https://github.com/Jlnvv-tom/quwork-dsh-mobile/releases/download/android-v0.7.5/quwork-android-v0.7.5.apk"><img src="https://raw.githubusercontent.com/Jlnvv-tom/quwork-dsh-mobile/main/assets/brand/app-icon-rounded.svg" alt="DSH Mobile Android app icon" width="72" height="72"></a><br>
+  <a href="https://github.com/Jlnvv-tom/quwork-dsh-mobile/releases/download/android-v0.7.5/quwork-android-v0.7.5.apk"><img src="https://raw.githubusercontent.com/Jlnvv-tom/quwork-dsh-mobile/main/assets/brand/app-icon-rounded.svg" alt="QuWork Android app icon" width="72" height="72"></a><br>
   <a href="https://github.com/Jlnvv-tom/quwork-dsh-mobile/releases/download/android-v0.7.5/quwork-android-v0.7.5.apk"><strong>Download Android app 0.7.5 (compatibility)</strong></a><br>
   <sub><a href="https://github.com/Jlnvv-tom/quwork-dsh-mobile/releases/download/android-v0.7.5/quwork-android-v0.7.5-iroh.apk">64-bit full APK (experimental iroh)</a> · <a href="https://github.com/Jlnvv-tom/quwork-dsh-mobile/releases/tag/android-v0.7.5">Release notes and checksums</a></sub>
 </p>
 
-DSH Mobile is a DeepSeek Harness plugin that lets a mobile browser or the Android app connect over a protected LAN or an optional Tailscale Funnel, cpolar, cloudflared, self-hosted FRP, or own reverse-proxy remote path. The full Android App also supports experimental iroh encrypted direct connections with relay fallback. The phone reaches the computer's sessions, Workspaces, messages and tools. The computer manages LAN and remote switches and pairing authorizations separately; the Android app lists paired computers together. The plugin does not modify DeepSeek Harness source.
+QuWork is a DeepSeek Harness plugin that lets a mobile browser or the Android app connect over a protected LAN or an optional Tailscale Funnel, cpolar, cloudflared, self-hosted FRP, or own reverse-proxy remote path. The full Android App also supports experimental iroh encrypted direct connections with relay fallback. The phone reaches the computer's sessions, Workspaces, messages and tools. The computer manages LAN and remote switches and pairing authorizations separately; the Android app lists paired computers together. The plugin does not modify DeepSeek Harness source.
 
 Mobile access uses a dedicated HTTPS origin and device pairing. The Android app pins the private LAN CA; public remote paths use platform-trusted certificates. The self-signed FRP entry additionally requires the 0.4.6 app to pin a remote CA during pairing.
 
@@ -138,7 +138,7 @@ LAN and remote access are independent connections. Prefer LAN while the phone is
 Use this when the phone and computer share Wi-Fi, Ethernet, or a phone hotspot. It is the default and simplest path.
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/Jlnvv-tom/quwork-dsh-mobile/main/assets/screenshots/lan-access-en.png" width="82%" alt="DSH Mobile LAN access, pairing QR code, and device management">
+  <img src="https://raw.githubusercontent.com/Jlnvv-tom/quwork-dsh-mobile/main/assets/screenshots/lan-access-en.png" width="82%" alt="QuWork LAN access, pairing QR code, and device management">
 </p>
 
 1. Connect the phone and computer to the same local network, then open **Mobile Access → Local network** in the lower-left corner of DeepSeek Harness.
@@ -177,7 +177,7 @@ Use this after the phone leaves the computer's network. Remote access is disable
 
 **Without a domain or public inbound access, you can also try iroh (experimental).** Install the pinned computer component and the **full Android App 0.7.0** to connect through encrypted direct links with relay fallback. Computer support is currently Windows/Linux x64; the compatibility APK and mobile browsers cannot use iroh. This is not a guaranteed connectivity or acceleration service: VPNs, proxies and both networks can affect it. See [iroh setup and troubleshooting](docs/IROH.en.md).
 
-Remote providers may impose bandwidth and connection limits: the [cpolar Free plan](https://svip.cpolar.com/pricing) currently lists 1 Mbps, while [Tailscale Funnel](https://tailscale.com/docs/features/tailscale-funnel#requirements-and-limitations) has non-configurable bandwidth limits, and a cloudflared quick tunnel is a free Cloudflare address with randomized hostnames and rate limiting. DSH Mobile uses gzip for static assets, persistent WebSockets, and load-on-scroll history to improve loading; DSH controls the Session history window and page sizes, and the plugin cannot raise provider quotas.
+Remote providers may impose bandwidth and connection limits: the [cpolar Free plan](https://svip.cpolar.com/pricing) currently lists 1 Mbps, while [Tailscale Funnel](https://tailscale.com/docs/features/tailscale-funnel#requirements-and-limitations) has non-configurable bandwidth limits, and a cloudflared quick tunnel is a free Cloudflare address with randomized hostnames and rate limiting. QuWork uses gzip for static assets, persistent WebSockets, and load-on-scroll history to improve loading; DSH controls the Session history window and page sizes, and the plugin cannot raise provider quotas.
 
 If the page opens but stays on “Reconnecting,” distinguish WebSocket upgrade failures, slow synchronization, and heartbeat deadlines using the [slow-link and reconnection guide](docs/SLOW_CONNECTIONS.en.md). Version 0.5.4 introduced per-path WebSocket compression, and since 0.8.0 `/api/remote.mux` is compressed by default; set `paths` to `[]` to turn it off. For long Sessions or metered links, follow the guide and compare actual transfer volume.
 
@@ -195,7 +195,7 @@ The usage notes below reflect the maintainer's long-term experience on a persona
 | Managed Caddy | Tencent Cloud DNSPod-managed domain and reachable public ingress | Plugin-managed HTTPS and certificates on Windows/Linux x64; [guide](docs/CADDY_MANAGED.en.md) | Does not traverse NAT; check inbound ports and forwarding. Existing Cloudflared users do not need to migrate |
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/Jlnvv-tom/quwork-dsh-mobile/main/assets/screenshots/remote-access-en.png" width="82%" alt="DSH Mobile remote access and provider selection">
+  <img src="https://raw.githubusercontent.com/Jlnvv-tom/quwork-dsh-mobile/main/assets/screenshots/remote-access-en.png" width="82%" alt="QuWork remote access and provider selection">
 </p>
 
 The following steps cover HTTPS remote channels. **iroh uses its own “Generate iroh pairing QR code” action and the full App, as described below.** Do not open its descriptor as an ordinary browser URL.
@@ -313,7 +313,7 @@ Revoking a device permanently deletes its durable record and token digest instea
 
 Version 0.5.3 includes the independently switchable `dsh-mobile-question-fixes` component, enabled by default. Disable it in DSH's plugin component list to restore the stock card immediately. Long questions, options, and footer actions share one bounded scroll area, and collapsed titles show up to two lines. Touch Enter retains its newline in phone browsers; the Android app applies this behavior only when its software keyboard is open and no hardware keyboard is connected. DSH continues to own answer drafts, with no additional copy in browser localStorage.
 
-DSH Mobile keeps the Workspace, task-management, terminal and file-panel entry points; DSH still loads third-party plugins. The mobile layer adapts layout and access without changing DSH source. A particular plugin's usability on a small screen still depends on its own layout and interactions.
+QuWork keeps the Workspace, task-management, terminal and file-panel entry points; DSH still loads third-party plugins. The mobile layer adapts layout and access without changing DSH source. A particular plugin's usability on a small screen still depends on its own layout and interactions.
 
 A third-party plugin must work in DSH Web and use reachable HTTP/WebSocket interfaces. The mobile layer cannot guarantee a phone layout for every plugin or replace a desktop-native window required by that plugin.
 
@@ -323,9 +323,9 @@ A skin tied to stock layout containers may not mount its backgrounds or decorati
 
 - The gateway allows first-party DSH WebSocket paths by default, including `/sidebar/ws/terminal`. Other paths used by community sidebar plugins are blocked by default and appear in Diagnostics; the `/sidebar/ws/agent-opens` and `/sidebar/ws/agent-terminals` paths in the image are examples that must be reviewed for the actual plugin.
 - In **Connection diagnostics → Third-party WebSocket paths**, select **Allow** only for an exact path you have verified. Query strings and fuzzy prefixes are rejected; **Allow all** is not recommended. Approved paths can be removed at any time, and the same policy applies to LAN and remote connections.
-- Approval only lets that path pass through the authenticated, same-origin DSH Mobile gateway. It does not open arbitrary TCP/UDP ports or bypass device pairing. If a community plugin still fails, check the path recorded by Diagnostics and approve one path at a time.
+- Approval only lets that path pass through the authenticated, same-origin QuWork gateway. It does not open arbitrary TCP/UDP ports or bypass device pairing. If a community plugin still fails, check the path recorded by Diagnostics and approve one path at a time.
 
-If another remote-access plugin shows its own “not paired” page inside DSH Mobile, the two authorization systems are separate. Temporarily turn off the other plugin's remote access on the computer to check whether the Mobile path recovers; do not enter a DSH Mobile pairing key on that page. Excluding its client module below does not necessarily remove a request-rewriting script injected before client boot. See [#111](https://github.com/Jlnvv-tom/quwork-dsh-mobile/issues/111).
+If another remote-access plugin shows its own “not paired” page inside QuWork, the two authorization systems are separate. Temporarily turn off the other plugin's remote access on the computer to check whether the QuWork path recovers; do not enter a QuWork pairing key on that page. Excluding its client module below does not necessarily remove a request-rewriting script injected before client boot. See [#111](https://github.com/Jlnvv-tom/quwork-dsh-mobile/issues/111).
 
 Allowing HTTP frames in the gateway does not make every client load them: the content is unencrypted, Android still blocks HTTP mixed content inside HTTPS pages, and browsers may block it too. Prefer HTTPS. The remote panel shows this risk when opened through an HTTPS administration entry.
 
@@ -389,7 +389,7 @@ The current plugin retains the 0.6.12 compatibility layer and startup feedback, 
 flowchart LR
   Phone["Android / mobile browser"] -->|"LAN HTTPS"| Lan["LAN gateway"]
   Phone -->|"remote HTTPS"| Remote["separate remote gateway"]
-  Lan --> Gateway["DSH Mobile Gateway Core"]
+  Lan --> Gateway["QuWork Gateway Core"]
   Remote --> Gateway
   Gateway -->|"loopback proxy"| DSH["Stock DSH Web and Host"]
   DSH -->|"same workspace, sessions and event stream"| Phone
@@ -405,7 +405,7 @@ Switching sessions tears down the client Session instance and its live stream. T
 - A remote origin is publicly reachable, but unpaired requests cannot enter DSH; turn the remote switch off when it is not needed.
 - cpolar downloads a pinned official build only after confirmation and verifies its size and SHA-256. It installs no system service, PATH entry, or startup task, and plugin cleanup removes its managed files.
 - cloudflared likewise downloads a pinned build from the official GitHub Release only after confirmation and verifies the exact size and SHA-256, and it launches the client with automatic updates disabled so the running binary is always the verified one. A quick tunnel needs no account, token, or DNS record; a named tunnel token is stored only in the plugin private directory and reaches cloudflared through the environment, and cleanup deletes every file it manages.
-- Managed Caddy downloads a fixed component reviewed and published by DSH Mobile, only after confirmation, and checks its size, SHA-256, core and DNS module versions. DNS credentials and certificates stay in a private directory; no system service, PATH entry or system trust certificate is added. Removing the component preserves other channels and paired devices.
+- Managed Caddy downloads a fixed component reviewed and published by QuWork, only after confirmation, and checks its size, SHA-256, core and DNS module versions. DNS credentials and certificates stay in a private directory; no system service, PATH entry or system trust certificate is added. Removing the component preserves other channels and paired devices.
 - Self-hosted FRP downloads pinned official `frpc` only after confirmation and verifies the origin, exact size, SHA-256, archive paths, and executable version. The shared token never appears in status, diagnostics, or attachment-plan responses. Copying a server template, or explicitly copying a token-bearing attach config after re-entering its token, places it on the system clipboard; clear it after use. Local cleanup removes only plugin-managed files. Managed VPS deployments require separate uninstall-script or one-click cleanup; attaching to an existing frps neither changes nor cleans up that VPS. Automatic deployment and server cleanup require SSH host-key verification against the VPS console.
 - A paired device is a fully trusted DeepSeek Harness operator and can run tools on the computer; revoke lost devices from the computer.
 - The mobile gateway proxies requests as a local DSH operator and supports `GET`, `HEAD`, `POST`, `PUT`, `PATCH`, and `DELETE` on ordinary plugin routes; writes still require a paired Session, exact Origin, and CSRF validation. Third-party plugins must not treat the upstream loopback Host as proof that the client is physically local to the computer.
@@ -421,7 +421,7 @@ See [SECURITY.md](SECURITY.md).
 - **A settings request returns HTTP `403`**: first inspect DSH's Host/Origin trust checks and any proxy response. Check whether an iframe, proxy, or browser extension changes the request's origin, and verify direct local access. Keep the trust checks enabled.
 - **The error contains `profile reload requires the root Include entry`**: this error occurs while DSH reloads the profile. [Issue #132](https://github.com/Jlnvv-tom/quwork-dsh-mobile/issues/132) reports it after two copies of `dsh-app-boot` were loaded, but the message alone does not establish that cause. Compare the versions and installation paths used by the running DSH command and the active profile; keep the configuration and follow the [official DSH documentation](https://deepseek-harness.github.io/deepseek-harness/) to repair the dependencies. If it still fails, report the versions, module paths, and full sanitized error upstream.
 - **The settings error contains `EACCES`, `EPERM`, or a lock-file failure**: inspect the reported file's permissions and any file-operation tools injected into the launch environment. Lock cleanup can fail after a write, so check what was actually saved.
-- **The phone shows another plugin’s pairing-code page**: `dsh-remote-web-ui` and DSH Mobile have separate remote channels and pairing codes; they cannot be mixed. If DSH Mobile diagnostics warn about a competing remote plugin, turn off that plugin’s remote access on the computer, refresh, and scan the current DSH Mobile QR code. Merely installing the other plugin without enabling its remote channel does not trigger this warning.
+- **The phone shows another plugin’s pairing-code page**: `dsh-remote-web-ui` and QuWork have separate remote channels and pairing codes; they cannot be mixed. If QuWork diagnostics warn about a competing remote plugin, turn off that plugin’s remote access on the computer, refresh, and scan the current QuWork QR code. Merely installing the other plugin without enabling its remote channel does not trigger this warning.
 - **Windows initialization waits on permissions or fails**: `sid-query` identifies the current-account SID lookup and `acl-apply` identifies private-file permission setup; failures also report the full wait duration for that stage. Do not disable permission checks or make sensitive files readable by everyone. Share the redacted stage, duration, error code and DSH version for diagnosis. These diagnostics do not establish a fix for the startup-contention problem in [#128](https://github.com/Jlnvv-tom/quwork-dsh-mobile/issues/128).
 - **Remote diagnostics say “reachable through the computer's proxy”**: the check tries a direct request first, then an HTTP proxy from the DSH process environment only if direct access fails; `NO_PROXY` may exclude the target. This proves only that the computer completed an HTTPS probe through the proxy, not that the phone or actual tunnel can connect. Test from the phone's mobile network. If both paths fail, diagnostics continue to report the endpoint unreachable instead of treating an offline route as ready.
 - **LAN access stops after switching networks**: if the log reports `saved LAN interface "XXX" is not connected`, the saved adapter is unavailable. DSH keeps running while Mobile Access stays dormant and retries when the adapter returns. If you have moved to a different adapter, configure LAN again or re-run `setup`. If mobile access is not needed, disable `mobile-access` in `cordis.patch.yml`.
@@ -447,7 +447,7 @@ This table describes the **computer running the plugin**, not the phone's OS; iP
 
 On macOS, local network, cloudflared, self-hosted FRP and the own reverse proxy work; Funnel and cpolar have no managed macOS component yet. The diagnostics firewall check currently covers Windows only and reports “not applicable” elsewhere.
 
-| DSH Mobile plugin | Verified DeepSeek Harness version |
+| QuWork plugin | Verified DeepSeek Harness version |
 | --- | --- |
 | `0.8.7` | On the `0.2.2-rc.1` packed target, add an opt-in session prefetch, close an expiring Gateway WebSocket normally with clearer authentication-failure categories, and prepare the background-reminder status and in-place notification open for Android 0.7.4; also update the plugin icon and iroh troubleshooting notes. The Android App is 0.7.4, with the device-side page cache and real background-reminder status |
 | `0.8.6` | On the `0.2.2-rc.1` packed target, forward paired third-party plugin `x-dsh-*` headers, keep the push subscription after a Disable, expose the trusted Host push-text service, and fix Windows firewall verification, iroh directory diagnostics and the LAN diagnostic scope. The Android App is 0.7.3 with opt-in background reminders |
@@ -461,7 +461,7 @@ On macOS, local network, cloudflared, self-hosted FRP and the own reverse proxy 
 <details>
 <summary>Earlier release checks</summary>
 
-| DSH Mobile plugin | Verified DeepSeek Harness version |
+| QuWork plugin | Verified DeepSeek Harness version |
 | --- | --- |
 | `0.7.1` | Isolated packed installation, mobile sidebar and breakpoint hit tests on `0.2.1-rc.3`, plus access-panel, pairing-expiry and component-cleanup checks |
 | `0.6.11` | Isolated packed-browser CI on `0.1.7-alpha.2`, `0.1.7-rc.1`, `0.1.7-rc.2`, `0.2.0-rc.1`, `0.2.0-rc.2`, `0.2.1-alpha.2` and `0.2.1-alpha.3`; additional real history-pagination, viewport-preservation and manual-loading checks on `0.2.0-rc.2` and `0.2.1-alpha.3`. Browser checks do not establish acceptance of every phone engine, third-party plugin or public route |
@@ -474,7 +474,7 @@ On macOS, local network, cloudflared, self-hosted FRP and the own reverse proxy 
 | `0.6.18` | `0.2.1-rc.2`: 18 real packed Chromium directory-picker checks, including compact layout, folder creation and cancellation; the candidate was installed in local official Desktop `0.2.1-rc.3` with LAN and Cloudflare gateways running |
 | `0.7.0` | Packed-browser CI across eight DSH versions (`0.1.7-alpha.2`–`0.2.1-rc.2`), Windows/Linux Gateway and iroh Host checks, both Android ABIs and compatibility APK checks. See the [iroh guide](docs/IROH.en.md) for device and network limits |
 
-| DSH Mobile plugin | Verified DeepSeek Harness version |
+| QuWork plugin | Verified DeepSeek Harness version |
 | --- | --- |
 | `0.6.8` | Packed mobile boot, legacy-WebView API simulation, WebSocket Workspace reads, mobile settings, module management, sidebar and composer regressions on `0.2.1-alpha.3`; separate real HTTP/TLS and legacy-credential upgrade tests cover the identity fix. The local official Desktop `0.2.0-rc.2` loads this plugin version with existing pairings preserved. This does not establish phone cellular or every third-party plugin combination |
 | `0.6.6` | Packed attachment intake and decoded-preview regressions on `0.2.0-rc.2` and `0.2.1-alpha.2`, covering multiple images, cancellation, late results and superseded requests. Android system-picker changes are released independently, not through the npm update |
