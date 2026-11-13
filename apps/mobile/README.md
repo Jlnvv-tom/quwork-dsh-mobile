@@ -4,14 +4,14 @@
 
 DeepSeek Harness is the display name of this community-maintained Android WebView app. It opens the plugin's authenticated HTTPS page rather than bundling another DSH frontend. The app and mobile browsers receive the same DSH features and computer-side mobile customizations.
 
-The current stable app is **0.7.6** (build 91). The npm plugin and Android App have independent versions: a plugin update does not automatically require another APK. See the [0.7.6 changes](#076-update).
+The current stable app is **0.7.7** (build 92). The npm plugin and Android App have independent versions: a plugin update does not automatically require another APK. See the [0.7.7 changes](#077-update).
 
 This APK supports Android 10 or later. iPhone and iPad use the [Safari Home Screen web app and optional Web Push](../../docs/WEB_PUSH.en.md), not this Android package; no native iOS app is distributed.
 
 ## Install and pair
 
 1. Install and enable the plugin using the [project quick start](../../README.en.md#quick-start). Complete LAN setup from the command line or the computer's **Mobile Access** panel.
-2. Install a signed Android APK from [GitHub Releases](https://github.com/Jlnvv-tom/quwork-dsh-mobile/releases/tag/android-v0.7.6). Choose the compatibility `.apk` for existing HTTPS channels, or the full `-iroh.apk` for experimental iroh on arm64-v8a/x86_64. Both have the same package ID and signer; install only one and upgrade in place to retain pairings. An App installed from the upstream project has a different signer, so uninstall it first. A differently signed Debug APK cannot replace it; do not uninstall or clear data just to bypass that mismatch.
+2. Install a signed Android APK from [GitHub Releases](https://github.com/Jlnvv-tom/quwork-dsh-mobile/releases/tag/android-v0.7.7). Choose the compatibility `.apk` for existing HTTPS channels, or the full `-iroh.apk` for experimental iroh on arm64-v8a/x86_64. Both have the same package ID and signer; install only one and upgrade in place to retain pairings. An App installed from the upstream project has a different signer, so uninstall it first. A differently signed Debug APK cannot replace it; do not uninstall or clear data just to bypass that mismatch.
 3. On the computer, generate a pairing key/link under **Mobile Access → Local network**, or configure a remote provider and generate its remote pairing QR code. In the app, choose the matching connection mode and scan or paste the link.
 4. Name the computer. The app stores each LAN or remote pairing as its own record. The phone does not need a cpolar, Cloudflare or Tailscale app.
 
@@ -35,6 +35,10 @@ The **Paired computers** list shows names, connection types, addresses, reachabi
 Page zoom changes the whole page and is separate from per-address text preferences. App-only actions are shown only when the native bridge supports them. Native screens follow the Android system language in Simplified Chinese, English or Italian; webpage copy follows DSH's selected locale. DSH does not currently expose Italian.
 
 Deleting a local record removes its saved token and pinned CA, not the computer's authorization or every short-lived WebView cookie. Use **Mobile Access** on the computer to revoke access immediately. A full Android clear-app-data reset removes all pairings and web data and is not a normal reconnection step.
+
+## 0.7.7 update
+
+This build is the same page, WebView shell and native code as 0.7.6 apart from the launcher label, which now reads QuWork instead of `quwork-mobile`. The package ID and the QuWork signing key are unchanged, so an installed 0.7.6 upgrades in place while a device with the upstream App still has to uninstall first.
 
 ## 0.7.6 update
 
