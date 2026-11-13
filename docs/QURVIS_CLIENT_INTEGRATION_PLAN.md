@@ -78,6 +78,25 @@
 
 ## 4 分阶段计划
 
+### 阶段 0.5：QuWork 入口在手机页可点开（已完成第一步）
+
+`qurwork-dsh-bridge` 渲染的个人中心按钮点击后走 `/qurwork` `profile/open`，真正的弹层由 Electron Renderer 渲染；手机端没有 Renderer，所以点了等于没反应，还会顺带在电脑上弹出个人中心。`src/mobile-qurwork-panel.ts` 现在在移动页拦截该点击：
+
+- 捕获 `[data-qurwork-profile]` 的点击并阻止冒泡，所以不会再触发桌面端弹窗；
+- 用只读的 `/qurwork` `profile/get` 渲染移动端底部面板（头像、显示名、用户名、账号 ID、身份、邀请码），读取失败、超时、未登录分别有独立文案；
+- 账号菜单的 `qurwork:open-app-settings` 事件改为打开「应用设置」说明面板；
+- 充值、订阅、邀请、客服、应用设置等只在电脑端存在的动作明确标注为桌面专属，不做假成功；
+- 安装位置在 `src/client.ts` 的非桌面分支，桌面 WebView 行为不变；`tests/mobile-qurwork-panel.test.ts` 覆盖解析、点击拦截、设置事件、无连接与销毁。
+
+`qurwork-dsh-bridge` 另外两个侧栏入口没有只读投影可做，点击只会落到 Electron 端点，所以在手机页直接隐藏（`src/mobile-qurwork-sidebar.ts`）：
+
+- `[data-qurwork-sidebar-actions]`（「插件 · 技能」→ `plugin-market/open`）整块隐藏；
+- DSH 自带 More 菜单里 bridge 追加的「内容创作」行按标签打标记后隐藏（`content-creation/open`）；
+- 规则写在 `html.dsh-native-mobile-active` 之下，宽屏桌面浏览器仍保留原侧栏；
+- `tests/mobile-qurwork-sidebar.test.ts` 覆盖标记、幂等、菜单延迟渲染、桌面不生效与销毁。
+
+仍待跟进：这些面板只是账号只读投影，正式的个人中心（积分、充值、邀请、客服）需要产品决定是在手机端重做还是在手机端只保留入口提示。侧栏之外还有 `[data-qurwork-browser-guide-entry]`（浏览器引导）和 `[data-qurwork-credit-promotion]`（积分加量横幅）同样是桌面专属，尚未处理。
+
 ### 阶段 0：兼容性验证 spike（1–2 天，不改代码）
 
 在 QuWork dev 环境把当前 `npm pack` 产物手工装进 `~/.qurwork-desktop-dsh/.dsh/profiles/web`，验证并记录：

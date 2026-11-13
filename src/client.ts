@@ -44,6 +44,8 @@ import { MobilePushSettings } from './mobile-push/settings.js'
 import { SESSION_PREFETCH_SETTINGS_ORDER, SessionPrefetchSettings } from './session-prefetch-settings.js'
 import { installPushNavigation } from './mobile-push/navigation.js'
 import { dismissMobileDirectoryPicker, hasUpstreamBrowsePicker, installMobileDirectoryPicker } from './mobile-directory-picker.js'
+import { installMobileQuworkPanel } from './mobile-qurwork-panel.js'
+import { installMobileQuworkSidebarHiding } from './mobile-qurwork-sidebar.js'
 
 export { shouldNudgeReconnect, shouldRenewSession } from './client-recovery.js'
 export type { MobileConnectionState } from './client-recovery.js'
@@ -5890,6 +5892,11 @@ export function apply(ctx: ClientContext): void {
         getLayout: () => ctx.get('layout'),
         getSidebarRight: () => ctx.get('sidebarRight'),
       }))
+      const removeQuworkPanel = installMobileQuworkPanel(
+        { get: name => ctx.get(name) },
+        { view: window, page: document, locale: selectedMobileControlLocale },
+      )
+      const removeQuworkSidebarEntries = installMobileQuworkSidebarHiding({ page: document })
       // The dedicated page owns its directory flow only when DSH's own picker
       // cannot serve a remote browser: the desktop composition keeps DSH's
       // adaptive picker (a native OS chooser there), which no remote browser
@@ -5907,7 +5914,7 @@ export function apply(ctx: ClientContext): void {
         // (smoke:voice-session asserts a cancelled call must not).
         const removal = removeDirectoryPicker()
         try {
-          disposeClientModuleDialogs(); removeModuleSettings(); removeSettingsAction(); removeCustom(); removeSurface(); removeVoiceSession(); removeDraftTransfer(); localFont.dispose(); style.remove()
+          disposeClientModuleDialogs(); removeModuleSettings(); removeSettingsAction(); removeCustom(); removeSurface(); removeQuworkPanel(); removeQuworkSidebarEntries(); removeVoiceSession(); removeDraftTransfer(); localFont.dispose(); style.remove()
         } finally { await removal }
       }
     }
