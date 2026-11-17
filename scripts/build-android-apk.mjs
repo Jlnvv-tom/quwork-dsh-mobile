@@ -16,6 +16,9 @@ const UPDATE_DESCRIPTOR_SCRIPT = join(ROOT, 'scripts/write-android-update-descri
 // Mirrors the Qurvis desktop channel layout, so APKs and the desktop packages share one CDN:
 // https://img1.rrzuji.cn/qurvis-package/latest/QuWork-1.6.5-win-x64.exe
 const CDN_BASE_URL = 'https://img1.rrzuji.cn/qurvis-package/latest'
+// Release hosting is checked in under config/ so moving the descriptor never edits build logic.
+// gradle's updatesDescriptorUrl reads the same file; both fall back when it is absent.
+const UPDATE_CONFIG = await readUpdateConfig()
 const DEFAULT_CREDENTIALS = join(homedir(), '.quwork-signing.txt')
 const DEFAULT_NDK_VERSION = '25.2.9519653'
 const DEFAULT_RUST_TOOLCHAIN = '1.99.1'
@@ -45,8 +48,9 @@ Options:
   --credentials=<file>         KEY=VALUE signing file (default: ~/.quwork-signing.txt)
   --rust-toolchain=<name>      Rust toolchain for the iroh package (default: ${DEFAULT_RUST_TOOLCHAIN})
   --download-page=<url>        Page the App opens for a manual download (default: GitHub releases)
-  --update-descriptor=<url>    Descriptor the App polls once per launch
-                               (default: ${CDN_BASE_URL}/quwork-android-release.json; pass an
+  --update-descriptor=<url>    Descriptor the App polls once per launch (default:
+                               config/mobile-update.json descriptorUrl, else
+                               ${CDN_BASE_URL}/quwork-android-release.json; pass an
                                empty value to disable update checking)
   --base-url=<url>             Prefix the generated descriptor's APK links point at
                                (default: ${CDN_BASE_URL})
@@ -76,6 +80,21 @@ async function exists(path) {
   }
 }
 
+/** Release hosting config is advisory: a missing or malformed file keeps the built-in default. */
+async function readUpdateConfig() {
+  try {
+    const parsed = JSON.parse(await readFile(join(ROOT, 'config/mobile-update.json'), 'utf8'))
+    return typeof parsed === 'object' && parsed !== null ? parsed : {}
+  } catch {
+    return {}
+  }
+}
+
+function configuredUrl(config, key, fallback) {
+  const value = typeof config[key] === 'string' ? config[key].trim() : ''
+  return value.startsWith('https://') ? value : fallback
+}
+
 function parseArgs(argv) {
   const options = {
     variants: ['full', 'compat'],
@@ -83,7 +102,7 @@ function parseArgs(argv) {
     prefix: 'quwork',
     // Upload target for the APKs, and the descriptor an installed App polls once per launch.
     baseUrl: CDN_BASE_URL,
-    updateDescriptor: `${CDN_BASE_URL}/quwork-android-release.json`,
+    updateDescriptor: configuredUrl(UPDATE_CONFIG, 'descriptorUrl', `${CDN_BASE_URL}/quwork-android-release.json`),
     rustToolchain: process.env.RUSTUP_TOOLCHAIN || DEFAULT_RUST_TOOLCHAIN,
     unsigned: false,
     skipVerify: false,

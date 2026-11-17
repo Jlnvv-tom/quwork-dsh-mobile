@@ -167,6 +167,8 @@ For native changes, increase Android `versionName` and `versionCode`, document t
 
 After verifying the published APK's checksum, identity, versionCode and established signer, copy the generated `quwork-android-release.json` into `apps/mobile/release.json` in a reviewed commit and update the App manuals and root APK links. This descriptor names an already published APK; do not advance it for an unpublished candidate. Its legacy `v<app-version>` tags remain valid, so existing downloads do not move. The plugin checks the public descriptor and falls back to its bundled copy when that lookup is unavailable.
 
+[config/quwork-android-release.json](config/quwork-android-release.json) is the descriptor an owner uploads beside the APKs it names; [config/mobile-update.json](config/mobile-update.json) is where the App looks for it and where a manual download starts. Both are checked by `npm run check:mobile-release`, and the Android build reads `config/mobile-update.json` unless `-PmobileUpdateDescriptorUrl` overrides it. Move APK hosting freely, but remember an already released App keeps the descriptor URL it was compiled with, so a new location only reaches phones that install a build made after the change.
+
 Stable Android releases require `ANDROID_KEYSTORE_BASE64`, `ANDROID_KEYSTORE_PASSWORD`, `ANDROID_KEY_ALIAS` and `ANDROID_KEY_PASSWORD`; npm publication requires `NPM_TOKEN`. Never copy their values into the repository. The Android workflow uses a temporary runner and validates the established single signer. Missing signing configuration fails the Android release; plugin-only publication does not require Android signing credentials.
 
 ## Reports and community conduct

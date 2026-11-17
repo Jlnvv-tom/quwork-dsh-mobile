@@ -1,0 +1,11 @@
+{
+  "version": "0.7.7",
+  "versionCode": 92,
+  "releaseTag": "android-v0.7.7",
+  "downloads": {
+    "iroh": "https://space-static.quwork.cn/file-center/files/2611/16/quwork-android-v0.7.7-d70d07cd.apk"
+  },
+  "sha256": {
+    "iroh": "84166ee23e101a4086ba311467c5b864e6fb33c6bdf2cadb7078f045f877d6f6"
+  }
+}

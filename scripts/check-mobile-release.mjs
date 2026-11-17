@@ -311,13 +311,102 @@ async function checkFunnelHost() {
   }
 }
 
+function parseJsonObject(source, label) {
+  let parsed
+  try {
+    parsed = JSON.parse(source)
+  } catch (error) {
+    fail(`${label} is not valid JSON: ${error instanceof Error ? error.message : String(error)}`)
+  }
+  if (typeof parsed !== 'object' || parsed === null || Array.isArray(parsed)) {
+    fail(`${label} must be a JSON object`)
+  }
+  return parsed
+}
+
+function requireHttpsUrl(value, label) {
+  if (typeof value !== 'string' || value.length === 0 || value.length > 2048) {
+    fail(`${label} must be a non-empty https URL string`)
+  }
+  if (value !== value.trim() || /[\s"'\\]/u.test(value)) {
+    fail(`${label} must be a single https URL without whitespace or quotes`)
+  }
+  if (!value.startsWith('https://')) fail(`${label} must use https, got ${value}`)
+  const [host] = value.slice('https://'.length).split('/')
+  if (!host || host.includes('@')) fail(`${label} must name a host without credentials, got ${value}`)
+  return value
+}
+
+/**
+ * The checked-in descriptor is the file an owner uploads beside the APKs it names, so a wrong
+ * version, tag or link here reaches phones as a prompt that cannot install. Validate it here
+ * instead of on a device.
+ */
+async function checkReleaseConfig() {
+  const [descriptorSource, hostingSource, gradle] = await Promise.all([
+    read('config/quwork-android-release.json', 'utf8'),
+    read('config/mobile-update.json', 'utf8'),
+    read('apps/mobile/android/app/build.gradle.kts', 'utf8'),
+  ])
+  const descriptor = parseJsonObject(descriptorSource, 'config/quwork-android-release.json')
+  if (!/^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/u.test(descriptor.version)) {
+    fail('config/quwork-android-release.json version must be a stable numeric SemVer')
+  }
+  if (!Number.isSafeInteger(descriptor.versionCode) || descriptor.versionCode <= 0) {
+    fail('config/quwork-android-release.json versionCode must be a positive safe integer')
+  }
+  if (descriptor.releaseTag !== `android-v${descriptor.version}`) {
+    fail(`config/quwork-android-release.json releaseTag must be android-v${descriptor.version}, got ${descriptor.releaseTag}`)
+  }
+  const downloads = descriptor.downloads
+  if (typeof downloads !== 'object' || downloads === null || Array.isArray(downloads)) {
+    fail('config/quwork-android-release.json downloads must be an object')
+  }
+  const variants = Object.keys(downloads)
+  if (variants.length === 0) {
+    // The App rejects an empty map, so an empty descriptor is a silent no-op on every phone.
+    fail('config/quwork-android-release.json downloads must name at least one variant')
+  }
+  for (const variant of variants) {
+    if (!['iroh', 'compatibility'].includes(variant)) {
+      fail(`config/quwork-android-release.json downloads.${variant} is not a variant the App downloads`)
+    }
+    requireHttpsUrl(downloads[variant], `config/quwork-android-release.json downloads.${variant}`)
+  }
+  if (descriptor.sha256 !== undefined) {
+    if (typeof descriptor.sha256 !== 'object' || descriptor.sha256 === null || Array.isArray(descriptor.sha256)) {
+      fail('config/quwork-android-release.json sha256 must be an object')
+    }
+    for (const [variant, digest] of Object.entries(descriptor.sha256)) {
+      if (!variants.includes(variant)) {
+        fail(`config/quwork-android-release.json sha256.${variant} has no matching download`)
+      }
+      if (typeof digest !== 'string' || !/^[0-9a-f]{64}$/u.test(digest)) {
+        fail(`config/quwork-android-release.json sha256.${variant} must be a lowercase hex SHA-256 digest`)
+      }
+    }
+  }
+  const versionName = singleMatch(gradle, /^\s*versionName\s*=\s*"([^"]+)"\s*$/gm, 'Android versionName')
+  const versionCode = singleMatch(gradle, /^\s*versionCode\s*=\s*(\d+)\s*$/gm, 'Android versionCode')
+  // Same rule as apps/mobile/release.json: a descriptor may trail the Gradle candidate but never
+  // lead it, because every version it names must already exist as an installable APK.
+  if (compareVersions(descriptor.version, versionName) > 0 || descriptor.versionCode > Number(versionCode)) {
+    fail(`config/quwork-android-release.json (${descriptor.version}/${descriptor.versionCode}) must not lead app/build.gradle.kts (${versionName}/${versionCode})`)
+  }
+
+  const hosting = parseJsonObject(hostingSource, 'config/mobile-update.json')
+  requireHttpsUrl(hosting.descriptorUrl, 'config/mobile-update.json descriptorUrl')
+  requireHttpsUrl(hosting.downloadPageUrl, 'config/mobile-update.json downloadPageUrl')
+}
+
 async function main() {
   await Promise.all([
     checkBrandAndStoreIcon(),
     checkAndroid(),
     checkFunnelHost(),
+    checkReleaseConfig(),
   ])
-  console.log('mobile release assets ok: transparent Android icons and Android API 36')
+  console.log('mobile release assets ok: transparent Android icons, Android API 36 and the update descriptor')
 }
 
 main().catch((error) => {

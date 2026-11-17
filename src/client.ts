@@ -717,7 +717,7 @@ function releaseVersion(value: unknown): string | undefined {
 export function clientReleaseInfo(data: Readonly<Record<string, unknown>>): ClientReleaseInfo {
   const latestVersion = releaseVersion(data.latestVersion)
   const androidVersion = releaseVersion(data.androidVersion)
-  // Downloads and updates belong to the QuWork download page; a response can never
+  // Downloads and updates belong to the owner-published App package; a response can never
   // redirect the client to an upstream or third-party host.
   const androidDownloadUrl = BRAND.downloadPageUrl
   return {

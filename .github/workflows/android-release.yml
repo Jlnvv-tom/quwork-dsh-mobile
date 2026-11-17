@@ -105,17 +105,24 @@ jobs:
           done
       - name: Name Android package and prepare release descriptor
         env:
-          # Descriptor APK links follow the fork's CDN layout; override the repository variable to
-          # publish from a different bucket or site.
+          # The checked-in descriptor is shipped whenever it already names this tag, because it is
+          # also the file the App downloads from. Otherwise APK links follow this base URL; override
+          # the repository variable to publish from a different bucket or site.
           MOBILE_DOWNLOAD_BASE_URL: ${{ vars.MOBILE_DOWNLOAD_BASE_URL || 'https://img1.rrzuji.cn/qurvis-package/latest' }}
         run: |
           version="${GITHUB_REF_NAME#android-v}"
           for apk in quwork-android-v*.apk; do sha256sum "$apk" > "$apk.sha256"; done
-          node scripts/write-android-update-descriptor.mjs quwork-android-v*.apk \
-            --repo="$GITHUB_REPOSITORY" \
-            --release-tag="$GITHUB_REF_NAME" \
-            ${MOBILE_DOWNLOAD_BASE_URL:+--base-url="$MOBILE_DOWNLOAD_BASE_URL"} \
-            --out=quwork-android-release.json
+          checked_tag="$(node -p "JSON.parse(require('node:fs').readFileSync('config/quwork-android-release.json','utf8')).releaseTag" || true)"
+          if [ "$checked_tag" = "$GITHUB_REF_NAME" ]; then
+            cp config/quwork-android-release.json quwork-android-release.json
+            echo "Shipping the checked-in descriptor for $GITHUB_REF_NAME." >> "$GITHUB_STEP_SUMMARY"
+          else
+            node scripts/write-android-update-descriptor.mjs quwork-android-v*.apk \
+              --repo="$GITHUB_REPOSITORY" \
+              --release-tag="$GITHUB_REF_NAME" \
+              ${MOBILE_DOWNLOAD_BASE_URL:+--base-url="$MOBILE_DOWNLOAD_BASE_URL"} \
+              --out=quwork-android-release.json
+          fi
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
           name: android-package
