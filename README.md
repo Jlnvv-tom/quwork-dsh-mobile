@@ -32,13 +32,13 @@
   <a href="README.en.md">English</a>
 </p>
 
-> QuWork 是 DeepSeek Harness 社区插件，原生 App 仅支持 Android。
+> QuWork 是 DeepSeek Harness 社区插件，原生 App 目前正式支持 Android；仓库另含一个**尚未发布**的[便携 Windows 客户端](apps/windows/README.md)（源码已合入 main，但未随任何版本发布，也未完成真实 Windows 验收，因此不作为已支持平台）。
 >
 > **使用 iPhone 或 iPad？** 可以用 Safari 访问，或[添加到主屏幕作为 Web App（PWA）使用](<#iphone-与-ipad主屏幕-web-apppwa>)，无需下载原生 iOS App。
 >
 > **当前正式版本：0.8.9**。Android 更新托管改为记录在仓库的 `config/`：更新描述符与 App 下载地址不再写死在构建逻辑里，控制面板的「下载 App」直接指向已发布的 0.7.7 APK。插件与 Android App 独立更新；Android App 0.7.7 已发布（构建号 92），与 0.7.6 的差异只有桌面启动器名称改成 QuWork；自 0.7.5 起改用本仓库的 QuWork 签名，安装过上游版本者需先卸载再装。[插件更新与下载](https://github.com/Jlnvv-tom/quwork-dsh-mobile/releases/tag/v0.8.9) · [完整更新记录](CHANGELOG.md)。
 >
-> **版本说明**：自插件 **0.6.2** 起，Android App 与插件改为独立发布（当时 App 仍为 0.6.1）；App 自 0.6.2 起使用独立编号，版本号无需一致；插件升级不代表 App 需要同步升级。[兼容说明](#兼容性)。
+> **版本说明**：自插件 **0.6.2** 起，Android App 与插件改为独立发布（当时 App 仍为 0.6.1）；App 自 0.6.2 起使用独立编号，版本号无需一致；插件升级不代表 App 需要同步升级。App 图标可在设置中更换，不影响版本与配对。[兼容说明](#兼容性)。
 
 <p align="center">
   <a href="https://github.com/Jlnvv-tom/quwork-dsh-mobile/releases/download/android-v0.7.7/quwork-android-v0.7.7.apk"><img src="https://raw.githubusercontent.com/Jlnvv-tom/quwork-dsh-mobile/main/assets/brand/app-icon-rounded.svg" alt="QuWork 安卓应用图标" width="72" height="72"></a><br>
@@ -56,7 +56,8 @@ QuWork 是一个 DeepSeek Harness 插件，让手机浏览器或 Android App 通
 
 - **在手机上继续电脑端的工作**：同一份会话、工作区、消息和工具，实时同步。
 - **用对话定制手机端**：在 DSH 对话里提出布局、交互或功能需求；文件修改完成后，自定义资源通常会自动更新。
-- **专属触屏布局**：会话抽屉、工具详情、设置、提问卡片和输入栏都按手机重新组织；侧栏列表在本页内记住位置，切换会话再打开不会总跳回顶部。App 跟随系统语言（简/英/意），插件界面跟随 DSH 语言。
+- **专属触屏布局**：会话抽屉、工具详情、设置、提问卡片和输入栏都按手机重新组织；侧栏列表在本页内记住位置，切换会话再打开不会总跳回顶部。App 跟随系统语言（简/英/意），插件界面跟随 DSH 语言。平板等宽屏上侧栏作为常驻栏，主区仍有足够空间时会话列保持约 720px 并居中，输入栏与列同轴；竖屏平板等主区较窄时保持整宽。
+- **点按路径即可复制**：触屏设备上，点按文件预览顶部的路径条，就把该元素显示的路径复制到剪贴板，并在底部短暂提示所复制的值（过长时屏幕上省略显示，剪贴板中始终是完整文本）。点按会覆盖剪贴板当前内容；交付文件卡片仍仅用于打开预览（不复制）；改动审查页顶部的文件切换箭头不受影响；桌面端鼠标点击不会复制。
 - **多种远程通道**：Tailscale、cpolar、cloudflared 快速/命名隧道、自建 FRP、自有反向代理，以及无需域名和公网端口的实验性 iroh；Windows/Linux x64 还可由插件托管 Caddy HTTPS 与证书。
 - **配对与多设备**：扫码、链接或密钥配对一次；同一 Origin 下自动续期，地址、证书或监听变化后需按「更换网络」重新配对（局域网运行时）或下次开启生效；App 在一个列表中显示局域网和远程配对的电脑，定期检测可达状态，并支持切换、重新配对或删除本地记录。
 - **一键诊断与放行**：检查版本、网关、网卡、防火墙和远程通道，生成脱敏报告；被拦截的第三方插件连接按确切路径一键放行。
@@ -114,7 +115,7 @@ dsh plugin --profile web add dshmarket
 
 从上方链接下载正式 Android APK。随后按[连接教程](#连接教程)选择局域网或远程访问；手机不需要安装额外的隧道客户端。包括 iOS 在内的浏览器访问方式见下文。
 
-通过 npm 安装的插件会在桌面界面加载时检查新版本，有更新时在访问面板标题右侧显示“更新插件”，安装后需重启 DSH。App 下载入口展示最新版本；本地开发包不会被自动覆盖，Android App 不会主动检查或推送版本更新。
+通过 npm 安装的插件会在桌面界面加载时检查新版本，有更新时在访问面板标题右侧显示“更新插件”，安装后需重启 DSH。App 下载入口展示最新版本；本地开发包不会被自动覆盖；Android App 0.7.4 不会主动检查或推送版本更新，0.7.5 起在设备列表设置中提供手动「检查更新」，只打开对应发布页，不自动下载或安装。
 
 ### iPhone 与 iPad：主屏幕 Web App（PWA）
 
@@ -194,6 +195,8 @@ dsh plugin --profile web add dshmarket
 | 自有反向代理 | 已有公开 HTTPS 代理 | 插件只提供私有认证后端；[配置指南](docs/SELF_HOSTED_ORIGIN.md) | 可沿用自己的代理设施，稳定性取决于代理、线路与运维 |
 | 托管 Caddy | 腾讯云 DNSPod 管理的域名与公网入站 | 插件管理 HTTPS 与证书；Windows/Linux x64；[配置指南](docs/CADDY_MANAGED.md) | 不提供内网穿透，需自行确认入站端口和映射；已有 Cloudflared 用户不必迁移 |
 
+如果你已经有自己的 frps，也可以用 frp 的 **stcp** 让手机经本地回环接入、完全不发布公网端口：电脑端跑 `type = stcp` 的 frpc，手机端（Termux）配 stcp visitor，只把网关的 HTTPS 端口经 frps 转到手机自己的 `127.0.0.1`。这需要用插件下一版本的「回环隧道接入」开关，且**手机端端口必须等于电脑端网关监听端口**（默认 3443）。与上表中由插件管理的通道不同，这条链路的 frpc 要你自己运行；配置步骤、必须一致的端口和残余风险见 [回环隧道接入](docs/LOOPBACK_TUNNEL.md)。
+
 <p align="center">
   <img src="https://raw.githubusercontent.com/Jlnvv-tom/quwork-dsh-mobile/main/assets/screenshots/remote-access.png" width="82%" alt="QuWork 远程访问与通道选择">
 </p>
@@ -237,7 +240,7 @@ Funnel 的运行组件把公开监听生命周期绑定到父进程和受限控�
 
 ### 实验中的 iroh 连接
 
-从插件 0.7.0 起，[dsh-mobile-iroh](https://github.com/saya-ch/dsh-mobile-iroh) 的实验性传输已整合进本仓库，电脑端组件、Android 原生传输和完整版 APK 随本项目维护。独立仓库保留方案与原型记录；日常安装使用本仓库的插件和 App 即可，不必再维护两套 App。连接步骤、平台限制与排障以 [iroh 使用说明](docs/IROH.md) 为准。
+从插件 0.7.0 起，[dsh-mobile-iroh](https://github.com/Jlnvv-tom/quwork-dsh-mobile-iroh) 的实验性传输已整合进本仓库，电脑端组件、Android 原生传输和完整版 APK 随本项目维护。独立仓库保留方案与原型记录；日常安装使用本仓库的插件和 App 即可，不必再维护两套 App。连接步骤、平台限制与排障以 [iroh 使用说明](docs/IROH.md) 为准。
 
 ## 扩展与自定义
 
@@ -282,6 +285,8 @@ Funnel 的运行组件把公开监听生命周期绑定到父进程和受限控�
 
 Android App 在“已配对设备”中统一显示电脑及其局域网／远程连接记录。两种方式的授权彼此独立，同一台电脑可能有两条记录。升级会迁移旧凭据，无需重新配对；重新验证变化的地址后，相同身份的记录会合并并保留名称。自签 FRP 使用独立 CA 指纹，可能另成一条记录。Token 和固定的 CA 由 Android Keystore 加密；配对二维码含短期配对信息，不含长期设备 Token 或 CA 私钥。
 
+「已配对设备」右上角设置里的**应用图标**可以更换：默认是拿着手机的 DSH 鲸鱼娘，另可选经典、欢呼、安静三种姿态和六种鲸鱼标志配色。切换只更换桌面入口，不改变包名、配对数据或后台服务。
+
 未手动指定标识时，公开证书远程入口的新配对使用电脑保存的随机标识，避免相同安装路径让两台电脑的记录互相覆盖。已有连接无需为此重新配对，也不需要更新 Android App；局域网和自签 FRP 仍按各自的 CA 区分。更新后正常退出并重启 DSH，降级前请先阅读[状态备份注意事项](SECURITY.md#installation-identity-and-device-state-upgrades)。
 
 每条记录显示自定义名称、连接方式、Origin、定期更新的可达状态和最近连接时间。绿色状态点表示“可达”，灰色状态点表示“检测中”“暂不可达”“配对已过期”或“电脑端已移除”；可达性检查直接验证 DSH Gateway，不依赖 ICMP，也不会把暂时断网误判成电脑端撤销。
@@ -299,12 +304,12 @@ App 0.6.7 配合插件 0.6.16，可在列表 **设置 → 同电脑自动连接*
 <table>
   <tr>
     <td align="center" valign="top" width="50%">
-      <img src="https://raw.githubusercontent.com/Jlnvv-tom/quwork-dsh-mobile/main/assets/screenshots/device-management.jpg" width="44%" alt="Android App 已配对设备列表"><br>
-      <sub>设备管理列表：查看已配对电脑、连接方式和可达状态</sub>
+      <img src="https://raw.githubusercontent.com/Jlnvv-tom/quwork-dsh-mobile/main/assets/screenshots/device-management.jpg?v=067b814bfc51" width="44%" alt="Android App 已配对设备列表：远程与局域网电脑及其可达状态"><br>
+      <sub>已配对设备：每台电脑的名称、连接方式、可达状态与最近连接时间，底部可添加新电脑</sub>
     </td>
     <td align="center" valign="top" width="50%">
-      <img src="https://raw.githubusercontent.com/Jlnvv-tom/quwork-dsh-mobile/main/assets/screenshots/startup-behavior.jpg" width="44%" alt="Android App 启动行为设置"><br>
-      <sub>启动行为设置：选择直接进入 DSH 或显示设备列表</sub>
+      <img src="https://raw.githubusercontent.com/Jlnvv-tom/quwork-dsh-mobile/main/assets/screenshots/startup-behavior.jpg?v=b6fe814aa2ed" width="44%" alt="Android App 设置页：启动行为、外观、应用图标、同电脑自动连接与检查更新"><br>
+      <sub>设置页：启动行为（直接进入 DSH 或显示设备列表）、外观、应用图标、同电脑自动连接与检查更新</sub>
     </td>
   </tr>
 </table>
@@ -350,19 +355,6 @@ excludedClientModules:
 
 </details>
 
-<table>
-  <tr>
-    <td align="center" valign="top" width="50%">
-      <img src="https://raw.githubusercontent.com/Jlnvv-tom/quwork-dsh-mobile/main/assets/screenshots/third-party-plugin-adaptation.png" width="96%" alt="Android App 宽屏布局与社区侧边栏插件适配"><br>
-      <sub>Android App 下社区侧边栏插件的兼容</sub>
-    </td>
-    <td align="center" valign="top" width="50%">
-      <img src="https://raw.githubusercontent.com/Jlnvv-tom/quwork-dsh-mobile/main/assets/screenshots/websocket-diagnostics.png" width="96%" alt="Android App 第三方 WebSocket 路径诊断"><br>
-      <sub>连接诊断：检查第三方 WebSocket 路径并按需放行</sub>
-    </td>
-  </tr>
-</table>
-
 ## App 与手机浏览器
 
 | 方式 | 适合场景 | 说明 |
@@ -395,7 +387,7 @@ flowchart LR
   DSH -->|"同一工作区、会话和事件流"| Phone
 ```
 
-插件包含三层：Host face 负责发现、配对、HTTPS、回环代理和扩展注册表；Client face 提供独立的移动布局与扩展 SDK；Android App 提供受限的原生 Bridge。Bridge 使用 `androidx.webkit` WebMessage，每条消息都校验精确顶层 Origin 和主 Frame，并限制消息大小；不使用 `addJavascriptInterface`。插件不改写 DeepSeek Harness 安装目录中的源码或网页文件；移动网关按请求提供启动兼容层与专用布局，安装和卸载通过插件机制完成。DSH Web 上游端口默认为 3080，可通过 `dsh web --port` 修改。
+插件包含三层：Host face 负责发现、配对、HTTPS、回环代理和扩展注册表；Client face 提供独立的移动布局与扩展 SDK；Android App 提供受限的原生 Bridge。Bridge 使用 `androidx.webkit` WebMessage，每条消息都校验精确顶层 Origin 和主 Frame，并限制消息大小；不使用 `addJavascriptInterface`。插件不改写 DeepSeek Harness 安装目录中的源码或网页文件；移动网关按请求提供启动兼容层与专用布局，安装和卸载通过插件机制完成。DSH Web 上游端口默认为 3080，可通过 `dsh web --port` 修改。阅读模式（可选，默认关闭）：向下滚动阅读长会话时收起输入栏的编辑区，输入框卡片与发送/停止按钮保留；点按卡片、聚焦输入框、打开软键盘或向上回滚约 80px 即恢复。有草稿、提交中或回复生成中时不会收起。可在「设置 → 通用」中开启。
 
 会话切换后会重建客户端 Session 与实时流。插件提供默认关闭的会话预取（对应 [#291](https://github.com/Jlnvv-tom/quwork-dsh-mobile/issues/291)）：切换稳定后，仅对刚离开的会话发起一次有界、只读的 `session/projections` 预热，让切回命中 DSH session-query 的已准备缓存，避免重新解析整个会话日志。该行为受每会话冷却与超时约束，失败静默，且绝不打扰正常请求或实时流；在「设置 → 通用」中的「预取刚离开的会话」开关显式开启后才生效（默认关闭，选择会持久化）。
 
@@ -449,6 +441,8 @@ macOS 上局域网、cloudflared、自建 FRP 与自有反向代理可用；Funn
 
 | QuWork 插件 | 已验证的 DeepSeek Harness 版本与范围 |
 | --- | --- |
+| `0.8.9` | 移动页点按预览路径条复制完整路径；网关对不受信任的来源网段返回 `source_network_untrusted`；抽屉不再裁剪上游固定定位面板（#413）；仓库加入尚未发布的便携 Windows 客户端源码。Android App 为 0.7.5 |
+| `0.8.8` | 在 `0.2.2-rc.2` 上恢复 Web 推送（AgentRegistry ownership 变更），任务完成事件携带会话标题与有界摘要并在 App 报告可投递时让出页面通知，新增默认关闭的阅读模式，推送调度不再在容量满时唤醒定时器。Android App 为 0.7.4 |
 | `0.8.7` | 在 `0.2.2-rc.1` 打包目标上加入默认关闭的会话预取、网关到期连接正常关闭与认证失败分类，并为 Android 0.7.4 准备后台提醒真实状态与通知就地打开；同时更新插件图标与 iroh 排障文档。Android App 为 0.7.4，新增设备端页面缓存与后台提醒真实状态 |
 | `0.8.6` | 在 `0.2.2-rc.1` 打包目标上透传已配对第三方插件的 `x-dsh-*` 请求头、修正网页推送停用语义、向受信 Host 插件开放推送文案接口，并修复 Windows 防火墙校验、iroh 目录诊断与局域网诊断口径。Android App 为 0.7.3，新增可选后台提醒 |
 | `0.8.5` | 插件维护与性能更新，继续使用 `0.2.2-rc.1` 的 DSH 打包验证目标；新增目录缓存、Desktop 更新目标修复、CGNAT 局域网识别、防火墙保护与 macOS 权限提示。Android App 仍为 0.7.2 |

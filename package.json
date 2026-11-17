@@ -74,6 +74,8 @@
     "docs/CLIENT_MODULES.en.md",
     "docs/TRUSTED_NETWORKS.md",
     "docs/TRUSTED_NETWORKS.en.md",
+    "docs/LOOPBACK_TUNNEL.md",
+    "docs/LOOPBACK_TUNNEL.en.md",
     "docs/SLOW_CONNECTIONS.md",
     "docs/SLOW_CONNECTIONS.en.md",
     "docs/CONNECTION_DIAGNOSTICS.md",
@@ -126,6 +128,7 @@
     "sync:upstream": "node ./scripts/sync-upstream.mjs",
     "sync:upstream:dry": "node ./scripts/sync-upstream.mjs --dry-run",
     "smoke:dsh-boot": "node ./scripts/smoke-dsh-mobile-boot.mjs",
+    "smoke:dsh-preview": "node ./scripts/smoke-dsh-mobile-boot.mjs --file-preview",
     "smoke:push-contract": "node ./scripts/smoke-mobile-push-contract.mjs",
     "smoke:web-push": "node ./scripts/smoke-mobile-push.mjs",
     "smoke:transport-recovery": "node ./scripts/smoke-mobile-transport-recovery.mjs",
@@ -146,6 +149,7 @@
     "smoke:push-settings": "node ./scripts/smoke-mobile-push-settings.mjs",
     "smoke:voice-session": "node ./scripts/smoke-voice-session.mjs",
     "smoke:composer-keyboard": "node ./scripts/smoke-composer-keyboard.mjs",
+    "smoke:composer-reading-mode": "node ./scripts/smoke-composer-reading-mode.mjs",
     "smoke:mobile-compat": "node ./scripts/smoke-mobile-compat.mjs",
     "smoke:boot-feedback": "node ./scripts/smoke-mobile-boot-feedback.mjs",
     "smoke:composer-overflow": "node ./scripts/smoke-composer-overflow.mjs",
@@ -179,7 +183,8 @@
     "verify": "npm run check:version && npm run check:docs && npm run check:companion-package && npm run check:funnel-licenses && npm run check:notices && npm run check:mobile-release && npm run typecheck && npm run test && npm run build && npm pack --dry-run",
     "smoke:plugin-portal-layers": "node ./scripts/smoke-plugin-portal-layers.mjs",
     "smoke:opaque-chrome": "node ./scripts/smoke-opaque-chrome.mjs",
-    "smoke:rightbar-fullscreen": "node ./scripts/smoke-rightbar-fullscreen.mjs"
+    "smoke:rightbar-fullscreen": "node ./scripts/smoke-rightbar-fullscreen.mjs",
+    "smoke:path-copy": "node ./scripts/smoke-path-copy.mjs"
   },
   "engines": {
     "node": "^22.19.0 || >=24.0.0"

@@ -19,6 +19,9 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           repository: deepseek-ai/deepseek-harness
+          # Track the newest released DSH source, not the upstream default branch:
+          # unreleased work there would fail this contract for changes no user runs yet.
+          ref: dsh-v0.2.2-rc.3
           path: dsh
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
         with:
@@ -31,7 +34,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        dsh: [0.1.7-alpha.2, 0.1.7-rc.1, 0.1.7-rc.2, 0.2.0-rc.1, 0.2.0-rc.2, 0.2.1-alpha.2, 0.2.1-alpha.3, 0.2.1-rc.2, 0.2.1-rc.3, 0.2.1-rc.5, 0.2.2-rc.1]
+        dsh: [0.1.7-alpha.2, 0.1.7-rc.1, 0.1.7-rc.2, 0.2.0-rc.1, 0.2.0-rc.2, 0.2.1-alpha.2, 0.2.1-alpha.3, 0.2.1-rc.2, 0.2.1-rc.3, 0.2.1-rc.5, 0.2.2-rc.1, 0.2.2-rc.2, 0.2.2-rc.3]
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
@@ -53,8 +56,13 @@ jobs:
           echo "DSH_BOOT_SMOKE_MOBILE_TARBALL=$RUNNER_TEMP/plugin-package/$mobile_name-$mobile_version.tgz" >> "$GITHUB_ENV"
       - run: npx playwright install --with-deps chromium --only-shell
       - name: Verify passive public Web Push lifecycle contracts
-        if: matrix.dsh == '0.2.1-rc.2' || matrix.dsh == '0.2.1-rc.5' || matrix.dsh == '0.2.2-rc.1'
+        if: matrix.dsh == '0.2.1-rc.2' || matrix.dsh == '0.2.1-rc.5' || matrix.dsh == '0.2.2-rc.1' || matrix.dsh == '0.2.2-rc.2'
         run: npm run smoke:push-contract
+      - name: Verify compressed mux, attachments and the preview read on the current rc
+        if: matrix.dsh == '0.2.2-rc.2' || matrix.dsh == '0.2.2-rc.3'
+        run: |
+          npm run smoke:attachments
+          npm run smoke:dsh-boot -- --compressed-websocket --diagnostics --file-preview
       - name: Verify current upstream settings, module recovery, picker, attachments and compressed mux
         if: matrix.dsh == '0.2.1-rc.5' || matrix.dsh == '0.2.2-rc.1'
         run: |
@@ -65,10 +73,10 @@ jobs:
           npm run smoke:mobile-sidebar
           npm run smoke:dsh-boot -- --compressed-websocket --diagnostics
       - name: Verify packed Declarative Web Push UI and authenticated navigation
-        if: matrix.dsh == '0.2.1-rc.2'
+        if: matrix.dsh == '0.2.1-rc.2' || matrix.dsh == '0.2.2-rc.2'
         run: npm run smoke:web-push
       - name: Reject a tap reference owned by another paired device
-        if: matrix.dsh == '0.2.1-rc.2'
+        if: matrix.dsh == '0.2.1-rc.2' || matrix.dsh == '0.2.2-rc.2'
         shell: bash
         run: |
           if npm run smoke:web-push -- --negative-control-owner > "$RUNNER_TEMP/web-push-ownership-negative.log" 2>&1; then
@@ -98,6 +106,8 @@ jobs:
           npm pack dsh-mobile@0.6.2 --ignore-scripts --pack-destination "$previous_dir"
           DSH_BOOT_SMOKE_PREVIOUS_MOBILE_TARBALL="$previous_dir/dsh-mobile-0.6.2.tgz" npm run smoke:plugin-installation
       - run: npm run smoke:native-layout
+      - name: Verify tapping a preview path copies it on touch
+        run: npm run smoke:path-copy
       - name: Verify mobile root geometry against broad skin overrides
         run: npm run smoke:layout-ownership
       - name: Verify a body-portal plugin menu stays clickable under the drawer
@@ -117,6 +127,8 @@ jobs:
           node scripts/negative-control.mjs "$RUNNER_TEMP/layout-ownership-negative.log" "Mobile layout ownership negative control detected"
       - run: npm run smoke:voice-session
       - run: npm run smoke:composer-keyboard
+      - name: Verify reading-mode composer collapse across both built bundles
+        run: npm run smoke:composer-reading-mode
       - name: Verify Gallery selection, menu order and stale-result cleanup
         if: matrix.dsh == '0.2.1-rc.3'
         run: npm run smoke:gallery

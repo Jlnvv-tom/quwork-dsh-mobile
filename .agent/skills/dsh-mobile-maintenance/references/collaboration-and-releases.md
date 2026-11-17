@@ -4,7 +4,11 @@
 
 Read the current issue/PR body, comments, changed files, exact head SHA and checks. A reported symptom can come from the plugin, DSH, the App, a remote provider or another frontend module. Reproduce or trace the concrete path before attributing it to user error or upstream version changes.
 
+Before replying, merging or pushing, verify the active account in the tool that will perform the write and preserve the identity the user selected. CLI and connector sessions can use different accounts even for the same repository. Do not silently switch identities as a fallback; ask when the authorized identity is unavailable.
+
 A request to inspect is review-only. When integration is authorized, preserve original author commits, normally by merging the tested head and appending focused maintainer corrections. Local integration does not mean the GitHub PR is merged. Recheck a moved remote head before final integration; avoid an unreviewed rewrite of published history.
+
+Author commits appearing in history or a PR showing merged do not establish that its entire proposal shipped. Verify the final tree and actual package, then distinguish retained, reworked and deferred functionality. Reconcile PR descriptions and release notes with those decisions instead of carrying forward claims from an earlier implementation.
 
 Do not accept a draft replacement just because it has more features. Check available upstream seams, loss of existing fallbacks, input/Stop/Send reachability, desktop behavior, theme tokens and new responsibility for hardcoded third-party classes. A missing slot, inaccessible controls or unsupported runtime is a concrete reason to defer it. Larger proposals such as worker-isolated extension execution need their own lifecycle/resource/recovery design; a timeout is not synchronous isolation.
 
@@ -21,6 +25,8 @@ Credit code authors and issue reporters by actual participation in `CONTRIBUTORS
 Check the implemented behavior before writing an instruction: does the entry exist, which App capability is required, does saving require restart or page reopening, and is this a native function or a community-plugin example? Captions should describe the image simply. Do not imply that phone and tablet are different Apps or that a compatible community sidebar is a native feature.
 
 Maintain paired English/Chinese guides together and product dictionaries for their supported locales. Use actual relative asset paths and compare against current original screenshots. Remove obsolete QR examples when replaced; do not silently rewrite historical release evidence. Run the documentation check described in [CONTRIBUTING](../../../../CONTRIBUTING.md#local-setup-and-baseline), but also inspect facts and rendered structure: link validation does not prove prose, HTML grouping, captions or image layout.
+
+Replacing an image at the same URL is not enough to update what readers see. GitHub proxies third-party image hosts through camo, which keys its cache on the exact URL, so a refreshed capture kept the previously cached fetch and the table showed a broken image while the file, host and local bytes were all correct. Add or change a version query when a referenced asset's content changes, as the hero image already does. Keep one host for the same group of images: `raw.githubusercontent.com` is fetched directly by the reader's browser while jsDelivr goes through camo, so mixed hosts fail in different networks. Verify by rendering the markup through GitHub's markdown API and requesting the URL it returns, not by reading the file back from disk.
 
 ## Independent versions
 
@@ -52,4 +58,11 @@ For a post-publication test repair, inspect the real package contents before dec
 
 ## Maintain the guidance
 
-Update the skill after a reusable failure or an architectural change, with links to the source/tests that now own the behavior. Delete superseded workarounds. Do not copy a conversation, all past PR numbers, local machine paths or a running task list into it. Preserve flexible judgment for ordinary maintenance; fixed ordering is justified for fragile publication, signing, installation and teardown operations, not for every small change.
+Update the skill when a demonstrated failure, changed architecture or durable user requirement would change another maintainer's decision. A resolved issue alone is not a reason to add a rule. Identify what a future Agent would otherwise misunderstand, and separate observed behavior from an unconfirmed explanation.
+
+- Check the entrypoint and relevant references first. Strengthen the existing owner or replace obsolete guidance rather than append a competing rule.
+- Put reusable decisions in the relevant reference; keep shared scope and routing in `SKILL.md`. Mechanically enforced behavior belongs in source/tests or a gate; current versions, open tasks, candidate hashes and one-off results belong in release or local evidence records.
+- Describe the applicable condition, decision and observable acceptance, with links to the owning code/tests. Preserve the reason a tempting alternative fails, without copying the conversation or making a particular implementation the only permitted solution. One unsafe cache design does not forbid all API caching; slow optional probes do not make cached in-memory metadata require a new request.
+- Validate changed links and instructions using the current repository checks. For a substantial or error-prone change, try a small realistic maintenance case without supplying the intended answer; include a case where the rule should not apply. Evaluate the resulting scope, decisions and evidence, not whether the Agent repeats the new wording.
+
+Remove superseded workarounds and keep ordinary maintenance flexible. Fixed ordering is justified for fragile publication, signing, installation and teardown operations, not every small edit. Maintaining guidance does not authorize a push, release, account change or unrelated configuration edit.

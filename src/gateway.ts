@@ -19,6 +19,7 @@ import { createServer as createHttpsServer, type Server as HttpsServer, type Ser
 import { connect, type AddressInfo, type Socket } from 'node:net'
 import { isIP } from './ip.js'
 import { MOBILE_PACKAGE_NAME } from './package-identity.js'
+import { TASK_ANNOUNCEMENT_LIMITS } from './task-events.js'
 import { Transform, type TransformCallback } from 'node:stream'
 import { pipeline } from 'node:stream/promises'
 import { promisify } from 'node:util'
@@ -89,7 +90,7 @@ import {
   MINIMUM_ANDROID_APP_VERSION,
   MOBILE_METADATA_VERSION,
 } from './version.js'
-import { addressAllowed, isLoopbackAddress, type ParsedCidr, RequestTrustPolicy } from './network.js'
+import { addressAllowed, isLoopbackAddress, resolveAuthority, type ParsedCidr, RequestTrustPolicy } from './network.js'
 import type { DeviceStore } from './storage.js'
 import { createWorkspaceDirectory, listComputerImages, listWorkspaceDirectories, readComputerImage } from './computer-images.js'
 import {
@@ -1851,6 +1852,27 @@ export class MobileAccessGateway {
     await new Promise<void>(resolve => {
       bonjour.unpublishAll(() => { bonjour.destroy(() => resolve()) })
     })
+  }
+
+  /**
+   * The loopback origin this gateway additionally accepts, when the administrator enabled
+   * a local tunnel. It must be one of the declared extra authorities, not merely a loopback
+   * origin that happens to be in the policy: a gateway that only listens on 127.0.0.1 has a
+   * loopback origin without any tunnel, and advertising it as one would be misleading.
+   */
+  loopbackOrigin(): string | undefined {
+    const port = this.listenerPort
+    if (this.policy === undefined || port === undefined) return undefined
+    const extras = this.config.additionalAuthorities
+    if (extras.length === 0) return undefined
+    const declared = new Set(extras.map(spec => resolveAuthority(spec, port).toLowerCase()))
+    for (const origin of this.policy.origins) {
+      const url = new URL(origin)
+      if (!declared.has(url.host.toLowerCase())) continue
+      if (!isLoopbackAddress(url.hostname.replace(/^\[|\]$/gu, ''))) continue
+      return origin
+    }
+    return undefined
   }
 
   /** Actual bound address, available after start and safe for loopback status output. */
@@ -4165,11 +4187,30 @@ export class MobileAccessGateway {
     for (const listener of this.extensionEventListeners) listener(this.extensionEventRevision)
   }
 
-  /** Fan a completed task to every phone holding this gateway's event stream. */
-  broadcastTaskEvent(event: { readonly sessionId: string; readonly turn: number }): void {
+  /**
+   * Fan a completed task to every phone holding this gateway's event stream.
+   *
+   * `sessionId` and `turn` always stay; `title`/`body` are optional and are
+   * emitted together so an older App ignores them and falls back to its own
+   * localized text. This layer re-bounds the strings (code-point safe) instead
+   * of trusting the caller; redaction is deliberately owned only by the
+   * task-events derivation, not repeated here, because this method is also
+   * callable by fixtures that bypass the watcher.
+   */
+  broadcastTaskEvent(event: {
+    readonly sessionId: string
+    readonly turn: number
+    readonly title?: string
+    readonly body?: string
+  }): void {
     if (this.closing) return
-    const payload = JSON.stringify({ sessionId: String(event.sessionId), turn: Number(event.turn) || 0 })
-    for (const listener of this.taskEventListeners) listener(payload)
+    const payload: Record<string, string | number> = { sessionId: String(event.sessionId), turn: Number(event.turn) || 0 }
+    if (typeof event.title === 'string' && event.title !== '' && typeof event.body === 'string' && event.body !== '') {
+      payload.title = Array.from(event.title).slice(0, TASK_ANNOUNCEMENT_LIMITS.title).join('')
+      payload.body = Array.from(event.body).slice(0, TASK_ANNOUNCEMENT_LIMITS.body).join('')
+    }
+    const serialized = JSON.stringify(payload)
+    for (const listener of this.taskEventListeners) listener(serialized)
   }
 
   /** Notify only the device whose persistent credential was revoked by the Host. */
@@ -4582,6 +4623,10 @@ export class MobileAccessGateway {
               : `instance=${this.config.instanceId}&token=${opened.token}`
             const pairUrl = `${this.address().origin}/mobile-access/pair#${fragment}`
             const appPairUrl = pairUrl
+            // A locally tunnelled phone binds the same port on its own loopback, so the
+            // one-time pairing fragment is valid there too; without the opt-in this is
+            // undefined and no loopback address is ever advertised.
+            const loopbackOrigin = this.loopbackOrigin()
             // The QR code is an enhancement; a failed render must not waste an opened window.
             let qrSvg = ''
             try {
@@ -4594,6 +4639,9 @@ export class MobileAccessGateway {
               appKey,
               pairUrl,
               appPairUrl,
+              ...(loopbackOrigin === undefined
+                ? {}
+                : { loopbackPairUrl: `${loopbackOrigin}/mobile-access/pair#${fragment}` }),
               qrSvg,
             }, false)
             return

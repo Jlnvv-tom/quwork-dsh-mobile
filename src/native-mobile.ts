@@ -10,6 +10,7 @@ import { MOBILE_COMPOSER_TOOLBAR_STYLES } from './mobile-composer-toolbar.js'
 import { pickBrowserFiles } from './browser-file-picker.js'
 import { installMobileSidebarScrollMemory } from './mobile-sidebar-scroll.js'
 import { WIDE_LAYOUT_ATTRIBUTE } from './mobile-layout-attributes.js'
+import { installMobilePathCopy, PATH_COPY_TOUCH_QUERY } from './mobile-path-copy.js'
 
 export const NATIVE_MOBILE_OVERLAY_QUERY = '(max-width:720px)'
 
@@ -23,6 +24,12 @@ export const NATIVE_MOBILE_STYLES = `
    the query restores the fixed scrim, and its more specific [hidden] rule
    keeps winning there. */
  .dsh-native-mobile-backdrop,.dsh-mobile-branch-toast,.dsh-mobile-media-toast { display:none; }
+ /* The path-copy toast confirms a clipboard write whose gate is the touch
+    predicate, not viewport width, so its box lives outside the overlay query:
+    a landscape phone or tablet copy must stay visible. The bottom slot keeps
+    it clear of the branch and media toasts' shared top-center position. */
+ .dsh-mobile-path-toast { display:none; }
+ .dsh-mobile-path-toast[data-visible="true"] { display:block; position:fixed; z-index:330; left:50%; transform:translateX(-50%); bottom:max(12px,env(safe-area-inset-bottom)); max-width:calc(100vw - 32px); box-sizing:border-box; padding:7px 14px; border:1px solid rgb(15 23 42 / 10%); border-radius:999px; background:rgb(15 23 42 / 92%); color:#fff; font-size:13px; line-height:20px; text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; pointer-events:none; }
  /* The content-font preference may exceed Safari's focused-editable minimum.
     The html-level class exists on every non-desktop mobile page, so it also
     covers body-level portals (model picker search) the center column never
@@ -243,16 +250,14 @@ export const NATIVE_MOBILE_STYLES = `
   [data-dsh-mobile-center] [data-composer-stats] [class*="_pill"] svg { display:inline-block !important; vertical-align:-2px !important; margin-right:6px !important; }
   [data-dsh-mobile-center] [data-composer-stats]:has(span[class*="_pill"]) { flex-wrap:wrap !important; overflow:visible !important; }
   [data-dsh-mobile-center] [data-composer-stats] span[class*="_pill"] { flex:0 1 auto !important; max-width:100% !important; white-space:normal !important; overflow:visible !important; overflow-wrap:anywhere !important; text-overflow:clip !important; }
-  /* Message runtime details are inline on desktop. Give the clock/runtime
-     label its own wrapping row on narrow screens so TTFT and throughput do
-     not push the action buttons or clip at the viewport edge. */
-  [data-dsh-mobile-center] [class*="_actions"]:has(> [class*="_timeStart"]),
-  [data-dsh-mobile-center] [class*="_actions"]:has(> [class*="_timeEnd"]) { box-sizing:border-box !important; width:100% !important; flex-wrap:wrap !important; justify-content:flex-end !important; height:auto !important; min-height:28px !important; row-gap:2px !important; }
-  [data-dsh-mobile-center] [class*="_timeStart"],
-  [data-dsh-mobile-center] [class*="_timeEnd"] { box-sizing:border-box !important; flex:1 1 100% !important; order:2 !important; min-width:0 !important; max-width:100% !important; padding:0 !important; line-height:20px !important; text-align:center !important; white-space:normal !important; overflow-wrap:anywhere !important; }
-  [data-dsh-mobile-center] [class*="_timeStart"] { box-sizing:border-box !important; flex:1 1 100% !important; order:2 !important; min-width:0 !important; max-width:100% !important; padding:0 !important; line-height:20px !important; text-align:center !important; white-space:normal !important; overflow-wrap:anywhere !important; }
-  [data-dsh-mobile-center] [class*="_timeStart"] [class*="_runTimeDot"],
-  [data-dsh-mobile-center] [class*="_timeEnd"] [class*="_runTimeDot"] { margin:0 6px !important; }
+  /* Message runtime labels stay inline, as DSH renders them. The earlier rule here
+     widened any actions row holding a _timeStart/_timeEnd child; DSH renders the
+     user message's clock (data-clock="start") as a direct child of that row, so the
+     rule widened the USER row, and a plugin that turns the row into a reversed flex
+     line collapsed the user bubble to a sliver (#441). The assistant's label is not
+     a direct child either (it sits in _endInfo), so that half never matched. DSH's
+     own actions row already keeps both labels on one line at 320-393px, so no
+     replacement rule is needed. */
   /* Keep the context meter's legend rows as readable label/value pairs.
      Generic mobile flex rules can otherwise place the rows side by side and
      break Chinese labels in the middle of a word. */
@@ -1422,6 +1427,14 @@ export function installNativeMobileSurface(backServices: NativeMobileBackService
       mediaToastTimer = 0
     }, 2200)
   }
+  const disposePathCopy = installMobilePathCopy({
+    document,
+    isTouchPrimary: () => window.matchMedia(PATH_COPY_TOUCH_QUERY).matches,
+    labels: {
+      copied: label('Copiato: {path}', 'Copied: {path}', '已复制：{path}'),
+      failed: label('Impossibile copiare il percorso.', 'Could not copy the path.', '无法复制路径。'),
+    },
+  })
   let mediaRequestGeneration = 0
   let disposed = false
   let boundComposer: Element | null = null
@@ -2052,6 +2065,7 @@ export function installNativeMobileSurface(backServices: NativeMobileBackService
     disposed = true
     stopStockBack()
     sidebarScrollMemory.dispose()
+    disposePathCopy()
     disposeTaskWatcher()
     mediaRequestGeneration += 1
     mediaPickerAbortController.abort()
