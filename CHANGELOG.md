@@ -2,6 +2,13 @@
 
 Notable changes are recorded here. GitHub Releases provide the downloadable packages and generated commit notes.
 
+## 0.8.9 - 2026-11-17
+
+- Record Android release hosting in `config/` instead of build logic: [config/quwork-android-release.json](config/quwork-android-release.json) is the update descriptor an owner uploads beside the APKs it names, and [config/mobile-update.json](config/mobile-update.json) is where an installed App polls it and where a manual download starts. Gradle and `scripts/build-android-apk.mjs` read that file and keep the previous CDN as the fallback when it is absent, so moving hosting no longer edits build code; `-P` properties and CLI flags still win. `npm run check:mobile-release` checks both files.
+- The Android release workflow ships the checked-in descriptor verbatim when it already names the pushed tag, because that same file drives the update check of App builds already installed. Regenerating it would name an address those phones cannot see yet; a tag without a matching descriptor still generates one from the CDN base URL.
+- The control panel's App download action links the published 0.7.7 APK directly instead of the QuWork site, so one click installs the App and there is no separate landing page to keep in sync.
+- Android App 0.7.7 (build 92) remains the published App; this plugin release rebuilds no APK.
+
 ## 0.8.8 - 2026-11-13
 
 - Remove DSH's own 「更多」 panel trigger from the dedicated Mobile drawer together with the QuWork-only entries already hidden there: it only opens the panel menu those entries belong to, and its collapsed state is a rail icon a phone cannot reach. The rule matches DSH's stable `_panelList` / `_moreAnchor` class suffixes and stays under the mobile layout class, so a wide desktop browser keeps the stock sidebar.

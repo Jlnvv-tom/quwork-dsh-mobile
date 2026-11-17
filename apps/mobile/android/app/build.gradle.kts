@@ -1,3 +1,4 @@
+import groovy.json.JsonSlurper
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -26,8 +27,9 @@ val irohNdk = providers.gradleProperty("irohNdk").orElse(providers.environmentVa
 /**
  * Update delivery is owner-controlled. `mobileDownloadPageUrl` is the page the App opens for a
  * manual download; `mobileUpdateDescriptorUrl` is the JSON an installed App polls at most once per
- * launch. Both default to the fork's CDN, which mirrors the Qurvis desktop channel layout
- * (https://img1.rrzuji.cn/qurvis-package/latest/...). Pass an empty -P value to disable checking.
+ * launch. Both default to <repo>/config/mobile-update.json, which points at the fork's published
+ * file-center assets (https://space-static.quwork.cn/file-center/files/...). Pass an empty -P value
+ * to disable checking.
  * Override per build with -P, or globally in ~/.gradle/gradle.properties.
  */
 fun httpsUrlProperty(name: String, fallback: String): String {
@@ -41,13 +43,36 @@ fun httpsUrlProperty(name: String, fallback: String): String {
     return raw
 }
 
+// Release hosting is maintained in <repo>/config so the download page and the update descriptor
+// can move without editing build logic. -P properties still win over the checked-in values.
+val releaseHosting: Map<*, *> = run {
+    val file = rootProject.projectDir.resolve("../../../config/mobile-update.json")
+    if (!file.isFile) return@run emptyMap<Any, Any>()
+    (JsonSlurper().parse(file) as? Map<*, *>) ?: emptyMap<Any, Any>()
+}
+
+fun releaseHostingUrl(key: String, fallback: String): String {
+    val value = releaseHosting[key] as? String ?: return fallback
+    val trimmed = value.trim()
+    require(trimmed.startsWith("https://") && trimmed.none { it == '"' || it == '\\' || it.code <= 0x20 }) {
+        "config/mobile-update.json $key must be a single https URL"
+    }
+    return trimmed
+}
+
 val downloadPageUrl = httpsUrlProperty(
     "mobileDownloadPageUrl",
-    "https://github.com/Jlnvv-tom/quwork-dsh-mobile/releases",
+    releaseHostingUrl(
+        "downloadPageUrl",
+        "https://space-static.quwork.cn/file-center/files/2611/16/quwork-android-v0.7.7-d70d07cd.apk",
+    ),
 )
 val updateDescriptorUrl = httpsUrlProperty(
     "mobileUpdateDescriptorUrl",
-    "https://img1.rrzuji.cn/qurvis-package/latest/quwork-android-release.json",
+    releaseHostingUrl(
+        "descriptorUrl",
+        "https://space-static.quwork.cn/file-center/files/2611/16/quwork-android-release-84eaa7d5.json",
+    ),
 )
 val buildIrohTransport = tasks.register<Exec>("buildIrohTransport") {
     group = "build"
