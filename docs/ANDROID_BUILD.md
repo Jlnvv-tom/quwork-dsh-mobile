@@ -115,4 +115,4 @@ shasum -a 256 ~/quwork-android-v0.7.5*.apk
 
 CI 每次都从零安装环境，本地复用缓存，版本更容易漂移；构建异常时先用 `./gradlew --version` 和 `java -version` 对照上表。
 
-在 macOS 上跑仓库的 `npm test` 会有与 Android 构建无关的平台差异失败：UDP 广播发现向不存在的网段发送会返回 `EADDRNOTAVAIL`，cpolar 组件只在 win32 可用，iroh 在 darwin 没有本地产物。这些是测试按 Linux 语义写成造成的，CI 的 ubuntu 结果才是判定依据。
+在 macOS 上跑仓库的 `npm test` 会有与 Android 构建无关的平台差异失败：UDP 广播发现向不存在的网段发送会返回 `EADDRNOTAVAIL`，iroh 在 darwin 没有本地产物。这些是测试按 Linux 语义写成造成的，CI 的 ubuntu 结果才是判定依据。

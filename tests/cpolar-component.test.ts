@@ -40,7 +40,7 @@ describe('managed cpolar component', () => {
     expect(CPOLAR_COMPONENT_RELEASE.downloadUrl).toMatch(/^https:\/\/www\.cpolar\.com\//u)
     expect(CPOLAR_COMPONENT_RELEASE.downloadSha256).toMatch(/^[a-f0-9]{64}$/u)
     expect(CPOLAR_COMPONENT_RELEASE.executableSha256).toMatch(/^[a-f0-9]{64}$/u)
-    expect(Object.keys(CPOLAR_COMPONENT_RELEASES).sort()).toEqual(['linux-arm64', 'linux-x64', 'win32-x64'])
+    expect(Object.keys(CPOLAR_COMPONENT_RELEASES).sort()).toEqual(['darwin-arm64', 'darwin-x64', 'linux-arm64', 'linux-x64', 'win32-x64'])
     for (const release of Object.values(CPOLAR_COMPONENT_RELEASES)) {
       expect(release.version).toBe(CPOLAR_COMPONENT_RELEASE.version)
       expect(release.downloadUrl).toMatch(/^https:\/\/www\.cpolar\.com\//u)
@@ -84,21 +84,28 @@ describe('managed cpolar component', () => {
     await expect(manager.install()).rejects.toThrow('cpolar_component_unsupported')
   })
 
-  it('selects the Linux tarball on Linux hosts', async () => {
+  it('selects the POSIX tarball on Linux and macOS hosts', async () => {
     const directory = await mkdtemp(join(tmpdir(), 'dsh-mobile-cpolar-component-'))
     temporaryDirectories.push(directory)
     const fetchArtifact = vi.fn(async () => new Uint8Array(16))
-    for (const arch of ['x64', 'arm64'] as const) {
-      const manager = new CpolarComponentManager({ stateDirectory: directory, platform: 'linux', arch, fetchArtifact })
-      await manager.initialize()
-      expect(manager.status()).toMatchObject({ supported: true, installed: false })
-      expect(manager.status().sourceUrl).toBe(CPOLAR_COMPONENT_RELEASES[`linux-${arch}`]?.downloadUrl)
-      expect(manager.executable.endsWith('cpolar')).toBe(true)
-      expect(manager.executable.endsWith('.exe')).toBe(false)
-      await expect(manager.install()).rejects.toThrow('cpolar_download_hash_mismatch')
+    for (const platform of ['linux', 'darwin'] as const) {
+      for (const arch of ['x64', 'arm64'] as const) {
+        const manager = new CpolarComponentManager({ stateDirectory: directory, platform, arch, fetchArtifact })
+        await manager.initialize()
+        expect(manager.status()).toMatchObject({ supported: true, installed: false })
+        expect(manager.status().sourceUrl).toBe(CPOLAR_COMPONENT_RELEASES[`${platform}-${arch}`]?.downloadUrl)
+        expect(CPOLAR_COMPONENT_RELEASES[`${platform}-${arch}`]?.archiveKind).toBe('tar.gz')
+        expect(manager.executable.endsWith('cpolar')).toBe(true)
+        expect(manager.executable.endsWith('.exe')).toBe(false)
+        await expect(manager.install()).rejects.toThrow('cpolar_download_hash_mismatch')
+      }
     }
     expect(fetchArtifact).toHaveBeenCalledWith(
       CPOLAR_COMPONENT_RELEASES['linux-x64']?.downloadUrl,
+      expect.anything(),
+    )
+    expect(fetchArtifact).toHaveBeenCalledWith(
+      CPOLAR_COMPONENT_RELEASES['darwin-arm64']?.downloadUrl,
       expect.anything(),
     )
   })

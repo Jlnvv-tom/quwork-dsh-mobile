@@ -27,7 +27,7 @@ interface CpolarArtifact {
   readonly executableName: string
   readonly executableBytes: number
   readonly executableSha256: string
-  /** Windows ships an MSI inside a zip; Linux ships the binary in a tarball. */
+  /** Windows ships an MSI inside a zip; Linux and macOS ship the binary in a tarball. */
   readonly archiveKind: 'msi-zip' | 'tar.gz'
 }
 
@@ -45,6 +45,30 @@ const releases = [
     executableBytes: 19_637_680,
     executableSha256: 'b2d865ee505e842d22ceca5493a872efa893a79b079a7a8ee2bd3aa5343a5c41',
     archiveKind: 'msi-zip',
+  },
+  {
+    version: CPOLAR_VERSION,
+    platform: 'darwin',
+    arch: 'x64',
+    downloadUrl: `https://www.cpolar.com/static/downloads/releases/${CPOLAR_VERSION}/cpolar-stable-darwin-amd64.tar.gz`,
+    downloadBytes: 7_520_764,
+    downloadSha256: '66b4f20558de0de6fe9c2c9c0495aecb71dcbbf73ed830021a3adc0a89120b0c',
+    executableName: 'cpolar',
+    executableBytes: 19_379_664,
+    executableSha256: '64889b816d82b98953d88bcce4e9056791d291ca7b07db819f4c5f1ee3f9a32d',
+    archiveKind: 'tar.gz',
+  },
+  {
+    version: CPOLAR_VERSION,
+    platform: 'darwin',
+    arch: 'arm64',
+    downloadUrl: `https://www.cpolar.com/static/downloads/releases/${CPOLAR_VERSION}/cpolar-stable-darwin-arm64.tar.gz`,
+    downloadBytes: 7_224_329,
+    downloadSha256: '08a5f5e708b01576efa453419d0844cbe7fd8ffd4cd9d515edc654defffd19b9',
+    executableName: 'cpolar',
+    executableBytes: 19_764_592,
+    executableSha256: '77bb1442b74840e071fd9ac66436a47869ef9b385216a075687f5d5cac6d41d3',
+    archiveKind: 'tar.gz',
   },
   {
     version: CPOLAR_VERSION,
@@ -276,10 +300,10 @@ async function extractWindowsMsi(archive: string, destination: string, executabl
   await extractWindowsMsiBinary(msi, destination, executableName, expectedBytes)
 }
 
-async function extractLinuxTarball(archive: string, destination: string, executableName: string): Promise<void> {
+async function extractPosixTarball(archive: string, destination: string, executableName: string): Promise<void> {
   const unpacked = join(destination, 'archive')
   await mkdir(unpacked, { recursive: true, mode: 0o700 })
-  // The Linux tarball carries the binary at its root; no installer involved.
+  // The Linux and macOS tarballs carry the binary at their root; no installer involved.
   await run(process.platform === 'win32' ? cpolarWindowsSystemTool('tar.exe') : 'tar', ['-xzf', archive, '-C', unpacked])
   const archiveEntries = await readdir(unpacked, { recursive: true })
   const executableRelative = archiveEntries.find(entry => basename(entry).toLowerCase() === executableName.toLowerCase())
@@ -288,7 +312,7 @@ async function extractLinuxTarball(archive: string, destination: string, executa
 }
 
 async function defaultExtractArtifact(archive: string, destination: string, release: CpolarArtifact): Promise<void> {
-  if (release.archiveKind === 'tar.gz') return extractLinuxTarball(archive, destination, release.executableName)
+  if (release.archiveKind === 'tar.gz') return extractPosixTarball(archive, destination, release.executableName)
   return extractWindowsMsi(archive, destination, release.executableName, release.executableBytes)
 }
 

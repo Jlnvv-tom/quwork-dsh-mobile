@@ -430,14 +430,14 @@ This table describes the **computer running the plugin**, not the phone's OS; iP
 | --- | --- | --- | --- | --- |
 | Local network | Yes (firewall automated) | Yes (open the firewall yourself) | Yes | Yes |
 | Tailscale Funnel | Yes (bundled) | Yes (bundled) | Yes (bundled) | No |
-| cpolar | Yes (on-demand) | Yes (on-demand) | Yes (on-demand) | No |
+| cpolar | Yes (on-demand) | Yes (on-demand) | Yes (on-demand) | Yes, x64/arm64 (on-demand) |
 | cloudflared quick/named tunnel | Yes (on-demand) | Yes (on-demand) | Yes (on-demand) | Yes, x64/arm64 (on-demand) |
 | Self-hosted FRP | Yes (on-demand) | Yes (on-demand) | Yes (on-demand) | Yes (on-demand) |
 | Own reverse proxy | Yes (config only) | Yes (config only) | Yes (config only) | Yes (config only) |
 | Managed Caddy | Yes (on-demand) | Yes (on-demand) | No | No |
 | iroh (Experimental) | Yes (on-demand) | Yes (on-demand) | No | No |
 
-On macOS, local network, cloudflared, self-hosted FRP and the own reverse proxy work; Funnel and cpolar have no managed macOS component yet. The diagnostics firewall check currently covers Windows only and reports “not applicable” elsewhere.
+On macOS, local network, cpolar, cloudflared, self-hosted FRP and the own reverse proxy work; Funnel has no managed macOS component yet. The cpolar macOS component only runs when the plugin downloads it into its private directory: the official binary is signed but not notarized, so a file you download yourself carries the quarantine attribute and Gatekeeper refuses it. Always use **Install official component** in the control panel instead of replacing `cpolar` in the component directory by hand. The diagnostics firewall check currently covers Windows only and reports “not applicable” elsewhere.
 
 | QuWork plugin | Verified DeepSeek Harness version |
 | --- | --- |
