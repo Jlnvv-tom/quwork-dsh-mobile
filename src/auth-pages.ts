@@ -9,6 +9,7 @@ interface AuthPageCopy {
   readonly pairingCodeHint: string
   readonly invalidPairingCode: string
   readonly appKeyNotCode: string
+  readonly iosHomeScreenHint: string
   readonly deviceName: string
   readonly pair: string
   readonly pairing: string
@@ -30,7 +31,8 @@ const COPY: Record<AuthPageLocale, AuthPageCopy> = {
     pairingCode: 'Pairing code', deviceName: 'Device name', pair: 'Pair', pairing: 'Pairing…',
     pairingCodeHint: 'Use the 43-character pairing code shown on the computer. Keys starting with dsh1. or dsh2. are for the Android app.',
     invalidPairingCode: 'Enter the 43-character pairing code from the current pairing window on the computer.',
-    appKeyNotCode: 'This is an Android app key. Use it in the app, or copy the browser pairing code from the computer.',
+    appKeyNotCode: 'This is an Android app key. Use it in the app, or copy the browser pairing link from the computer and open it in Safari or another browser.',
+    iosHomeScreenHint: 'On iPhone or iPad: after pairing, open Safari\'s Share menu and choose Add to Home Screen. The icon opens full screen, and web push is only offered there.',
     pairFailed: 'Pairing failed. Check the code or generate a new one on the computer.',
     pairingExpired: 'The pairing code is invalid or has expired. Generate a new code on the computer and try again.',
     pairingLimited: 'Too many pairing attempts. Wait a moment and try again.',
@@ -45,7 +47,8 @@ const COPY: Record<AuthPageLocale, AuthPageCopy> = {
     pairingCode: '配对码', deviceName: '设备名称', pair: '配对', pairing: '正在配对…',
     pairingCodeHint: '请输入电脑端显示的 43 位配对码。以 dsh1. 或 dsh2. 开头的密钥用于 Android App。',
     invalidPairingCode: '请输入电脑端当前配对窗口中的 43 位配对码。',
-    appKeyNotCode: '这是 Android App 密钥。请在 App 中使用，或回到电脑端复制浏览器配对码。',
+    appKeyNotCode: '这是 Android App 密钥。请在 App 中使用，或在电脑端复制浏览器配对链接，用 Safari 等浏览器打开。',
+    iosHomeScreenHint: '在 iPhone 或 iPad 上：配对完成后，用 Safari 的分享菜单「添加到主屏幕」。从主屏图标进入会全屏打开，网页推送也只能在那里开启。',
     pairFailed: '配对失败，请检查输入或在电脑端重新生成配对码。',
     pairingExpired: '配对码无效或已过期，请在电脑端重新生成后重试。',
     pairingLimited: '配对尝试过于频繁，请稍后再试。',
@@ -60,7 +63,8 @@ const COPY: Record<AuthPageLocale, AuthPageCopy> = {
     pairingCode: 'Codice di abbinamento', deviceName: 'Nome dispositivo', pair: 'Abbina', pairing: 'Abbinamento…',
     pairingCodeHint: 'Usa il codice di abbinamento di 43 caratteri mostrato sul computer. Le chiavi che iniziano con dsh1. o dsh2. sono per l’app Android.',
     invalidPairingCode: 'Inserisci il codice di 43 caratteri dalla finestra di abbinamento attuale sul computer.',
-    appKeyNotCode: 'Questa è una chiave per l’app Android. Usala nell’app oppure copia il codice di abbinamento per il browser dal computer.',
+    appKeyNotCode: 'Questa è una chiave per l’app Android. Usala nell’App oppure copia sul computer il link di abbinamento per il browser e aprilo in Safari o in un altro browser.',
+    iosHomeScreenHint: 'Su iPhone o iPad: dopo l’abbinamento, apri il menu Condividi di Safari e scegli Aggiungi alla schermata Home. L’icona si apre a tutto schermo e le notifiche web si attivano solo da lì.',
     pairFailed: 'Abbinamento non riuscito. Controlla il codice o generane uno nuovo sul computer.',
     pairingExpired: 'Il codice non è valido o è scaduto. Genera un nuovo codice sul computer e riprova.',
     pairingLimited: 'Troppi tentativi di abbinamento. Attendi un momento e riprova.',
@@ -103,6 +107,7 @@ export function renderPairPage(locale: AuthPageLocale): string {
 <title>${copy.pairTitle}</title>
 <main>
   <h1>${copy.pairHeading}</h1>
+  <p id="ios-home-hint" hidden></p>
   <form id="pair-form">
     <label>${copy.pairingCode} <input id="pair-token" autocomplete="one-time-code" autocapitalize="off" spellcheck="false" aria-describedby="pair-token-hint pair-status" required></label>
     <p id="pair-token-hint">${copy.pairingCodeHint}</p>
@@ -130,6 +135,16 @@ export function renderPairScript(locale: AuthPageLocale): string {
   const supplied = fragment.get('token')
   history.replaceState(null, '', location.pathname)
   if (supplied) token.value = supplied
+  const nav = globalThis.navigator ?? {}
+  const ipadDesktopUserAgent = nav.platform === 'MacIntel' && Number(nav.maxTouchPoints ?? 0) > 1
+  const iosDevice = ipadDesktopUserAgent || /iPad|iPhone|iPod/u.test(String(nav.userAgent ?? ''))
+  const homeScreenApp = nav.standalone === true
+    || (typeof globalThis.matchMedia === 'function' && globalThis.matchMedia('(display-mode: standalone)').matches)
+  const homeHint = document.getElementById('ios-home-hint')
+  if (homeHint && iosDevice && !homeScreenApp) {
+    homeHint.textContent = ${JSON.stringify(copy.iosHomeScreenHint)}
+    homeHint.hidden = false
+  }
   token.addEventListener('input', () => {
     token.removeAttribute('aria-invalid')
     if (!submitting) status.value = ''

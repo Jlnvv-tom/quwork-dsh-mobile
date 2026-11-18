@@ -104,6 +104,20 @@ describe('browser authentication page localization', () => {
     expect(page).toContain('43-character')
   })
 
+  it('offers Home Screen guidance without forcing it on a paired Home Screen app', () => {
+    const page = renderPairPage('en')
+    const script = renderPairScript('zh')
+
+    expect(page).toContain('<p id="ios-home-hint" hidden></p>')
+    expect(script).toContain('iPad|iPhone|iPod')
+    expect(script).toContain("nav.platform === 'MacIntel'")
+    expect(script).toContain('(display-mode: standalone)')
+    expect(script).toContain('添加到主屏幕')
+    // The hint never replaces the pairing form, so a failed permission or an
+    // iPad desktop user agent cannot block pairing itself.
+    expect(script.indexOf('ios-home-hint')).toBeLessThan(script.indexOf('/mobile-access/auth/pair'))
+  })
+
   it('renders localized reauthentication failure guidance', () => {
     const page = renderLoginPage('it')
     const script = renderLoginScript('zh')

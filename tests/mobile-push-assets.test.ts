@@ -11,7 +11,16 @@ describe('dedicated Mobile push static assets', () => {
     const asset = await mobilePushAsset('/mobile-access/push/manifest.webmanifest')
     expect(asset?.contentType).toBe('application/manifest+json; charset=utf-8')
     const manifest = JSON.parse(String(asset?.body)) as Record<string, unknown>
-    expect(manifest).toMatchObject({ id: '/', start_url: '/', scope: '/', display: 'standalone' })
+    expect(manifest).toMatchObject({
+      id: '/',
+      name: 'QuWork',
+      short_name: 'QuWork',
+      start_url: '/',
+      scope: '/',
+      display: 'standalone',
+      theme_color: '#0F172A',
+      background_color: '#0F172A',
+    })
     expect(JSON.stringify(manifest)).not.toMatch(/credential|token|reference|mobile-push|\?/i)
     expect(manifest.icons).toEqual([
       { src: '/mobile-access/push/icon-180.png', sizes: '180x180', type: 'image/png' },

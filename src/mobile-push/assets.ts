@@ -14,11 +14,23 @@ const ICON_FILES: Readonly<Record<string, string>> = Object.freeze({
   '/mobile-access/push/icon-512.png': 'icon-512.png',
 })
 const MANIFEST_PATH = '/mobile-access/push/manifest.webmanifest'
+/**
+ * Home-screen identity shared with the head metadata injected into the dedicated
+ * mobile document. iOS reads `apple-mobile-web-app-title`, every other browser
+ * reads the manifest, so both names come from one constant.
+ */
+export const MOBILE_APP_NAME = 'QuWork'
+/** Dark canvas from the design system; iOS ignores this and uses the head meta. */
+export const MOBILE_APP_THEME_COLOR = '#0F172A'
 const MANIFEST = JSON.stringify({
   id: '/',
+  name: MOBILE_APP_NAME,
+  short_name: MOBILE_APP_NAME,
   start_url: '/',
   scope: '/',
   display: 'standalone',
+  theme_color: MOBILE_APP_THEME_COLOR,
+  background_color: MOBILE_APP_THEME_COLOR,
   icons: [
     { src: '/mobile-access/push/icon-180.png', sizes: '180x180', type: 'image/png' },
     { src: '/mobile-access/push/icon-192.png', sizes: '192x192', type: 'image/png' },

@@ -1398,7 +1398,7 @@ describe('HTTP gateway', () => {
   })
 
   it('serves the dedicated layout at the authenticated root while retaining stock metadata and escape hatch', async () => {
-    const upstreamMetadata = '<link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" sizes="192x192" href="/upstream-icon.png"><link rel="icon" href="/favicon.ico">'
+    const upstreamMetadata = '<link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" sizes="192x192" href="/upstream-icon.png"><link rel="icon" href="/favicon.ico"><meta name="theme-color" content="#ffffff"><meta name="apple-mobile-web-app-capable" content="no">'
     const inner = await upstream('legacy', false, Buffer.alloc(0), [], undefined, undefined, 0, 0, undefined, upstreamMetadata)
     const instance = await gateway(inner.port)
     const paired = await pair(instance)
@@ -1422,6 +1422,15 @@ describe('HTTP gateway', () => {
     expect(mobile.body).not.toContain('/upstream-icon.png')
     expect(mobile.body).toContain('<link rel="icon" href="/favicon.ico">')
     expect(mobile.body.match(/rel="manifest"/gu)).toHaveLength(1)
+    // Home-screen identity replaces upstream metadata instead of stacking a second copy.
+    expect(mobile.body).toContain('<meta name="apple-mobile-web-app-capable" content="yes">')
+    expect(mobile.body).toContain('<meta name="apple-mobile-web-app-title" content="QuWork">')
+    expect(mobile.body).toContain('<meta name="apple-mobile-web-app-status-bar-style" content="black">')
+    expect(mobile.body).toContain('<meta name="theme-color" content="#0F172A">')
+    expect(mobile.body).toContain('<meta name="format-detection" content="telephone=no">')
+    expect(mobile.body).not.toContain('content="#ffffff"')
+    expect(mobile.body).not.toContain('apple-mobile-web-app-capable" content="no"')
+    expect(mobile.body.match(/<meta name="theme-color"/gu)).toHaveLength(1)
     expect(mobile.body.indexOf('/mobile-access/compat.js')).toBeLessThan(mobile.body.indexOf('__DSH_BOOT__'))
 
     const deepLink = await request(instance.address().port, '/?sessionId=example', { headers })

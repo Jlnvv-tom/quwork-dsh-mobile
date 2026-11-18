@@ -110,7 +110,7 @@ import {
   resolveAuthPageLocale,
 } from './auth-pages.js'
 import { resolveBrowserUiLocale } from './browser-ui-locale.js'
-import { mobilePushAsset } from './mobile-push/assets.js'
+import { MOBILE_APP_NAME, MOBILE_APP_THEME_COLOR, mobilePushAsset } from './mobile-push/assets.js'
 import { isPushInstallationId } from './mobile-push/installation-id.js'
 import type { PushConfig, PushEnrollment, PushMutationGuard, PushOwner, PushPreferences, PushRegistration, PushTarget } from './mobile-push/contracts.js'
 import type { PushGatewayService } from './mobile-push/gateway.js'
@@ -873,32 +873,57 @@ function rewriteMobileApplicationPreloads(html: string, replacements: ReadonlyMa
   })
 }
 
-const MOBILE_PUSH_HEAD_LINKS = [
+/** Head metadata owned by this plugin; upstream copies are replaced, not duplicated. */
+const MOBILE_METADATA_META_NAMES: ReadonlySet<string> = new Set([
+  'theme-color',
+  'application-name',
+  'apple-mobile-web-app-capable',
+  'apple-mobile-web-app-status-bar-style',
+  'apple-mobile-web-app-title',
+  'mobile-web-app-capable',
+  'format-detection',
+])
+
+const MOBILE_HEAD_TAGS = [
   '<link rel="manifest" href="/mobile-access/push/manifest.webmanifest">',
   '<link rel="apple-touch-icon" sizes="180x180" href="/mobile-access/push/icon-180.png">',
   '<link rel="apple-touch-icon" sizes="192x192" href="/mobile-access/push/icon-192.png">',
   '<link rel="apple-touch-icon" sizes="512x512" href="/mobile-access/push/icon-512.png">',
+  `<meta name="theme-color" content="${MOBILE_APP_THEME_COLOR}">`,
+  `<meta name="application-name" content="${MOBILE_APP_NAME}">`,
+  // Launching from the Home Screen icon opens without Safari chrome. The opaque
+  // status bar keeps the conversation clear of the notch without moving any
+  // upstream layout, which `black-translucent` would require.
+  '<meta name="apple-mobile-web-app-capable" content="yes">',
+  '<meta name="apple-mobile-web-app-status-bar-style" content="black">',
+  `<meta name="apple-mobile-web-app-title" content="${MOBILE_APP_NAME}">`,
+  '<meta name="mobile-web-app-capable" content="yes">',
+  // iOS turns long digit runs in conversation text into phone links otherwise.
+  '<meta name="format-detection" content="telephone=no">',
 ].join('')
 
-function replaceDedicatedMobilePushLinks(html: string): string {
-  // The manifest/icon replacement is optional metadata polish: an upstream document
+function replaceDedicatedMobileMetadata(html: string): string {
+  // The manifest/icon/metadata replacement is optional polish: an upstream document
   // without a literal head element keeps its own metadata unchanged rather than
   // breaking the whole dedicated boot for ordinary Mobile access.
   if (/<head\b[^>]*>/iu.exec(html) === null) return html
-  const linkPattern = /<link\b[^>]*>/giu
   const remove: Array<{ start: number; end: number }> = []
-  for (const match of html.matchAll(linkPattern)) {
+  for (const match of html.matchAll(/<link\b[^>]*>/giu)) {
     const rel = (preloadAttribute(match[0], 'rel') ?? '').toLowerCase().split(/\s+/u)
-    if (rel.includes('manifest') || rel.includes('apple-touch-icon')) {
-      remove.push({ start: match.index!, end: match.index! + match[0].length })
-    }
+    if (!rel.includes('manifest') && !rel.includes('apple-touch-icon')) continue
+    remove.push({ start: match.index!, end: match.index! + match[0].length })
+  }
+  for (const match of html.matchAll(/<meta\b[^>]*>/giu)) {
+    const name = (preloadAttribute(match[0], 'name') ?? '').toLowerCase()
+    if (!MOBILE_METADATA_META_NAMES.has(name)) continue
+    remove.push({ start: match.index!, end: match.index! + match[0].length })
   }
   let cleaned = html
-  for (const range of remove.reverse()) cleaned = `${cleaned.slice(0, range.start)}${cleaned.slice(range.end)}`
+  for (const range of remove.sort((left, right) => right.start - left.start)) cleaned = `${cleaned.slice(0, range.start)}${cleaned.slice(range.end)}`
   const head = /<head\b[^>]*>/iu.exec(cleaned)
   if (head?.index === undefined) throw new Error('dedicated mobile document has no head element')
   const position = head.index + head[0].length
-  return `${cleaned.slice(0, position)}${MOBILE_PUSH_HEAD_LINKS}${cleaned.slice(position)}`
+  return `${cleaned.slice(0, position)}${MOBILE_HEAD_TAGS}${cleaned.slice(position)}`
 }
 
 function rewriteMobileIndexWithBatch(
@@ -911,7 +936,7 @@ function rewriteMobileIndexWithBatch(
   const replacement = `${MOBILE_GATEWAY_REACHABILITY_BOOTSTRAP}${transportBootstrap}${mobileCsrfFetchBootstrap(options.csrfCookie ?? CSRF_COOKIE)}window.__DSH_MOBILE_FRONTEND__="dedicated";${plan.assignment}${JSON.stringify(plan.parsed)};`
   const rewritten = `${html.slice(0, plan.replaceStart)}${replacement}${html.slice(plan.replaceEnd)}`
   return Object.freeze({
-    html: replaceDedicatedMobilePushLinks(ensureMobileGatewayMarker(ensureMobileViewport(ensureMobileCompatibility(rewriteMobileApplicationPreloads(rewritten, projected.preloadReplacements), options.compatPath)))),
+    html: replaceDedicatedMobileMetadata(ensureMobileGatewayMarker(ensureMobileViewport(ensureMobileCompatibility(rewriteMobileApplicationPreloads(rewritten, projected.preloadReplacements), options.compatPath)))),
     batches: projected.batches,
     graphTransport: projected.graphTransport,
   })
